@@ -30,8 +30,8 @@
         .editable:focus { outline: 2px dashed #4A342E; background: rgba(74, 52, 46, 0.05); border-radius: 4px; }
         .active-nav-btn { color: #4A342E !important; }
         
-        /* 日期框修改為正方形 */
-        .day-btn { width: 80px; height: 80px; transition: all 0.2s; }
+        /* 正方形日期框 */
+        .day-btn { width: 80px; height: 80px; transition: all 0.2s; flex-shrink: 0; }
         .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); }
         
         .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #E8DCCF; opacity: 0.5; }
@@ -41,40 +41,40 @@
 </head>
 <body class="flex justify-center">
 
-    <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg">
+    <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg shadow-inner">
         
         <!-- Header -->
         <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20 flex justify-between items-center">
             <h1 id="trip-title" contenteditable="true" onblur="saveState()" class="editable text-lg font-black tracking-tight italic">🇰🇷 韓國之旅 2026</h1>
-            <div class="w-8 h-8 rounded-full bg-cream-accent text-white flex items-center justify-center text-[10px] font-bold tracking-tighter">KR</div>
+            <div class="w-8 h-8 rounded-full bg-cream-accent text-white flex items-center justify-center text-[10px] font-bold">KR</div>
         </header>
 
-        <!-- [分頁 1] 行程 (Schedule) -->
+        <!-- [分頁 1] 行程 -->
         <section id="tab-schedule" class="tab-content active px-4 pt-6">
-            <!-- 日期選擇器: 正方形樣式 -->
             <div id="day-selector" class="flex space-x-3 overflow-x-auto no-scrollbar mb-8 pb-4"></div>
             <div class="relative timeline-line ml-1" id="itinerary-list"></div>
-            <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-[2rem] text-cream-accent font-bold text-sm">
-                <i class="fa-solid fa-plus mr-2"></i>新增行程項目
+            <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-[2rem] text-cream-accent font-bold text-sm tracking-widest">
+                + 新增行程項目
             </button>
         </section>
 
-        <!-- [分頁 2] 代辦 (Todo) -->
+        <!-- [分頁 2] 代辦 (母標題) -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black italic">行前代辦</h2>
+                <h2 class="text-2xl font-black italic">行前待辦</h2>
                 <button onclick="addTodoGroup()" class="text-xs bg-cream-accent text-white px-3 py-1.5 rounded-full font-bold">新增母標題</button>
             </div>
             <div id="todo-groups" class="space-y-6"></div>
         </section>
 
-        <!-- [分頁 3] 記帳 (Budget) -->
+        <!-- [分頁 3] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic">旅遊記帳</h2>
             
+            <!-- 預算進度 -->
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4">
-                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tighter">
-                    <span>預算進度 (NT$ <span contenteditable="true" id="budget-val" onblur="saveState()">50000</span>)</span>
+                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase">
+                    <span>預算 (NT$ <span contenteditable="true" id="budget-val" onblur="saveState()">50000</span>)</span>
                     <span>剩餘: <span id="budget-left" class="text-cream-accent">0</span></span>
                 </div>
                 <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -82,137 +82,91 @@
                 </div>
             </div>
 
-            <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-6 relative overflow-hidden">
-                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase font-mono">總支出 (TWD)</p>
+            <!-- 總額卡片 -->
+            <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-6 relative overflow-hidden text-center">
+                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase">總支出 (TWD)</p>
                 <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter">NT$ 0</h3>
-                <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30">
+                <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30 italic">
                     <i class="fa-solid fa-calculator mr-1"></i> 查看分帳統計
                 </button>
-                <i class="fa-solid fa-won-sign absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
+                <i class="fa-solid fa-sack-dollar absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
             </div>
 
-            <!-- 記帳日期篩選 -->
-            <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6"></div>
+            <!-- 動態日期標籤 -->
+            <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 px-1"></div>
             <div id="expense-list" class="space-y-4"></div>
         </section>
 
-        <!-- [分頁 4] 資訊 (Info) -->
+        <!-- [分頁 4] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-cream-accent">旅遊資訊</h2>
             <div class="space-y-4 mb-8">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                    <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 去程班機時刻</p>
-                    <h4 class="font-black text-base italic">濟州航空 7C6102</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-                        11:55 桃機 T1 起飛<br>15:35 抵達仁川機場 T1
-                    </div>
+                    <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 去程時刻表</p>
+                    <h4 class="font-black text-base">濟州航空 7C6102</h4>
+                    <div class="mt-2 text-sm text-gray-500 font-medium">11:55 桃機 T1 / 15:35 抵達仁川 T1</div>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                    <p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 回程班機時刻</p>
-                    <h4 class="font-black text-base italic">長榮航空 BR159</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-                        19:45 仁川機場 T1 起飛<br>21:25 抵達桃機 T2
-                    </div>
+                    <p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 回程時刻表</p>
+                    <h4 class="font-black text-base">長榮航空 BR159</h4>
+                    <div class="mt-2 text-sm text-gray-500 font-medium">19:45 仁川 T1 / 21:25 抵達桃機 T2</div>
                 </div>
             </div>
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-8">
-                <p class="text-[10px] font-black text-cream-accent uppercase mb-3 tracking-widest font-mono text-center italic">🏨 住宿導覽</p>
-                <h4 class="font-black text-sm mb-1 text-center">Seoul Jung-gu Sogong-ro 6na-gil 11</h4>
-                <div class="grid grid-cols-2 gap-3 mt-4">
-                    <button onclick="openM('google', 'Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-3 bg-gray-50 rounded-2xl text-[10px] font-bold italic">Google Maps</button>
-                    <button onclick="openM('naver', '서울특별시 중구 소공로6나길 11')" class="py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700 italic">NAVER Map</button>
+                <p class="text-[10px] font-black text-cream-accent uppercase mb-3 tracking-widest font-mono text-center italic">🏨 住宿與導航</p>
+                <h4 class="font-black text-[13px] text-center mb-4">Seoul Jung-gu Sogong-ro 6na-gil 11</h4>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="openM('google', 'Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-3 bg-gray-50 rounded-2xl text-[10px] font-bold">Google Maps</button>
+                    <button onclick="openM('naver', '서울특별시 중구 소공로6나길 11')" class="py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700">NAVER Map</button>
                 </div>
             </div>
             <div id="custom-info-list" class="space-y-4"></div>
-            <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm">+ 新增自訂資訊區塊</button>
+            <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm">+ 新增自訂資訊</button>
         </section>
 
-        <!-- 底部導覽列 -->
+        <!-- 底部導覽 (已補上記帳 Icon) -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[400px] bg-white/80 backdrop-blur-2xl border border-white/50 h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around px-2 z-[100]">
             <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center space-y-1 active-nav-btn text-gray-300">
-                <i class="fa-solid fa-compass text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">行程</span>
+                <i class="fa-solid fa-compass text-lg"></i><span class="text-[9px] font-black uppercase">行程</span>
             </button>
             <button onclick="switchTab('todo')" id="nav-todo" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">代辦</span>
+                <i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] font-black uppercase">代辦</span>
             </button>
             <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-sack-dollar text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">記帳</span>
+                <i class="fa-solid fa-sack-dollar text-lg"></i><span class="text-[9px] font-black uppercase">記帳</span>
             </button>
             <button onclick="switchTab('info')" id="nav-info" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">資訊</span>
+                <i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] font-black uppercase">資訊</span>
             </button>
         </nav>
 
-        <!-- 記帳新增浮動鈕 -->
+        <!-- 記帳浮動鈕 -->
         <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90]">
             <i class="fa-solid fa-plus"></i>
         </button>
 
-        <!-- 分帳 Modal -->
-        <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center">
-            <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8">
-                <h3 class="text-lg font-black italic mb-6">分帳統計</h3>
-                <div id="settlement-content" class="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar"></div>
-                <button onclick="toggleSettlement()" class="w-full mt-8 bg-cream-accent text-white py-4 rounded-2xl font-bold text-sm tracking-widest">關閉</button>
-            </div>
-        </div>
-
-        <!-- 記帳新增/編輯 Modal -->
+        <!-- 記帳 Modal -->
         <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
             <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s]">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="exp-modal-title" class="text-xl font-black italic">新增記帳</h3>
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="exp-modal-title" class="text-xl font-black italic tracking-tighter">新增記帳</h3>
                     <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center text-gray-400">✕</button>
                 </div>
 
-                <div class="space-y-6 overflow-y-auto max-h-[75vh] pb-8 no-scrollbar">
+                <div class="space-y-6 overflow-y-auto max-h-[75vh] pb-10 no-scrollbar">
                     <input type="hidden" id="edit-exp-id">
-                    
                     <div>
                         <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">項目名稱</label>
-                        <input id="exp-item" type="text" placeholder="例如：早餐、地鐵" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
+                        <input id="exp-item" type="text" placeholder="例如：午餐、地鐵" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
                     </div>
-
                     <div>
                         <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">花費日期</label>
                         <input id="exp-date" type="date" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold font-mono">
                     </div>
-
-                    <!-- 按鈕組: 付款人 -->
+                    <!-- 付款人 -->
                     <div>
                         <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款人</label>
                         <div class="grid grid-cols-4 gap-2">
                             <button onclick="setField('payer', '小慌')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小慌</button>
                             <button onclick="setField('payer', '昱凱')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">昱凱</button>
                             <button onclick="setField('payer', '小安')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小安</button>
-                            <button onclick="setField('payer', '文哥')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">文哥</button>
-                        </div>
-                    </div>
-
-                    <!-- 按鈕組: 付款方式 -->
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款方式</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setField('payment', '信用卡')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">信用卡</button>
-                            <button onclick="setField('payment', '現金')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">現金</button>
-                            <button onclick="setField('payment', '行動支付')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">行動支付</button>
-                        </div>
-                    </div>
-
-                    <!-- 按鈕組: 退稅狀態 -->
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">退稅狀態</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setField('tax', '無')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">無</button>
-                            <button onclick="setField('tax', '未退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">未退稅</button>
-                            <button onclick="setField('tax', '已退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">已退稅</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">金額</label>
-                        <div class="flex items-center space-x-2">
-                            <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-[10px] font-black outline-none border-none">
-                                <option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option>
-                            </select>
-                            <input id="exp-amount" type="number" placeholder="0" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none text-base font-black italic tracking-tighter">
