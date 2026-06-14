@@ -31,7 +31,10 @@
         .active-nav-btn { color: #4A342E !important; }
         .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); }
         .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #E8DCCF; opacity: 0.5; }
-        .segment-btn.active { background-color: #4A342E; color: white; border-color: #4A342E; }
+        
+        /* 彈窗按鈕樣式 */
+        .seg-btn { background-color: #FFFFFF; color: #8B8B8B; border: 1px solid #F3F0ED; transition: all 0.2s; }
+        .seg-btn.active { background-color: #4A342E; color: #FFFFFF; border-color: #4A342E; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -53,7 +56,7 @@
             </button>
         </section>
 
-        <!-- [分頁 2] 代辦 (可輸入母標題) -->
+        <!-- [分頁 2] 代辦 -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-black italic">行前代辦</h2>
@@ -85,46 +88,34 @@
                 <i class="fa-solid fa-won-sign absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
             </div>
 
-            <!-- 日期篩選 (動態生成) -->
             <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6"></div>
-
             <div id="expense-list" class="space-y-4"></div>
         </section>
 
-        <!-- [分頁 4] 資訊 (New) -->
+        <!-- [分頁 4] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-cream-accent">旅遊資訊</h2>
-            
-            <!-- 航班資料 (固定) -->
             <div class="space-y-4 mb-8">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                     <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">✈️ 去程班機時刻</p>
                     <h4 class="font-black text-base">濟州航空 7C6102</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-                        11:55 桃機 T1 起飛<br>15:35 抵達仁川機場 T1
-                    </div>
+                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">11:55 桃機 T1 起飛<br>15:35 抵達仁川機場 T1</div>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                     <p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest">✈️ 回程班機時刻</p>
                     <h4 class="font-black text-base">長榮航空 BR159</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">
-                        19:45 仁川機場 T1 起飛<br>21:25 抵達桃機 T2
-                    </div>
+                    <div class="mt-2 text-sm text-gray-500 font-medium leading-relaxed">19:45 仁川機場 T1 起飛<br>21:25 抵達桃機 T2</div>
                 </div>
             </div>
-
-            <!-- 住宿導航 -->
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-8">
                 <p class="text-[10px] font-black text-cream-accent uppercase mb-3 tracking-widest">🏨 住宿導航</p>
                 <h4 class="font-black text-sm mb-1">Seoul Jung-gu Sogong-ro 6na-gil 11</h4>
                 <p class="text-[10px] text-gray-400 mb-4">서울특별시 중구 소공로6나길 11</p>
                 <div class="grid grid-cols-2 gap-3">
-                    <a href="https://www.google.com/maps/search/?api=1&query=Seoul+Jung-gu+Sogong-ro+6na-gil+11" target="_blank" class="flex items-center justify-center py-3 bg-gray-50 rounded-2xl text-[10px] font-bold">Google Maps</a>
-                    <a href="https://map.naver.com/v5/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%A4%91%EA%B5%AC%20%EC%86%8C%EA%B3%B5%EB%A1%9C6%EB%82%98%EA%B8%B8%2011" target="_blank" class="flex items-center justify-center py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700">NAVER Map</a>
+                    <button onclick="openM('google', 'Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-3 bg-gray-50 rounded-2xl text-[10px] font-bold">Google Maps</button>
+                    <button onclick="openM('naver', '서울특별시 중구 소공로6나길 11')" class="py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700">NAVER Map</button>
                 </div>
             </div>
-
-            <!-- 自訂資訊區塊 -->
             <div id="custom-info-list" class="space-y-4"></div>
             <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm">新增自訂資訊</button>
         </section>
@@ -145,7 +136,7 @@
             </button>
         </nav>
 
-        <!-- 記帳新增按鈕 -->
+        <!-- 記帳按鈕 -->
         <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90]">
             <i class="fa-solid fa-plus"></i>
         </button>
@@ -162,285 +153,39 @@
             </div>
         </div>
 
-        <!-- 記帳新增彈窗 -->
+        <!-- 記帳新增彈窗 (完全同步截圖 UI) -->
         <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
             <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s]">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black italic">新增費用</h3>
-                    <button onclick="closeExpenseModal()" class="text-gray-300">✕</button>
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xl font-black italic">新增記帳</h3>
+                    <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-xs text-gray-400">✕</button>
                 </div>
-                <div class="space-y-5">
-                    <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
-                    <div class="flex space-x-2">
-                        <input id="exp-date" type="date" class="w-1/2 bg-gray-50 p-4 rounded-2xl outline-none text-xs font-bold">
-                        <select id="exp-payer" class="w-1/2 bg-gray-50 p-4 rounded-2xl outline-none text-xs font-bold">
-                            <option value="小慌">小慌</option><option value="昱凱">昱凱</option><option value="小安">小安</option><option value="文哥">文哥</option>
-                        </select>
+
+                <div class="space-y-6 overflow-y-auto max-h-[75vh] no-scrollbar">
+                    <!-- 項目名稱 -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase">項目名稱</label>
+                        <input id="exp-item" type="text" placeholder="例如：午餐、地鐵" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-medium">
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-xs font-bold border-none outline-none">
-                            <option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option>
-                        </select>
-                        <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none text-sm font-black">
+
+                    <!-- 花費日期 -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase">花費日期</label>
+                        <input id="exp-date" type="date" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
                     </div>
-                    <div class="flex justify-between items-center px-2">
-                        <span class="text-[10px] text-gray-400 font-bold">匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent outline-none"></span>
-                        <span id="exp-twd-hint" class="text-[10px] font-black text-cream-accent tracking-tighter uppercase">台幣換算: NT$ 0</span>
-                    </div>
-                    <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-3xl font-black shadow-lg">確認儲存</button>
-                </div>
-            </div>
-        </div>
 
-    </div>
-
-    <script>
-        // --- 初始化狀態 ---
-        let state = JSON.parse(localStorage.getItem('korea_2026_pro')) || {
-            title: "🇰🇷 韓國之旅 2026",
-            budget: 50000,
-            currentDay: 1,
-            itinerary: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
-            todoGroups: [{ id: 1, title: "母標題: 證件清單", items: ["護照", "機票"] }],
-            expenses: [],
-            customInfo: []
-        };
-
-        const dayList = [
-            { d: "7/5", w: "SUN", n: "Day 1" }, { d: "7/6", w: "MON", n: "Day 2" }, { d: "7/7", w: "TUE", n: "Day 3" },
-            { d: "7/8", w: "WED", n: "Day 4" }, { d: "7/9", w: "THU", n: "Day 5" }, { d: "7/10", w: "FRI", n: "Day 6" }, { d: "7/11", w: "SAT", n: "Day 7" }
-        ];
-
-        window.onload = () => {
-            renderAll();
-            document.getElementById('exp-amount').oninput = calcHint;
-            document.getElementById('exp-rate').oninput = calcHint;
-        };
-
-        function saveState() {
-            state.title = document.getElementById('trip-title').innerText;
-            state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
-            localStorage.setItem('korea_2026_pro', JSON.stringify(state));
-            updateBudgetSummary();
-        }
-
-        function renderAll() {
-            renderDaySelector();
-            renderItinerary();
-            renderTodoGroups();
-            renderExpenses('all');
-            renderCustomInfo();
-            updateBudgetSummary();
-        }
-
-        // --- 行程功能 ---
-        function renderDaySelector() {
-            const container = document.getElementById('day-selector');
-            container.innerHTML = "";
-            dayList.forEach((day, i) => {
-                const dayNum = i + 1;
-                const btn = document.createElement('button');
-                btn.className = `day-btn flex-none w-18 h-24 bg-white rounded-3xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == dayNum ? 'active' : 'text-cream-sub'}`;
-                btn.onclick = () => { state.currentDay = dayNum; renderAll(); };
-                btn.innerHTML = `<span class="text-[9px] font-black opacity-50 mb-1">${day.n}</span><span class="text-[10px] font-bold">${day.w}</span><span class="text-base font-black">${day.d}</span>`;
-                container.appendChild(btn);
-            });
-        }
-
-        function renderItinerary() {
-            const list = document.getElementById('itinerary-list');
-            list.innerHTML = "";
-            const items = state.itinerary[state.currentDay] || [];
-            items.forEach((item, idx) => {
-                const div = document.createElement('div');
-                div.className = "relative pl-10 mb-8";
-                div.innerHTML = `
-                    <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative">
-                        <button onclick="deleteItinerary(${idx})" class="absolute top-4 right-4 text-gray-200">✕</button>
-                        <div class="flex justify-between mb-2">
-                            <span contenteditable="true" onblur="editItin(${idx},'time',this.innerText)" class="editable text-xs font-black text-cream-accent italic">${item.time}</span>
-                            <span contenteditable="true" onblur="editItin(${idx},'type',this.innerText)" class="editable text-[10px] bg-cream-bg px-2 py-1 rounded-lg text-cream-sub">${item.type}</span>
-                        </div>
-                        <h3 contenteditable="true" onblur="editItin(${idx},'title',this.innerText)" class="editable font-black text-base mb-1">${item.title}</h3>
-                        <p contenteditable="true" onblur="editItin(${idx},'loc',this.innerText)" class="editable text-[11px] text-gray-400 mb-3">${item.loc}</p>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button onclick="openM('google', '${item.loc}')" class="py-2.5 bg-gray-50 rounded-xl text-[10px] font-black">Google</button>
-                            <button onclick="openM('naver', '${item.loc}')" class="py-2.5 bg-green-50 rounded-xl text-[10px] font-black text-green-700">Naver</button>
+                    <!-- 付款方式 (按鈕切換) -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase">付款方式</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setExpField('payment', '信用卡')" class="pay-btn seg-btn py-3 rounded-xl text-xs font-bold">信用卡</button>
+                            <button onclick="setExpField('payment', '現金')" class="pay-btn seg-btn py-3 rounded-xl text-xs font-bold active">現金</button>
+                            <button onclick="setExpField('payment', '行動支付')" class="pay-btn seg-btn py-3 rounded-xl text-xs font-bold">行動支付</button>
                         </div>
                     </div>
-                `;
-                list.appendChild(div);
-            });
-        }
 
-        function addNewItinerary() {
-            state.itinerary[state.currentDay].push({ time: "12:00", title: "行程項目", loc: "地點", type: "分類" });
-            saveState(); renderItinerary();
-        }
-        function deleteItinerary(idx) { state.itinerary[state.currentDay].splice(idx,1); saveState(); renderItinerary(); }
-        function editItin(idx, f, v) { state.itinerary[state.currentDay][idx][f] = v; saveState(); }
-
-        // --- 代辦功能 (母標題組) ---
-        function renderTodoGroups() {
-            const container = document.getElementById('todo-groups');
-            container.innerHTML = "";
-            state.todoGroups.forEach((group, gIdx) => {
-                const groupDiv = document.createElement('div');
-                groupDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative";
-                groupDiv.innerHTML = `
-                    <button onclick="deleteTodoGroup(${gIdx})" class="absolute top-6 right-6 text-gray-300 text-xs">✕</button>
-                    <h3 contenteditable="true" onblur="editTodoGroupTitle(${gIdx}, this.innerText)" class="editable text-base font-black mb-4 pr-6">${group.title}</h3>
-                    <div class="space-y-3" id="group-items-${gIdx}">
-                        ${group.items.map((item, iIdx) => `
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-4 h-4 rounded border border-gray-200"></div>
-                                    <span contenteditable="true" onblur="editTodoItem(${gIdx},${iIdx},this.innerText)" class="editable text-sm font-bold text-gray-500">${item}</span>
-                                </div>
-                                <button onclick="deleteTodoItem(${gIdx},${iIdx})" class="text-gray-200 text-xs">✕</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-cream-accent uppercase tracking-widest">+ 新增代辦項目</button>
-                `;
-                container.appendChild(groupDiv);
-            });
-        }
-
-        function addTodoGroup() { state.todoGroups.push({ id: Date.now(), title: "母標題: 新分類", items: ["代辦項目"] }); saveState(); renderTodoGroups(); }
-        function deleteTodoGroup(idx) { state.todoGroups.splice(idx,1); saveState(); renderTodoGroups(); }
-        function editTodoGroupTitle(idx, v) { state.todoGroups[idx].title = v; saveState(); }
-        function addTodoItem(idx) { state.todoGroups[idx].items.push("點擊編輯"); saveState(); renderTodoGroups(); }
-        function deleteTodoItem(gIdx, iIdx) { state.todoGroups[gIdx].items.splice(iIdx,1); saveState(); renderTodoGroups(); }
-        function editTodoItem(gIdx, iIdx, v) { state.todoGroups[gIdx].items[iIdx] = v; saveState(); }
-
-        // --- 記帳功能 ---
-        function renderExpenses(filter = 'all') {
-            const list = document.getElementById('expense-list');
-            list.innerHTML = "";
-            const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
-            renderExpDateFilter(uniqueDates, filter);
-
-            const filtered = filter === 'all' ? state.expenses : state.expenses.filter(e => e.date.endsWith(filter));
-            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm";
-                div.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div>
-                        <div>
-                            <p class="text-sm font-black">${e.item}</p>
-                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm font-black italic tracking-tighter">NT$ ${e.twd.toLocaleString()}</p>
-                        <p class="text-[9px] text-gray-300 font-bold tracking-widest">(₩ ${e.amount.toLocaleString()})</p>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-            updateBudgetSummary();
-        }
-
-        function renderExpDateFilter(dates, current) {
-            const container = document.getElementById('expense-date-filter');
-            container.innerHTML = `<button onclick="renderExpenses('all')" class="px-4 py-2 rounded-full text-[10px] font-bold ${current === 'all' ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'}">全部</button>`;
-            dates.forEach(d => {
-                container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-4 py-2 rounded-full text-[10px] font-bold ${current === d ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'}">${d}</button>`;
-            });
-        }
-
-        function calcHint() {
-            const a = parseFloat(document.getElementById('exp-amount').value) || 0;
-            const r = parseFloat(document.getElementById('exp-rate').value) || 1;
-            document.getElementById('exp-twd-hint').innerText = `台幣換算: NT$ ${Math.round(a * r).toLocaleString()}`;
-        }
-
-        function openExpenseModal() { document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate = new Date(); }
-        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
-        
-        function saveExpense() {
-            const item = document.getElementById('exp-item').value;
-            const date = document.getElementById('exp-date').value;
-            const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
-            const rate = parseFloat(document.getElementById('exp-rate').value) || 1;
-            const payer = document.getElementById('exp-payer').value;
-            if (item && amount) {
-                state.expenses.push({ item, date, amount, rate, payer, twd: Math.round(amount * rate) });
-                saveState(); renderExpenses(); closeExpenseModal();
-                document.getElementById('exp-item').value = ""; document.getElementById('exp-amount').value = "";
-            }
-        }
-
-        function updateBudgetSummary() {
-            const total = state.expenses.reduce((s, e) => s + e.twd, 0);
-            document.getElementById('total-spent').innerText = `NT$ ${total.toLocaleString()}`;
-            document.getElementById('budget-left').innerText = `$ ${(state.budget - total).toLocaleString()}`;
-            document.getElementById('budget-bar').style.width = Math.min(100, (total / state.budget) * 100) + '%';
-        }
-
-        function toggleSettlement() {
-            const modal = document.getElementById('settlement-modal');
-            const content = document.getElementById('settlement-content');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-                const payers = ["小慌", "昱凱", "小安", "文哥"];
-                const total = state.expenses.reduce((s, e) => s + e.twd, 0);
-                const avg = total / payers.length;
-                const paid = {}; payers.forEach(p => paid[p] = 0);
-                state.expenses.forEach(e => paid[e.payer] += e.twd);
-                
-                content.innerHTML = "";
-                payers.forEach(p => {
-                    const diff = paid[p] - avg;
-                    content.innerHTML += `
-                        <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                            <span class="text-sm font-bold">${p}</span>
-                            <div class="text-right">
-                                <p class="text-[10px] text-gray-400">支付: ${paid[p].toLocaleString()}</p>
-                                <p class="text-xs font-black ${diff >= 0 ? 'text-green-500' : 'text-red-400'}">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else { modal.classList.add('hidden'); }
-        }
-
-        // --- 資訊功能 ---
-        function renderCustomInfo() {
-            const container = document.getElementById('custom-info-list');
-            container.innerHTML = "";
-            state.customInfo.forEach((info, idx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative";
-                div.innerHTML = `
-                    <button onclick="deleteCustomInfo(${idx})" class="absolute top-4 right-4 text-gray-200 text-xs">✕</button>
-                    <h4 contenteditable="true" onblur="editCustomInfo(${idx},'title',this.innerText)" class="editable font-black text-sm mb-2">${info.title}</h4>
-                    <div contenteditable="true" onblur="editCustomInfo(${idx},'content',this.innerText)" class="editable text-xs text-gray-500 leading-relaxed">${info.content}</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-        function addCustomInfo() { state.customInfo.push({ title: "新資訊區塊", content: "點擊編輯內容" }); saveState(); renderCustomInfo(); }
-        function deleteCustomInfo(idx) { state.customInfo.splice(idx,1); saveState(); renderCustomInfo(); }
-        function editCustomInfo(idx, f, v) { state.customInfo[idx][f] = v; saveState(); }
-
-        // --- 通用功能 ---
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav-btn'));
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.getElementById('nav-' + tab).classList.add('active-nav-btn');
-            document.getElementById('nav-' + tab).classList.remove('text-gray-300');
-            document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
-        }
-        function openM(type, loc) {
-            const q = encodeURIComponent(loc);
-            window.open(type === 'google' ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://map.naver.com/v5/search/${q}`, '_blank');
-        }
-    </script>
-</body>
-</html>
+                    <!-- 退稅狀態 (按鈕切換) -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase">退稅狀態</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setExpField('tax', '無')" class="tax-btn seg-btn py
