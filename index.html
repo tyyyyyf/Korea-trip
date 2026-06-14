@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>我的韓國之旅</title>
+    <title>🇰🇷 韓國之旅 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -14,8 +14,9 @@
                     colors: {
                         'cream-bg': '#F8F5F2',
                         'cream-card': '#FFFFFF',
-                        'cream-accent': '#D9B99B',
+                        'cream-accent': '#4A342E', /* 參考圖片深色 */
                         'cream-primary': '#E8DCCF',
+                        'btn-unselected': '#F8F5F2',
                     }
                 }
             }
@@ -27,12 +28,12 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .editable:focus { outline: 2px dashed #D9B99B; background: rgba(217, 185, 155, 0.1); border-radius: 4px; padding: 0 4px; }
-        .active-nav-btn { color: #D9B99B !important; }
-        .day-btn.active { background-color: #D9B99B; color: white; transform: scale(1.1); }
+        .editable:focus { outline: 2px dashed #D9B99B; background: rgba(217, 185, 155, 0.1); border-radius: 4px; }
+        .active-nav-btn { color: #4A342E !important; }
+        .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); }
         .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #E8DCCF; opacity: 0.5; }
+        .segment-btn.active { background-color: #4A342E; color: white; border-color: #4A342E; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -40,68 +41,71 @@
     <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg">
         
         <!-- Header -->
-        <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20 flex justify-between items-end">
-            <div>
-                <p class="text-[10px] font-bold text-cream-accent tracking-widest uppercase mb-1">Travel Plan</p>
-                <h1 id="trip-title" contenteditable="true" onblur="saveGeneralInfo()" class="editable text-2xl font-black tracking-tight">🇰🇷 韓國之旅 7/5-7/11</h1>
-            </div>
-            <div class="text-right">
-                <p class="text-[10px] text-gray-400 font-bold uppercase">預算剩餘</p>
-                <p id="header-budget" class="text-sm font-black italic text-cream-accent">NT$ 0</p>
+        <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20">
+            <div class="flex justify-between items-center">
+                <h1 id="trip-title" contenteditable="true" onblur="saveState()" class="editable text-xl font-black tracking-tight italic">🇰🇷 韓國之旅行程表 2026</h1>
+                <div class="w-8 h-8 rounded-full bg-cream-primary flex items-center justify-center text-[10px] font-bold">KR</div>
             </div>
         </header>
 
-        <!-- [頁面 1] 行程管理 (Schedule) -->
+        <!-- [頁面 1] 行程 (Schedule) -->
         <section id="tab-schedule" class="tab-content active px-4 pt-6">
-            <!-- 日期切換 -->
-            <div id="day-selector" class="flex space-x-3 overflow-x-auto no-scrollbar mb-8 pb-2 px-1">
-                <!-- 由 JS 生成 -->
+            <!-- 日期切換器 (2026 正確曆法) -->
+            <div id="day-selector" class="flex space-x-3 overflow-x-auto no-scrollbar mb-8 pb-2">
+                <!-- JS 動態生成 -->
             </div>
 
             <!-- 行程清單 -->
             <div class="relative timeline-line ml-1" id="itinerary-list">
-                <!-- 由 JS 生成 -->
+                <!-- JS 動態生成 -->
             </div>
 
-            <!-- 新增行程按鈕 -->
-            <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-[2rem] text-cream-accent font-bold text-sm hover:bg-cream-primary/10 transition">
-                <i class="fa-solid fa-plus mr-2"></i>新增此日行程
+            <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-cream-accent font-bold text-sm">
+                <i class="fa-solid fa-plus mr-2"></i>新增行程項目
             </button>
         </section>
 
-        <!-- [頁面 2] 待辦事項 (To-do) -->
+        <!-- [頁面 2] 待辦 (To-do) -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black mb-6">行前待辦</h2>
-            <div id="todo-list" class="bg-white rounded-[2.5rem] p-6 shadow-sm space-y-2">
-                <!-- 由 JS 生成 -->
-            </div>
+            <h2 class="text-2xl font-black mb-6 italic">行前待辦事項</h2>
+            <div id="todo-list" class="bg-white rounded-[2.5rem] p-6 shadow-sm space-y-3"></div>
             <div class="mt-8 flex space-x-3">
-                <input id="todo-input" type="text" placeholder="輸入新的待辦..." class="flex-1 bg-white border-none rounded-2xl px-5 py-4 text-sm shadow-sm outline-none">
-                <button onclick="addTodo()" class="bg-cream-accent text-white px-6 py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition">新增</button>
+                <input id="todo-input" type="text" placeholder="新增待辦..." class="flex-1 bg-white border-none rounded-2xl px-5 py-4 text-sm shadow-sm outline-none">
+                <button onclick="addTodo()" class="bg-cream-accent text-white px-6 py-4 rounded-2xl font-bold text-sm">新增</button>
             </div>
         </section>
 
         <!-- [頁面 3] 記帳 (Budget) -->
         <section id="tab-budget" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black mb-6">旅遊記帳</h2>
+            <h2 class="text-2xl font-black mb-6 italic">旅遊記帳</h2>
             
-            <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-cream-primary/20 mb-8 relative">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">總預算 (點擊修改)</p>
-                <h3 id="budget-amount" contenteditable="true" onblur="saveGeneralInfo()" class="editable text-4xl font-black text-cream-text italic tracking-tighter">40000</h3>
-                <div class="mt-6 flex justify-between">
-                    <div><p class="text-[10px] text-gray-400 uppercase font-bold">總支出</p><p id="total-spent" class="font-black text-red-400 font-mono"></p></div>
-                    <div class="text-right"><p class="text-[10px] text-gray-400 uppercase font-bold">每人應付</p><p id="per-person" class="font-black text-gray-800 font-mono"></p></div>
+            <!-- 預算進度條 (參考截圖 2) -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4">
+                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2">
+                    <span>預算 (NT$ <span contenteditable="true" id="budget-val" onblur="saveState()">50000</span>)</span>
+                    <span>剩餘: <span id="budget-left" class="text-cream-accent">0</span></span>
+                </div>
+                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                    <div id="budget-bar" class="bg-cream-accent h-full transition-all duration-700" style="width: 0%"></div>
                 </div>
             </div>
 
-            <!-- 分帳建議 -->
-            <div class="bg-cream-primary/20 p-6 rounded-[2rem] mb-8">
-                <p class="text-xs font-black mb-3 italic text-cream-accent">誰該給誰錢 (Settlement)</p>
-                <div id="settlement-results" class="space-y-2 text-[11px] font-bold"></div>
+            <!-- 總花費卡片 (參考截圖 2) -->
+            <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-8 relative overflow-hidden">
+                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase">總花費 (TWD)</p>
+                <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter">NT$ 0</h3>
+                <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
             </div>
 
-            <div id="expense-list" class="space-y-3">
-                <!-- 由 JS 生成 -->
+            <!-- 日期篩選 -->
+            <div class="flex space-x-2 overflow-x-auto no-scrollbar mb-6">
+                <button onclick="filterExpense('all')" class="exp-filter-btn px-4 py-2 bg-blue-50 rounded-full text-[11px] font-bold text-blue-500">全部</button>
+                <button onclick="filterExpense('07-05')" class="exp-filter-btn px-4 py-2 bg-white rounded-full text-[11px] font-bold text-gray-400">07-05</button>
+                <button onclick="filterExpense('07-06')" class="exp-filter-btn px-4 py-2 bg-white rounded-full text-[11px] font-bold text-gray-400">07-06</button>
+            </div>
+
+            <div id="expense-list" class="space-y-4">
+                <!-- JS 動態生成項目 -->
             </div>
         </section>
 
@@ -114,107 +118,163 @@
                 <i class="fa-solid fa-list-ul text-xl"></i><span class="text-[10px] font-black uppercase">待辦</span>
             </button>
             <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-wallet text-xl"></i><span class="text-[10px] font-black uppercase">記帳</span>
+                <i class="fa-solid fa-sack-dollar text-xl"></i><span class="text-[10px] font-black uppercase">記帳</span>
             </button>
         </nav>
 
-        <!-- 記帳新增按鈕 (僅在記帳頁顯示) -->
+        <!-- 浮動新增按鈕 -->
         <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90]">
             <i class="fa-solid fa-plus"></i>
         </button>
 
     </div>
 
-    <!-- 記帳 Modal -->
+    <!-- 記帳 Modal (參考截圖 1) -->
     <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
         <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s_ease-out]">
-            <h3 class="text-xl font-black mb-6 italic">新增支出</h3>
-            <div class="space-y-4">
-                <input id="exp-item" type="text" placeholder="項目 (如：炸雞)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm">
-                <div class="flex space-x-2">
-                    <input id="exp-amount" type="number" placeholder="金額" class="w-1/2 bg-gray-50 p-4 rounded-2xl outline-none text-sm">
-                    <select id="exp-payer" class="w-1/2 bg-gray-50 p-4 rounded-2xl outline-none text-sm">
-                        <option value="小慌">小慌</option><option value="昱凱">昱凱</option><option value="小安">小安</option><option value="文哥">文哥</option>
-                    </select>
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-xl font-black italic">新增記帳</h3>
+                <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-xs text-gray-400">✕</button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- 項目名稱 -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block">項目名稱</label>
+                    <input id="exp-item" type="text" placeholder="例如：午餐、地鐵" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-medium">
                 </div>
-                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-4 rounded-2xl font-bold">儲存</button>
-                <button onclick="closeExpenseModal()" class="w-full text-gray-400 py-2 text-xs">取消</button>
+
+                <!-- 日期 -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block">花費日期</label>
+                    <input id="exp-date" type="date" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
+                </div>
+
+                <!-- 付款方式 按鈕組 -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block">付款方式</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setSegment('payment', '信用卡')" class="payment-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold bg-gray-50 text-gray-400">信用卡</button>
+                        <button onclick="setSegment('payment', '現金')" class="payment-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold active">現金</button>
+                        <button onclick="setSegment('payment', '行動支付')" class="payment-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold bg-gray-50 text-gray-400">行動支付</button>
+                    </div>
+                </div>
+
+                <!-- 退稅狀態 按鈕組 -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block">退稅狀態</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setSegment('tax', '無')" class="tax-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold active">無</button>
+                        <button onclick="setSegment('tax', '未退稅')" class="tax-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold bg-gray-50 text-gray-400">未退稅</button>
+                        <button onclick="setSegment('tax', '已退稅')" class="tax-seg segment-btn py-3 border border-gray-100 rounded-xl text-xs font-bold bg-gray-50 text-gray-400">已退稅</button>
+                    </div>
+                </div>
+
+                <!-- 金額與匯率 -->
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block">金額與匯率</label>
+                    <div class="flex items-center space-x-2">
+                        <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-xs font-bold outline-none border-none">
+                            <option value="KRW">KRW (₩)</option>
+                            <option value="TWD">TWD ($)</option>
+                        </select>
+                        <div class="relative flex-1">
+                            <input id="exp-amount" type="number" placeholder="0" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-base font-black">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between px-2">
+                        <span class="text-[10px] text-gray-400">當前匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-12 bg-transparent outline-none"></span>
+                        <span class="text-[10px] font-black text-cream-accent tracking-widest">換算台幣: NT$ <span id="exp-twd-hint">0</span></span>
+                    </div>
+                </div>
+
+                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-3xl font-black shadow-lg tracking-widest active:scale-95 transition mt-4">確認新增</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 核心資料結構 ---
-        let state = JSON.parse(localStorage.getItem('korea_trip_state')) || {
-            title: "🇰🇷 韓國之旅 7/5-7/11",
-            budget: 40000,
+        // --- 初始化資料 ---
+        let state = JSON.parse(localStorage.getItem('korea_trip_2026')) || {
+            title: "🇰🇷 韓國之旅行程表 2026",
+            budget: 50000,
             currentDay: 1,
-            todos: [
-                { id: 1, text: "護照與簽證", done: false },
-                { id: 2, text: "eSIM 網卡確認", done: false }
-            ],
-            schedule: {
-                1: [{ time: "16:30", title: "飯店 Check-in", loc: "Seoul Jung-gu Sogong-ro 6na-gil 11", note: "Naver Map 直接導航", type: "住宿" }],
-                2: [], 3: [], 4: [], 5: [], 6: [], 7: []
-            },
+            todos: [],
+            schedule: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] },
             expenses: []
         };
 
-        const members = ["小慌", "昱凱", "小安", "文哥"];
+        let selectedPayment = "現金";
+        let selectedTax = "無";
 
-        // --- 初始化 ---
+        const dayInfo = [
+            { d: "7/5", w: "SUN", n: "Day 1" },
+            { d: "7/6", w: "MON", n: "Day 2" },
+            { d: "7/7", w: "TUE", n: "Day 3" },
+            { d: "7/8", w: "WED", n: "Day 4" },
+            { d: "7/9", w: "THU", n: "Day 5" },
+            { d: "7/10", w: "FRI", n: "Day 6" },
+            { d: "7/11", w: "SAT", n: "Day 7" }
+        ];
+
         window.onload = () => {
             renderAll();
+            // 自動計算台幣
+            document.getElementById('exp-amount').oninput = calcTwdHint;
+            document.getElementById('exp-rate').oninput = calcTwdHint;
         };
+
+        function saveState() {
+            state.title = document.getElementById('trip-title').innerText;
+            state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
+            localStorage.setItem('korea_trip_2026', JSON.stringify(state));
+            updateBudgetData();
+        }
 
         function renderAll() {
             document.getElementById('trip-title').innerText = state.title;
-            document.getElementById('budget-amount').innerText = state.budget;
+            document.getElementById('budget-val').innerText = state.budget;
             renderDaySelector();
             renderItinerary();
             renderTodos();
             renderExpenses();
-            localStorage.setItem('korea_trip_state', JSON.stringify(state));
+            updateBudgetData();
         }
 
-        // --- 1. 行程功能 ---
+        // --- 行程功能 ---
         function renderDaySelector() {
             const container = document.getElementById('day-selector');
             container.innerHTML = "";
-            const days = ["FRI", "SAT", "SUN", "MON", "TUE", "WED", "THU"];
-            const dates = ["7/5", "7/6", "7/7", "7/8", "7/9", "7/10", "7/11"];
-            
-            for (let i = 1; i <= 7; i++) {
+            dayInfo.forEach((info, i) => {
+                const dayNum = i + 1;
                 const btn = document.createElement('button');
-                btn.className = `day-btn flex-none w-16 h-20 bg-white rounded-3xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == i ? 'active' : 'text-cream-sub'}`;
-                btn.onclick = () => { state.currentDay = i; renderAll(); };
-                btn.innerHTML = `<span class="text-[10px] mb-1">${days[i-1]}</span><span class="text-lg font-bold">${dates[i-1]}</span>`;
+                btn.className = `day-btn flex-none w-18 h-24 bg-white rounded-3xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == dayNum ? 'active' : 'text-cream-sub'}`;
+                btn.onclick = () => { state.currentDay = dayNum; renderAll(); };
+                btn.innerHTML = `<span class="text-[9px] font-black opacity-60 mb-1">${info.n}</span><span class="text-[10px] font-bold">${info.w}</span><span class="text-base font-black">${info.d}</span>`;
                 container.appendChild(btn);
-            }
+            });
         }
 
         function renderItinerary() {
             const list = document.getElementById('itinerary-list');
             list.innerHTML = "";
-            const dayItems = state.schedule[state.currentDay] || [];
-
-            dayItems.forEach((item, index) => {
+            const items = state.schedule[state.currentDay] || [];
+            items.forEach((item, idx) => {
                 const card = document.createElement('div');
-                card.className = "relative pl-10 mb-8 animate-[fadeIn_0.3s]";
+                card.className = "relative pl-10 mb-8";
                 card.innerHTML = `
                     <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
                     <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative">
-                        <button onclick="deleteItinerary(${index})" class="absolute top-4 right-4 text-gray-300 hover:text-red-400 text-xs"><i class="fa-solid fa-trash"></i></button>
-                        <div class="flex justify-between mb-2 pr-6">
-                            <span contenteditable="true" onblur="editItinerary(${index}, 'time', this.innerText)" class="editable text-xs font-black text-cream-accent">${item.time}</span>
-                            <span contenteditable="true" onblur="editItinerary(${index}, 'type', this.innerText)" class="editable text-[10px] bg-cream-bg px-2 py-1 rounded-lg text-cream-sub">${item.type}</span>
+                        <button onclick="deleteItinerary(${idx})" class="absolute top-4 right-4 text-gray-300 text-[10px]">✕</button>
+                        <div class="flex justify-between mb-2">
+                            <span contenteditable="true" onblur="editItinerary(${idx},'time',this.innerText)" class="editable text-xs font-black text-cream-accent italic">${item.time}</span>
+                            <span contenteditable="true" onblur="editItinerary(${idx},'type',this.innerText)" class="editable text-[10px] bg-cream-bg px-2 py-1 rounded-lg text-cream-sub">${item.type}</span>
                         </div>
-                        <h3 contenteditable="true" onblur="editItinerary(${index}, 'title', this.innerText)" class="editable font-bold text-lg mb-1">${item.title}</h3>
-                        <p contenteditable="true" onblur="editItinerary(${index}, 'loc', this.innerText)" class="editable text-xs text-cream-sub mb-3">📍 ${item.loc}</p>
-                        <div contenteditable="true" onblur="editItinerary(${index}, 'note', this.innerText)" class="editable bg-cream-bg/50 p-3 rounded-2xl mb-4 text-[11px] text-cream-text leading-relaxed italic">${item.note}</div>
+                        <h3 contenteditable="true" onblur="editItinerary(${idx},'title',this.innerText)" class="editable font-black text-base mb-1">${item.title}</h3>
+                        <p contenteditable="true" onblur="editItinerary(${idx},'loc',this.innerText)" class="editable text-[11px] text-gray-400 mb-3">📍 ${item.loc}</p>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="openMap('google', '${item.loc}')" class="py-3 bg-gray-50 rounded-2xl text-[10px] font-bold">Google</button>
-                            <button onclick="openMap('naver', '${item.loc}')" class="py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700">Naver</button>
+                            <button onclick="openMap('google', '${item.loc}')" class="py-2.5 bg-gray-50 rounded-xl text-[10px] font-bold">Google</button>
+                            <button onclick="openMap('naver', '${item.loc}')" class="py-2.5 bg-green-50 rounded-xl text-[10px] font-bold text-green-700">Naver</button>
                         </div>
                     </div>
                 `;
@@ -223,168 +283,176 @@
         }
 
         function addNewItinerary() {
-            state.schedule[state.currentDay].push({ time: "00:00", title: "新行程", loc: "目的地地址", note: "備註內容", type: "分類" });
-            renderAll();
+            state.schedule[state.currentDay].push({ time: "12:00", title: "行程名稱", loc: "地點或地址", type: "分類" });
+            saveState();
+            renderItinerary();
         }
 
-        function editItinerary(index, field, value) {
-            state.schedule[state.currentDay][index][field] = value;
-            localStorage.setItem('korea_trip_state', JSON.stringify(state));
+        function editItinerary(idx, field, val) {
+            state.schedule[state.currentDay][idx][field] = val;
+            saveState();
         }
 
-        function deleteItinerary(index) {
-            if(confirm("確定刪除此行程？")) {
-                state.schedule[state.currentDay].splice(index, 1);
-                renderAll();
+        function deleteItinerary(idx) {
+            state.schedule[state.currentDay].splice(idx, 1);
+            saveState();
+            renderItinerary();
+        }
+
+        // --- 記帳功能 ---
+        function setSegment(type, val) {
+            const btns = document.querySelectorAll(`.${type}-seg`);
+            btns.forEach(b => {
+                b.classList.remove('active', 'bg-cream-accent', 'text-white');
+                b.classList.add('bg-gray-50', 'text-gray-400');
+                if (b.innerText === val) {
+                    b.classList.add('active', 'bg-cream-accent', 'text-white');
+                    b.classList.remove('bg-gray-50', 'text-gray-400');
+                }
+            });
+            if(type === 'payment') selectedPayment = val;
+            if(type === 'tax') selectedTax = val;
+        }
+
+        function calcTwdHint() {
+            const amt = document.getElementById('exp-amount').value || 0;
+            const rate = document.getElementById('exp-rate').value || 1;
+            document.getElementById('exp-twd-hint').innerText = Math.round(amt * rate).toLocaleString();
+        }
+
+        function openExpenseModal() {
+            document.getElementById('expense-modal').classList.remove('hidden');
+            document.getElementById('exp-date').valueAsDate = new Date();
+        }
+
+        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
+
+        function saveExpense() {
+            const item = document.getElementById('exp-item').value;
+            const date = document.getElementById('exp-date').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const rate = parseFloat(document.getElementById('exp-rate').value) || 1;
+            const currency = document.getElementById('exp-currency').value;
+
+            if (item && amount) {
+                state.expenses.push({
+                    id: Date.now(),
+                    item, date, amount, rate, currency,
+                    payment: selectedPayment,
+                    tax: selectedTax,
+                    twd: Math.round(amount * rate)
+                });
+                saveState();
+                renderExpenses();
+                closeExpenseModal();
+                document.getElementById('exp-item').value = "";
+                document.getElementById('exp-amount').value = "";
             }
         }
 
-        // --- 2. 待辦事項功能 ---
-        function renderTodos() {
-            const list = document.getElementById('todo-list');
+        function renderExpenses(filter = 'all') {
+            const list = document.getElementById('expense-list');
             list.innerHTML = "";
-            state.todos.forEach(todo => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between group p-1";
-                item.innerHTML = `
-                    <div class="flex items-center space-x-4 flex-1">
-                        <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodo(${todo.id})" class="w-6 h-6 accent-cream-accent border-gray-200 rounded-lg">
-                        <span contenteditable="true" onblur="editTodo(${todo.id}, this.innerText)" class="editable text-sm font-medium ${todo.done ? 'line-through text-gray-300' : ''}">${todo.text}</span>
+            let filtered = state.expenses;
+            if (filter !== 'all') {
+                filtered = state.expenses.filter(e => e.date.endsWith(filter));
+            }
+
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(e => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-3xl shadow-sm border border-gray-50 flex justify-between items-center";
+                card.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-xs text-gray-400 italic">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <p class="text-sm font-black">${e.item}</p>
+                                ${e.tax === '已退稅' ? '<span class="bg-green-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">已退稅</span>' : ''}
+                            </div>
+                            <p class="text-[10px] text-gray-400">${e.date.slice(5)}  ·  ${e.payment}</p>
+                        </div>
                     </div>
-                    <button onclick="deleteTodo(${todo.id})" class="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="text-right">
+                        <p class="text-sm font-black italic">NT$ ${e.twd.toLocaleString()}</p>
+                        <p class="text-[9px] text-gray-300 font-bold tracking-widest">(₩ ${e.amount.toLocaleString()})</p>
+                    </div>
                 `;
-                list.appendChild(item);
+                list.appendChild(card);
+            });
+            updateBudgetData();
+        }
+
+        function updateBudgetData() {
+            const total = state.expenses.reduce((sum, e) => sum + e.twd, 0);
+            document.getElementById('total-spent').innerText = `NT$ ${total.toLocaleString()}`;
+            
+            const left = state.budget - total;
+            document.getElementById('budget-left').innerText = `$ ${left.toLocaleString()}`;
+            
+            const pct = Math.min(100, (total / state.budget) * 100);
+            document.getElementById('budget-bar').style.width = pct + '%';
+        }
+
+        // --- 待辦事項 ---
+        function renderTodos() {
+            const container = document.getElementById('todo-list');
+            container.innerHTML = "";
+            state.todos.forEach((t, i) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between group";
+                item.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTodo(${i})" class="w-6 h-6 accent-cream-accent rounded-lg">
+                        <span contenteditable="true" onblur="editTodo(${i}, this.innerText)" class="editable text-sm font-bold ${t.done ? 'line-through text-gray-300' : ''}">${t.text}</span>
+                    </div>
+                    <button onclick="deleteTodo(${i})" class="text-gray-200 group-hover:text-red-400">✕</button>
+                `;
+                container.appendChild(item);
             });
         }
 
         function addTodo() {
             const input = document.getElementById('todo-input');
-            if (input.value.trim()) {
-                state.todos.push({ id: Date.now(), text: input.value, done: false });
+            if (input.value) {
+                state.todos.push({ text: input.value, done: false });
                 input.value = "";
-                renderAll();
+                saveState(); renderTodos();
             }
         }
 
-        function toggleTodo(id) {
-            const todo = state.todos.find(t => t.id === id);
-            todo.done = !todo.done;
-            renderAll();
-        }
+        function toggleTodo(i) { state.todos[i].done = !state.todos[i].done; saveState(); renderTodos(); }
+        function editTodo(i, val) { state.todos[i].text = val; saveState(); }
+        function deleteTodo(i) { state.todos.splice(i, 1); saveState(); renderTodos(); }
 
-        function editTodo(id, newText) {
-            const todo = state.todos.find(t => t.id === id);
-            todo.text = newText;
-            localStorage.setItem('korea_trip_state', JSON.stringify(state));
-        }
-
-        function deleteTodo(id) {
-            state.todos = state.todos.filter(t => t.id !== id);
-            renderAll();
-        }
-
-        // --- 3. 記帳功能 ---
-        function renderExpenses() {
-            const list = document.getElementById('expense-list');
-            const totalSpentEl = document.getElementById('total-spent');
-            const perPersonEl = document.getElementById('per-person');
-            const headerBudgetEl = document.getElementById('header-budget');
-            
-            list.innerHTML = "";
-            let total = 0;
-            const paidBy = {};
-            members.forEach(m => paidBy[m] = 0);
-
-            state.expenses.forEach((exp, idx) => {
-                total += exp.amount;
-                paidBy[exp.payer] += exp.amount;
-                const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-[2rem] flex justify-between items-center shadow-sm relative group";
-                div.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <div class="w-10 h-10 bg-cream-primary/20 rounded-xl flex items-center justify-center text-cream-accent text-xs font-bold">${exp.payer[0]}</div>
-                        <div><p class="text-sm font-bold">${exp.item}</p><p class="text-[10px] text-gray-400">${exp.payer} 付款</p></div>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-black text-sm text-red-400">- ${exp.amount.toLocaleString()}</p>
-                        <button onclick="deleteExpense(${idx})" class="text-[10px] text-gray-300 hover:text-red-400">刪除</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-
-            totalSpentEl.innerText = `NT$ ${total.toLocaleString()}`;
-            perPersonEl.innerText = `NT$ ${Math.round(total / members.length).toLocaleString()}`;
-            headerBudgetEl.innerText = `NT$ ${(state.budget - total).toLocaleString()}`;
-            
-            renderSettlement(total, paidBy);
-        }
-
-        function renderSettlement(total, paidBy) {
-            const avg = total / members.length;
-            const diffs = members.map(m => ({ name: m, diff: paidBy[m] - avg }));
-            const settlement = document.getElementById('settlement-results');
-            settlement.innerHTML = "";
-
-            let debtors = diffs.filter(x => x.diff < 0).sort((a,b) => a.diff - b.diff);
-            let creditors = diffs.filter(x => x.diff > 0).sort((a,b) => b.diff - a.diff);
-
-            debtors.forEach(d => {
-                let dAmt = Math.abs(d.diff);
-                creditors.forEach(c => {
-                    if (dAmt <= 0) return;
-                    let cAmt = c.diff;
-                    if (cAmt <= 0) return;
-                    let move = Math.min(dAmt, cAmt);
-                    settlement.innerHTML += `<div class='flex justify-between border-b border-cream-primary/10 pb-1'><span>${d.name} → ${c.name}</span><span class='text-cream-accent'>NT$ ${Math.round(move).toLocaleString()}</span></div>`;
-                    dAmt -= move; c.diff -= move;
-                });
-            });
-        }
-
-        function openExpenseModal() { document.getElementById('expense-modal').classList.remove('hidden'); }
-        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
-        
-        function saveExpense() {
-            const item = document.getElementById('exp-item').value;
-            const amount = parseFloat(document.getElementById('exp-amount').value);
-            const payer = document.getElementById('exp-payer').value;
-            if(item && amount) {
-                state.expenses.push({ item, amount, payer });
-                document.getElementById('exp-item').value = "";
-                document.getElementById('exp-amount').value = "";
-                renderAll();
-                closeExpenseModal();
-            }
-        }
-
-        function deleteExpense(idx) {
-            state.expenses.splice(idx, 1);
-            renderAll();
-        }
-
-        // --- 通用功能 ---
+        // --- 通用切換 ---
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav-btn'));
-            
             document.getElementById('tab-' + tab).classList.add('active');
             document.getElementById('nav-' + tab).classList.add('active-nav-btn');
             document.getElementById('nav-' + tab).classList.remove('text-gray-300');
-            
             document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
-        }
-
-        function saveGeneralInfo() {
-            state.title = document.getElementById('trip-title').innerText;
-            state.budget = parseFloat(document.getElementById('budget-amount').innerText) || 0;
-            renderAll();
         }
 
         function openMap(type, loc) {
             const q = encodeURIComponent(loc);
             window.open(type === 'google' ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://map.naver.com/v5/search/${q}`, '_blank');
+        }
+
+        function filterExpense(day) {
+            const btns = document.querySelectorAll('.exp-filter-btn');
+            btns.forEach(b => {
+                b.classList.remove('bg-blue-50', 'text-blue-500');
+                b.classList.add('bg-white', 'text-gray-400');
+                if (b.innerText.includes(day) || (day === 'all' && b.innerText === '全部')) {
+                    b.classList.add('bg-blue-50', 'text-blue-500');
+                    b.classList.remove('bg-white', 'text-gray-400');
+                }
+            });
+            renderExpenses(day);
         }
     </script>
 </body>
