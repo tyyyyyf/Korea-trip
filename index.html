@@ -170,3 +170,277 @@
                             <button onclick="setField('payer', '小慌')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小慌</button>
                             <button onclick="setField('payer', '昱凱')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">昱凱</button>
                             <button onclick="setField('payer', '小安')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小安</button>
+                            <button onclick="setField('payer', '文哥')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">文哥</button>
+                        </div>
+                    </div>
+                    <!-- 付款方式 -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款方式</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setField('payment', '信用卡')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">信用卡</button>
+                            <button onclick="setField('payment', '現金')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">現金</button>
+                            <button onclick="setField('payment', '行動支付')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">行動支付</button>
+                        </div>
+                    </div>
+                    <!-- 退稅 -->
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">退稅狀態</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setField('tax', '無')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">無</button>
+                            <button onclick="setField('tax', '未退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">未退稅</button>
+                            <button onclick="setField('tax', '已退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">已退稅</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">金額</label>
+                        <div class="flex items-center space-x-2">
+                            <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-[10px] font-black border-none outline-none">
+                                <option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option>
+                            </select>
+                            <input id="exp-amount" type="number" placeholder="0" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none text-base font-black italic tracking-tighter">
+                        </div>
+                        <div class="mt-3 flex justify-between px-2">
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b outline-none"></span>
+                            <span id="exp-twd-hint" class="text-[10px] font-black text-cream-accent italic tracking-tighter uppercase">台幣換算: NT$ 0</span>
+                        </div>
+                    </div>
+                    <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg tracking-widest active:scale-95 transition">確認儲存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分帳 Modal -->
+        <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center">
+            <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8">
+                <h3 class="text-lg font-black italic mb-6">分帳統計</h3>
+                <div id="settlement-content" class="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar"></div>
+                <button onclick="toggleSettlement()" class="w-full mt-8 bg-cream-accent text-white py-4 rounded-2xl font-bold text-sm tracking-widest">關閉</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 核心資料 ---
+        let state = JSON.parse(localStorage.getItem('korea_2026_final_v3')) || {
+            title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
+            itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
+            todoGroups: [{ id: Date.now(), title: "母標題: 必備清單", items: ["護照", "網卡"] }],
+            expenses: [], customInfo: []
+        };
+
+        const dayArr = [
+            { d: "7/5", w: "SUN", n: "Day 1" }, { d: "7/6", w: "MON", n: "Day 2" }, { d: "7/7", w: "TUE", n: "Day 3" },
+            { d: "7/8", w: "WED", n: "Day 4" }, { d: "7/9", w: "THU", n: "Day 5" }, { d: "7/10", w: "FRI", n: "Day 6" }, { d: "7/11", w: "SAT", n: "Day 7" }
+        ];
+
+        let curPayer = "文哥", curPayment = "現金", curTax = "無";
+
+        window.onload = () => {
+            renderAll();
+            document.getElementById('exp-amount').oninput = calcHint;
+            document.getElementById('exp-rate').oninput = calcHint;
+        };
+
+        function saveState() {
+            state.title = document.getElementById('trip-title').innerText;
+            state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
+            localStorage.setItem('korea_2026_final_v3', JSON.stringify(state));
+            updateSummary();
+        }
+
+        function renderAll() {
+            renderDayNav(); renderItin(); renderTodos(); renderExpenses('all'); renderInfo(); updateSummary();
+        }
+
+        // --- 行程功能 ---
+        function renderDayNav() {
+            const container = document.getElementById('day-selector'); container.innerHTML = "";
+            dayArr.forEach((d, i) => {
+                const num = i + 1;
+                const btn = document.createElement('button');
+                btn.className = `day-btn flex-none rounded-2xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == num ? 'active' : 'bg-white text-cream-sub'}`;
+                btn.onclick = () => { state.currentDay = num; renderAll(); };
+                btn.innerHTML = `
+                    <span class="text-[9px] font-black opacity-50 mb-1 tracking-tighter uppercase">${d.n}</span>
+                    <span class="text-[10px] font-bold tracking-tight">${d.w}</span>
+                    <span class="text-base font-black italic tracking-tighter underline decoration-cream-primary/30">${d.d}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+        function renderItin() {
+            const list = document.getElementById('itinerary-list'); list.innerHTML = "";
+            (state.itin[state.currentDay] || []).forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = "relative pl-10 mb-8";
+                div.innerHTML = `
+                    <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
+                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative transition active:scale-95">
+                        <button onclick="delItin(${idx})" class="absolute top-4 right-4 text-gray-200">✕</button>
+                        <div class="flex justify-between mb-2 pr-6">
+                            <span contenteditable="true" onblur="editItin(${idx},'time',this.innerText)" class="editable text-xs font-black text-cream-accent italic tracking-tighter">${item.time}</span>
+                            <span contenteditable="true" onblur="editItin(${idx},'type',this.innerText)" class="editable text-[9px] bg-cream-bg px-2 py-1 rounded-lg text-cream-sub font-bold uppercase tracking-widest">${item.type}</span>
+                        </div>
+                        <h3 contenteditable="true" onblur="editItin(${idx},'title',this.innerText)" class="editable font-black text-base mb-1 tracking-tighter italic">${item.title}</h3>
+                        <p contenteditable="true" onblur="editItin(${idx},'loc',this.innerText)" class="editable text-[11px] text-gray-400 mb-3">${item.loc}</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="openM('google', '${item.loc}')" class="py-2.5 bg-gray-50 rounded-xl text-[10px] font-bold italic">Google</button>
+                            <button onclick="openM('naver', '${item.loc}')" class="py-2.5 bg-green-50 rounded-xl text-[10px] font-bold text-green-700 italic">Naver</button>
+                        </div>
+                    </div>`;
+                list.appendChild(div);
+            });
+        }
+        function addNewItinerary() { state.itin[state.currentDay].push({ time: "12:00", title: "行程名稱", loc: "地點或地址", type: "分類" }); saveState(); renderItin(); }
+        function delItin(idx) { if(confirm("確定刪除此行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
+        function editItin(idx, f, v) { state.itin[state.currentDay][idx][f] = v; saveState(); }
+
+        // --- 代辦功能 ---
+        function renderTodos() {
+            const container = document.getElementById('todo-groups'); container.innerHTML = "";
+            state.todoGroups.forEach((group, gIdx) => {
+                const gDiv = document.createElement('div');
+                gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative mb-4";
+                gDiv.innerHTML = `
+                    <button onclick="delTodoG(${gIdx})" class="absolute top-6 right-6 text-gray-200">✕</button>
+                    <h3 contenteditable="true" onblur="editTodoG(${gIdx}, this.innerText)" class="editable text-base font-black mb-4 pr-6 italic tracking-tight uppercase underline decoration-cream-accent/20">${group.title}</h3>
+                    <div class="space-y-3">
+                        ${group.items.map((item, iIdx) => `
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200"></div>
+                                <span contenteditable="true" onblur="editTodoI(${gIdx},${iIdx},this.innerText)" class="editable text-sm font-bold text-gray-500">${item}</span></div>
+                                <button onclick="delTodoI(${gIdx},${iIdx})" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button>
+                            </div>`).join('')}
+                    </div>
+                    <button onclick="addTodoI(${gIdx})" class="mt-4 text-[10px] font-black text-cream-accent uppercase tracking-widest">+ 新增代辦項目</button>`;
+                container.appendChild(gDiv);
+            });
+        }
+        function addTodoGroup() { state.todoGroups.push({ id: Date.now(), title: "母標題: 新群組", items: ["代辦項目"] }); saveState(); renderTodos(); }
+        function delTodoG(idx) { if(confirm("刪除整個分類？")) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); } }
+        function editTodoG(idx, v) { state.todoGroups[idx].title = v; saveState(); }
+        function addTodoI(idx) { state.todoGroups[idx].items.push("點擊編輯"); saveState(); renderTodos(); }
+        function delTodoI(gIdx, iIdx) { state.todoGroups[gIdx].items.splice(iIdx,1); saveState(); renderTodos(); }
+        function editTodoI(gIdx, iIdx, v) { state.todoGroups[gIdx].items[iIdx] = v; saveState(); }
+
+        // --- 記帳功能 ---
+        function setField(type, val) {
+            document.querySelectorAll(`.${type}-btn`).forEach(b => {
+                b.classList.remove('active'); if (b.innerText === val) b.classList.add('active');
+            });
+            if(type === 'payer') curPayer = val; if(type === 'payment') curPayment = val; if(type === 'tax') curTax = val;
+        }
+        function renderExpenses(filter = 'all') {
+            const list = document.getElementById('expense-list'); list.innerHTML = "";
+            const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
+            renderDateFilters(uniqueDates, filter);
+            const filtered = filter === 'all' ? state.expenses : state.expenses.filter(e => e.date.endsWith(filter));
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e) => {
+                const idx = state.expenses.findIndex(x => x.id === e.id);
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-[2rem] flex justify-between items-center shadow-sm relative transition active:scale-95";
+                div.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div onclick="editExp(${idx})" class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div>
+                        <div onclick="editExp(${idx})" class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <p class="text-sm font-black italic tracking-tighter uppercase">${e.item}</p>
+                                ${e.tax === '已退稅' ? '<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退稅</span>' : ''}
+                            </div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.payment}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black italic tracking-tighter">NT$ ${e.twd.toLocaleString()}</p>
+                        <p class="text-[9px] text-gray-300 font-bold italic tracking-widest uppercase">(₩ ${e.amount.toLocaleString()})</p>
+                        <button onclick="delExp(${idx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase tracking-tighter">✕ 刪除</button>
+                    </div>`;
+                list.appendChild(div);
+            });
+            updateSummary();
+        }
+        function renderDateFilters(dates, cur) {
+            const container = document.getElementById('expense-date-filter'); container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2 rounded-full text-[10px] font-black ${cur === 'all' ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm uppercase italic">全部</button>`;
+            dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2 rounded-full text-[10px] font-black ${cur === d ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm uppercase italic">${d}</button>`; });
+        }
+        function calcHint() {
+            const a = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const r = parseFloat(document.getElementById('exp-rate').value) || 1;
+            document.getElementById('exp-twd-hint').innerText = `台幣: NT$ ${Math.round(a * r).toLocaleString()}`;
+        }
+        function openExpenseModal() {
+            document.getElementById('exp-modal-title').innerText = "新增記帳";
+            document.getElementById('edit-exp-id').value = "";
+            document.getElementById('expense-modal').classList.remove('hidden'); 
+            document.getElementById('exp-date').valueAsDate = new Date();
+            setField('payer', '文哥'); setField('payment', '現金'); setField('tax', '無');
+            document.getElementById('exp-item').value = ""; document.getElementById('exp-amount').value = "";
+            calcHint();
+        }
+        function editExp(idx) {
+            const e = state.expenses[idx];
+            document.getElementById('exp-modal-title').innerText = "編輯帳目";
+            document.getElementById('edit-exp-id').value = e.id;
+            document.getElementById('exp-item').value = e.item;
+            document.getElementById('exp-date').value = e.date;
+            document.getElementById('exp-amount').value = e.amount;
+            document.getElementById('exp-rate').value = e.rate;
+            setField('payer', e.payer); setField('payment', e.payment); setField('tax', e.tax);
+            document.getElementById('expense-modal').classList.remove('hidden');
+            calcHint();
+        }
+        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
+        function saveExpense() {
+            const item = document.getElementById('exp-item').value, date = document.getElementById('exp-date').value, amount = parseFloat(document.getElementById('exp-amount').value) || 0, rate = parseFloat(document.getElementById('exp-rate').value) || 1, id = document.getElementById('edit-exp-id').value;
+            if (item && amount) {
+                const record = { id: id || Date.now(), item, date, amount, rate, payer: curPayer, payment: curPayment, tax: curTax, twd: Math.round(amount * rate) };
+                if (id) { const idx = state.expenses.findIndex(x => x.id == id); state.expenses[idx] = record; } else { state.expenses.push(record); }
+                saveState(); renderExpenses(); closeExpenseModal();
+            }
+        }
+        function delExp(idx) { if(confirm("確定刪除這筆帳目？")) { state.expenses.splice(idx,1); saveState(); renderExpenses(); } }
+        function updateSummary() {
+            const total = state.expenses.reduce((s, e) => s + e.twd, 0);
+            document.getElementById('total-spent').innerText = `NT$ ${total.toLocaleString()}`;
+            document.getElementById('budget-left').innerText = `$ ${(state.budget - total).toLocaleString()}`;
+            document.getElementById('budget-bar').style.width = Math.min(100, (total / state.budget) * 100) + '%';
+        }
+        function toggleSettlement() {
+            const modal = document.getElementById('settlement-modal'); const content = document.getElementById('settlement-content');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                const pList = ["小慌", "昱凱", "小安", "文哥"], total = state.expenses.reduce((s, e) => s + e.twd, 0), avg = total / pList.length, paid = {}; pList.forEach(p => paid[p] = 0);
+                state.expenses.forEach(e => paid[e.payer] += e.twd);
+                content.innerHTML = "";
+                pList.forEach(p => { const diff = paid[p] - avg; content.innerHTML += `<div class="flex justify-between items-center py-3 border-b border-gray-50"><span class="text-sm font-bold italic tracking-tighter uppercase">${p}</span><div class="text-right"><p class="text-[10px] text-gray-400 uppercase">已付: ${paid[p].toLocaleString()}</p><p class="text-xs font-black italic tracking-tighter ${diff >= 0 ? 'text-green-500' : 'text-red-400'} uppercase font-mono">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p></div></div>`; });
+            } else { modal.classList.add('hidden'); }
+        }
+
+        // --- 資訊功能 ---
+        function renderInfo() {
+            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
+            state.customInfo.forEach((info, idx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative mb-4";
+                div.innerHTML = `<button onclick="delInfo(${idx})" class="absolute top-4 right-4 text-gray-200">✕</button><h4 contenteditable="true" onblur="editInfo(${idx},'title',this.innerText)" class="editable font-black text-sm mb-2 italic tracking-tighter uppercase underline decoration-cream-accent/20">${info.title}</h4><div contenteditable="true" onblur="editInfo(${idx},'content',this.innerText)" class="editable text-xs text-gray-500 leading-relaxed font-medium">${info.content}</div>`;
+                container.appendChild(div);
+            });
+        }
+        function addCustomInfo() { state.customInfo.push({ title: "新資訊區塊", content: "點擊編輯內容" }); saveState(); renderInfo(); }
+        function delInfo(idx) { state.customInfo.splice(idx,1); saveState(); renderInfo(); }
+        function editInfo(idx, f, v) { state.customInfo[idx][f] = v; saveState(); }
+
+        // --- 通用切換 ---
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav-btn'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active-nav-btn');
+            document.getElementById('nav-' + tab).classList.remove('text-gray-300');
+            document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
+        }
+        function openM(type, loc) { const q = encodeURIComponent(loc); window.open(type === 'google' ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://map.naver.com/v5/search/${q}`, '_blank'); }
+    </script>
+</body>
+</html>
