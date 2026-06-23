@@ -15,6 +15,7 @@
                         'cream-card': '#FFFFFF',
                         'cream-accent': '#4A342E',
                         'cream-primary': '#E8DCCF',
+                        // 行程分類色 (奶油系)
                         'cat-att': '#D9B99B', // 景點
                         'cat-shp': '#F3E9E0', // 購物
                         'cat-res': '#E8DCCF', // 餐廳
@@ -36,6 +37,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .editable:focus { outline: 2px dashed #4A342E; background: rgba(74, 52, 46, 0.05); border-radius: 4px; }
         .active-nav-btn { color: #4A342E !important; }
+        /* 正方形日期框 */
         .day-btn { width: 80px; height: 80px; transition: all 0.2s; flex-shrink: 0; }
         .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); }
         .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #E8DCCF; opacity: 0.5; }
@@ -53,10 +55,13 @@
             <div class="w-8 h-8 rounded-full bg-cream-accent text-white flex items-center justify-center text-[10px] font-bold">KR</div>
         </header>
 
-        <!-- [分頁 1] 行程 (全面升級版) -->
+        <!-- [分頁 1] 行程 (全面修復與升級版) -->
         <section id="tab-schedule" class="tab-content active px-4 pt-6">
             <div id="day-selector" class="flex space-x-3 overflow-x-auto no-scrollbar mb-8 pb-4"></div>
+            
+            <!-- 行程項目 -->
             <div class="relative timeline-line ml-1" id="itinerary-list"></div>
+            
             <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-[2rem] text-cream-accent font-bold text-sm tracking-widest">+ 新增行程項目</button>
         </section>
 
@@ -73,7 +78,7 @@
         <section id="tab-budget" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic">旅遊記帳</h2>
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4">
-                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase">
+                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tighter">
                     <span>預算進度 (NT$ <span contenteditable="true" id="budget-val" onblur="saveState()">50000</span>)</span>
                     <span>剩餘: <span id="budget-left" class="text-cream-accent">0</span></span>
                 </div>
@@ -82,7 +87,7 @@
                 </div>
             </div>
             <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-6 relative overflow-hidden text-center">
-                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase">總支出 (TWD)</p>
+                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase font-mono">總支出 (TWD)</p>
                 <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter">NT$ 0</h3>
                 <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30 italic">查看分帳統計</button>
                 <i class="fa-solid fa-sack-dollar absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
@@ -97,18 +102,18 @@
             <div class="space-y-4 mb-8">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                     <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 去程班機時刻</p>
-                    <h4 class="font-black text-base italic">濟州航空 7C6102</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium font-mono">11:55 桃機 T1 / 15:35 抵達仁川 T1</div>
+                    <h4 class="font-black text-base italic tracking-tight">濟州航空 7C6102</h4>
+                    <div class="mt-2 text-sm text-gray-500 font-medium">11:55 桃機 T1 / 15:35 抵達仁川 T1</div>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                     <p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 回程班機時刻</p>
-                    <h4 class="font-black text-base italic">長榮航空 BR159</h4>
-                    <div class="mt-2 text-sm text-gray-500 font-medium font-mono">19:45 仁川 T1 / 21:25 抵達桃機 T2</div>
+                    <h4 class="font-black text-base italic tracking-tight">長榮航空 BR159</h4>
+                    <div class="mt-2 text-sm text-gray-500 font-medium">19:45 仁川 T1 / 21:25 抵達桃機 T2</div>
                 </div>
             </div>
-            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-8 text-center">
-                <p class="text-[10px] font-black text-cream-accent uppercase mb-3 tracking-widest font-mono italic">🏨 住宿與導航</p>
-                <h4 class="font-black text-[13px] mb-4">Seoul Jung-gu Sogong-ro 6na-gil 11</h4>
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-8">
+                <p class="text-[10px] font-black text-cream-accent uppercase mb-3 tracking-widest text-center italic">🏨 住宿導航</p>
+                <h4 class="font-black text-[13px] text-center mb-4">Seoul Jung-gu Sogong-ro 6na-gil 11</h4>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="openM('google', 'Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-3 bg-gray-50 rounded-2xl text-[10px] font-bold">Google Maps</button>
                     <button onclick="openM('naver', '서울특별시 중구 소公路6나길 11')" class="py-3 bg-green-50 rounded-2xl text-[10px] font-bold text-green-700">NAVER Map</button>
@@ -121,16 +126,16 @@
         <!-- 底部導覽 -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[400px] bg-white/80 backdrop-blur-2xl border border-white/50 h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around px-2 z-[100]">
             <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center space-y-1 active-nav-btn text-gray-300">
-                <i class="fa-solid fa-compass text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">行程</span>
+                <i class="fa-solid fa-compass text-lg"></i><span class="text-[9px] font-black uppercase">行程</span>
             </button>
             <button onclick="switchTab('todo')" id="nav-todo" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">代辦</span>
+                <i class="fa-solid fa-list-check text-lg"></i><span class="text-[9px] font-black uppercase">代辦</span>
             </button>
             <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-sack-dollar text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">記帳</span>
+                <i class="fa-solid fa-sack-dollar text-lg"></i><span class="text-[9px] font-black uppercase">記帳</span>
             </button>
             <button onclick="switchTab('info')" id="nav-info" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
-                <i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] font-black uppercase tracking-tighter">資訊</span>
+                <i class="fa-solid fa-circle-info text-lg"></i><span class="text-[9px] font-black uppercase">資訊</span>
             </button>
         </nav>
 
@@ -139,72 +144,71 @@
             <i class="fa-solid fa-plus"></i>
         </button>
 
-        <!-- 記帳 Modal, 分帳 Modal (保留原邏輯) -->
-        <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
-            <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s]">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 id="exp-modal-title" class="text-xl font-black italic">新增記帳</h3>
-                    <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">✕</button>
+    </div>
+
+    <!-- 記帳 Modal -->
+    <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
+        <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="exp-modal-title" class="text-xl font-black italic">記帳內容</h3>
+                <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 text-xs">✕</button>
+            </div>
+            <div class="space-y-5 overflow-y-auto max-h-[75vh] pb-10 no-scrollbar">
+                <input type="hidden" id="edit-exp-id">
+                <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
+                <input id="exp-date" type="date" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold font-mono">
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款人</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setField('payer', '小慌')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小慌</button>
+                        <button onclick="setField('payer', '昱凱')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">昱凱</button>
+                        <button onclick="setField('payer', '小安')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小安</button>
+                        <button onclick="setField('payer', '文哥')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">文哥</button>
+                    </div>
                 </div>
-                <div class="space-y-5 overflow-y-auto max-h-[75vh] pb-10 no-scrollbar">
-                    <input type="hidden" id="edit-exp-id">
-                    <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold">
-                    <input id="exp-date" type="date" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm font-bold font-mono">
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款人</label>
-                        <div class="grid grid-cols-4 gap-2">
-                            <button onclick="setField('payer', '小慌')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小慌</button>
-                            <button onclick="setField('payer', '昱凱')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">昱凱</button>
-                            <button onclick="setField('payer', '小安')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold">小安</button>
-                            <button onclick="setField('payer', '文哥')" class="payer-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">文哥</button>
-                        </div>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款方式</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setField('payment', '信用卡')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">信用卡</button>
+                        <button onclick="setField('payment', '現金')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">現金</button>
+                        <button onclick="setField('payment', '行動支付')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">行動支付</button>
                     </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">付款方式</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setField('payment', '信用卡')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">信用卡</button>
-                            <button onclick="setField('payment', '現金')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">現金</button>
-                            <button onclick="setField('payment', '行動支付')" class="payment-btn seg-btn py-3 rounded-xl text-[10px] font-bold">行動支付</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">退稅狀態</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="setField('tax', '無')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">無</button>
-                            <button onclick="setField('tax', '未退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">未退稅</button>
-                            <button onclick="setField('tax', '已退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">已退稅</button>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-[10px] font-black border-none outline-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select>
-                        <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none text-base font-black italic">
-                    </div>
-                    <div class="flex justify-between px-2 font-mono text-[10px] text-gray-400">
-                        <span>匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b outline-none text-cream-accent font-bold"></span>
-                        <span id="exp-twd-hint" class="font-black text-cream-accent uppercase tracking-tighter">台幣: NT$ 0</span>
-                    </div>
-                    <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg tracking-widest transition">確認儲存</button>
                 </div>
+                <div>
+                    <label class="text-[11px] font-bold text-gray-400 mb-2 block uppercase tracking-widest">退稅狀態</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setField('tax', '無')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold active">無</button>
+                        <button onclick="setField('tax', '未退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">未退稅</button>
+                        <button onclick="setField('tax', '已退稅')" class="tax-btn seg-btn py-3 rounded-xl text-[10px] font-bold">已退稅</button>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <select id="exp-currency" class="w-1/3 bg-gray-50 p-4 rounded-2xl text-[10px] font-black border-none outline-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select>
+                    <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-4 rounded-2xl outline-none text-base font-black italic">
+                </div>
+                <div class="flex justify-between px-2 font-mono text-[10px] text-gray-400">
+                    <span>匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b outline-none text-cream-accent font-bold"></span>
+                    <span id="exp-twd-hint" class="font-black text-cream-accent uppercase">台幣: NT$ 0</span>
+                </div>
+                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg">確認儲存</button>
             </div>
         </div>
+    </div>
 
-        <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center">
-            <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8">
-                <h3 class="text-lg font-black italic mb-6">分帳統計</h3>
-                <div id="settlement-content" class="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar"></div>
-                <button onclick="toggleSettlement()" class="w-full mt-8 bg-cream-accent text-white py-4 rounded-2xl font-bold text-sm tracking-widest uppercase italic">Close</button>
-            </div>
+    <!-- 分帳統計 Modal -->
+    <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center">
+        <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8">
+            <h3 class="text-lg font-black italic mb-6">分帳統計</h3>
+            <div id="settlement-content" class="space-y-3 max-h-[300px] overflow-y-auto no-scrollbar"></div>
+            <button onclick="toggleSettlement()" class="w-full mt-8 bg-cream-accent text-white py-4 rounded-2xl font-bold text-sm tracking-widest uppercase italic">Close</button>
         </div>
-
     </div>
 
     <script>
         // --- 核心資料 ---
-        let state = JSON.parse(localStorage.getItem('korea_2026_v7_itins')) || {
+        let state = JSON.parse(localStorage.getItem('korea_2026_pro_v8')) || {
             title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
-            itin: { 
-                1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] 
-            },
+            itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
             todoGroups: [{ id: Date.now(), title: "母標題: 必備清單", items: ["護照", "網卡"] }],
             expenses: [], customInfo: []
         };
@@ -225,7 +229,7 @@
         function saveState() {
             state.title = document.getElementById('trip-title').innerText;
             state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
-            localStorage.setItem('korea_2026_v7_itins', JSON.stringify(state));
+            localStorage.setItem('korea_2026_pro_v8', JSON.stringify(state));
             updateSummary();
         }
 
@@ -233,7 +237,7 @@
             renderDayNav(); renderItin(); renderTodos(); renderExpenses('all'); renderInfo(); updateSummary();
         }
 
-        // --- 行程功能 (排序/選取器/巢狀清單) ---
+        // --- 行程功能 (排序/分類色/🧾巢狀清單) ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
             dayArr.forEach((d, i) => {
@@ -241,47 +245,44 @@
                 const btn = document.createElement('button');
                 btn.className = `day-btn flex-none rounded-2xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == num ? 'active' : 'bg-white text-cream-sub'}`;
                 btn.onclick = () => { state.currentDay = num; renderAll(); };
-                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1 uppercase">${d.n}</span><span class="text-[10px] font-bold">${d.w}</span><span class="text-base font-black italic tracking-tighter">${d.d}</span>`;
+                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1 uppercase tracking-tighter">${d.n}</span><span class="text-[10px] font-bold">${d.w}</span><span class="text-base font-black italic tracking-tighter underline decoration-cream-primary/30">${d.d}</span>`;
                 container.appendChild(btn);
             });
         }
 
-        function getCatColor(type) {
-            const colors = {
-                '景點': 'bg-cat-att text-white',
-                '購物': 'bg-cat-shp text-[#8B735B]',
-                '餐廳': 'bg-cat-res text-cream-accent',
-                '咖啡廳': 'bg-cat-caf text-[#8B7E74]',
-                '餐酒館': 'bg-cat-bis text-white font-black',
-                '換錢站': 'bg-cat-mon text-white font-black',
-                '其他': 'bg-cat-oth text-gray-500'
-            };
-            return colors[type] || 'bg-white text-gray-400';
+        function getCatClass(type) {
+            switch(type) {
+                case '景點': return 'bg-cat-att text-white';
+                case '購物': return 'bg-cat-shp text-[#8B735B]';
+                case '餐廳': return 'bg-cat-res text-cream-accent';
+                case '咖啡廳': return 'bg-cat-caf text-[#8B7E74]';
+                case '餐酒館': return 'bg-cat-bis text-white';
+                case '換錢站': return 'bg-cat-mon text-white';
+                case '其他': return 'bg-cat-oth text-gray-500';
+                default: return 'bg-white text-gray-400';
+            }
         }
 
         function renderItin() {
             const list = document.getElementById('itinerary-list'); list.innerHTML = "";
             const items = state.itin[state.currentDay] || [];
-            
             items.forEach((item, idx) => {
+                const colorClass = getCatClass(item.type);
                 const div = document.createElement('div');
                 div.className = "relative pl-10 mb-8";
-                const catClass = getCatColor(item.type);
-                
                 div.innerHTML = `
                     <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative">
-                        <!-- 右上控制 -->
-                        <div class="absolute top-4 right-4 flex space-x-2 text-gray-300">
+                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative transition">
+                        <!-- 控制按鈕 -->
+                        <div class="absolute top-4 right-4 flex space-x-3 text-gray-300">
                             <button onclick="moveItin(${idx},-1)"><i class="fa-solid fa-chevron-up"></i></button>
                             <button onclick="moveItin(${idx},1)"><i class="fa-solid fa-chevron-down"></i></button>
-                            <button onclick="delItin(${idx})" class="hover:text-red-400"><i class="fa-solid fa-xmark ml-2"></i></button>
+                            <button onclick="delItin(${idx})"><i class="fa-solid fa-xmark ml-1"></i></button>
                         </div>
-
                         <!-- 時間與分類 -->
                         <div class="flex justify-between mb-3 pr-14">
-                            <input type="time" value="${item.time}" onchange="editItin(${idx},'time',this.value)" class="bg-transparent text-xs font-black text-cream-accent italic outline-none font-mono">
-                            <select onchange="editItin(${idx},'type',this.value)" class="text-[9px] px-2 py-1 rounded-lg font-bold uppercase outline-none ${catClass}">
+                            <input type="time" value="${item.time || '12:00'}" onchange="editItin(${idx},'time',this.value)" class="bg-transparent text-xs font-black text-cream-accent italic outline-none font-mono">
+                            <select onchange="editItin(${idx},'type',this.value)" class="text-[9px] px-2 py-1 rounded-lg font-bold uppercase outline-none transition-colors ${colorClass}">
                                 <option value="景點" ${item.type==='景點'?'selected':''}>景點</option>
                                 <option value="購物" ${item.type==='購物'?'selected':''}>購物</option>
                                 <option value="餐廳" ${item.type==='餐廳'?'selected':''}>餐廳</option>
@@ -291,24 +292,21 @@
                                 <option value="其他" ${item.type==='其他'?'selected':''}>其他</option>
                             </select>
                         </div>
-
-                        <!-- 地標名稱 -->
-                        <h3 contenteditable="true" onblur="editItin(${idx},'title',this.innerText)" class="editable font-black text-base mb-3 italic tracking-tight uppercase">${item.title}</h3>
+                        <!-- 地標與備註 -->
+                        <h3 contenteditable="true" onblur="editItin(${idx},'title',this.innerText)" class="editable font-black text-base mb-1 italic tracking-tight uppercase">${item.title}</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest opacity-50">Notes</p>
+                        <div contenteditable="true" onblur="editItin(${idx},'note',this.innerText)" class="editable text-[11px] text-gray-500 leading-relaxed mb-4">${item.note}</div>
                         
-                        <!-- 🧾 行程清單區塊 -->
-                        <div class="bg-cream-bg/40 rounded-2xl p-3 mb-3">
-                            <p class="text-[9px] font-black text-cream-accent uppercase tracking-widest mb-2 flex items-center">
-                                <i class="fa-solid fa-receipt mr-1"></i> 行程詳細清單
+                        <!-- 🧾 行程詳細清單區區塊 -->
+                        <div class="bg-cream-bg/40 rounded-2xl p-4 mb-4">
+                            <p class="text-[9px] font-black text-cream-accent uppercase tracking-widest mb-3 flex items-center">
+                                <i class="fa-solid fa-receipt mr-1"></i> 行程清單 🧾
                             </p>
-                            <div id="itin-check-container-${idx}" class="space-y-3">
-                                ${renderItinChecklists(idx, item.lists)}
+                            <div id="nested-list-${idx}" class="space-y-4">
+                                ${renderNestedList(idx, item.nestedList)}
                             </div>
-                            <button onclick="addItinMother(${idx})" class="mt-3 text-[8px] font-black text-gray-400 uppercase tracking-tighter">+ 新增母項目</button>
+                            <button onclick="addMotherItem(${idx})" class="mt-4 text-[9px] font-black text-gray-400 uppercase tracking-tighter hover:text-cream-accent transition">+ 新增母項目</button>
                         </div>
-
-                        <!-- 備註 -->
-                        <p class="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-widest italic opacity-60">Notes</p>
-                        <div contenteditable="true" onblur="editItin(${idx},'note',this.innerText)" class="editable text-[11px] text-gray-500 leading-relaxed min-h-[20px] mb-4">${item.note}</div>
 
                         <!-- 導航按鈕 -->
                         <div class="grid grid-cols-2 gap-2 border-t border-cream-primary/10 pt-3">
@@ -320,77 +318,188 @@
             });
         }
 
-        // 行程巢狀清單渲染
-        function renderItinChecklists(itinIdx, lists) {
-            if (!lists) return "";
-            return lists.map((group, gIdx) => `
+        // --- 巢狀清單渲染 ---
+        function renderNestedList(itinIdx, nested) {
+            if(!nested) return "";
+            return nested.map((mother, mIdx) => `
                 <div class="border-l-2 border-cream-primary/30 pl-3 relative">
                     <div class="flex justify-between items-center mb-1">
-                        <span contenteditable="true" onblur="editItinListGroup(${itinIdx},${gIdx},this.innerText)" class="editable text-[11px] font-black text-cream-accent italic tracking-tight">${group.title}</span>
-                        <div class="flex space-x-1 opacity-40 text-[7px]">
-                            <button onclick="moveItinGroup(${itinIdx},${gIdx},-1)"><i class="fa-solid fa-chevron-up"></i></button>
-                            <button onclick="moveItinGroup(${itinIdx},${gIdx},1)"><i class="fa-solid fa-chevron-down"></i></button>
-                            <button onclick="delItinGroup(${itinIdx},${gIdx})" class="text-red-400"><i class="fa-solid fa-trash"></i></button>
+                        <span contenteditable="true" onblur="editMotherTitle(${itinIdx},${mIdx},this.innerText)" class="editable text-[11px] font-black text-cream-accent italic tracking-tight">${mother.title}</span>
+                        <div class="flex space-x-1 opacity-30 text-[8px]">
+                            <button onclick="moveMother(${itinIdx},${mIdx},-1)"><i class="fa-solid fa-chevron-up"></i></button>
+                            <button onclick="moveMother(${itinIdx},${mIdx},1)"><i class="fa-solid fa-chevron-down"></i></button>
+                            <button onclick="delMother(${itinIdx},${mIdx})" class="text-red-400 ml-1">✕</button>
                         </div>
                     </div>
                     <div class="space-y-1">
-                        ${group.items.map((sub, sIdx) => `
+                        ${mother.subs.map((sub, sIdx) => `
                             <div class="flex items-center justify-between group">
                                 <div class="flex items-center space-x-2">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-cream-primary/50"></div>
-                                    <span contenteditable="true" onblur="editItinListItem(${itinIdx},${gIdx},${sIdx},this.innerText)" class="editable text-[10px] font-bold text-gray-500">${sub}</span>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-cream-primary/60"></div>
+                                    <span contenteditable="true" onblur="editSubItem(${itinIdx},${mIdx},${sIdx},this.innerText)" class="editable text-[10px] font-bold text-gray-500">${sub}</span>
                                 </div>
-                                <div class="flex space-x-1 opacity-0 group-hover:opacity-100 text-[6px]">
-                                    <button onclick="moveItinSub(${itinIdx},${gIdx},${sIdx},-1)"><i class="fa-solid fa-chevron-up"></i></button>
-                                    <button onclick="moveItinSub(${itinIdx},${gIdx},${sIdx},1)"><i class="fa-solid fa-chevron-down"></i></button>
-                                    <button onclick="delItinSub(${itinIdx},${gIdx},${sIdx})"><i class="fa-solid fa-xmark text-red-300"></i></button>
+                                <div class="flex space-x-1 opacity-0 group-hover:opacity-100 text-[7px]">
+                                    <button onclick="moveSub(${itinIdx},${mIdx},${sIdx},-1)"><i class="fa-solid fa-chevron-up"></i></button>
+                                    <button onclick="moveSub(${itinIdx},${mIdx},${sIdx},1)"><i class="fa-solid fa-chevron-down"></i></button>
+                                    <button onclick="delSub(${itinIdx},${mIdx},${sIdx})"><i class="fa-solid fa-xmark text-red-300"></i></button>
                                 </div>
                             </div>
                         `).join('')}
-                        <button onclick="addItinSub(${itinIdx},${gIdx})" class="text-[8px] font-bold text-gray-300 mt-1 italic">+ 新增代買項目</button>
+                        <button onclick="addSubItem(${itinIdx},${mIdx})" class="text-[8px] font-black text-gray-300 mt-1 italic hover:text-cream-accent transition">+ 新增子項目</button>
                     </div>
                 </div>
             `).join('');
         }
 
+        // --- 行程與清單邏輯 ---
         function addNewItinerary() {
             state.itin[state.currentDay].push({ 
                 time: "12:00", title: "地標名稱", type: "景點", note: "點擊編輯備註...", 
-                lists: [{ title: "母項目 (如: 美妝)", items: ["子項目 (如: 面膜)"] }] 
+                nestedList: [{ title: "母項目 (如: 美妝)", subs: ["子項目 (如: 面膜)"] }] 
             });
             saveState(); renderItin();
         }
-
-        // --- 巢狀清單邏輯 ---
-        function addItinMother(itinIdx) { state.itin[state.currentDay][itinIdx].lists.push({ title: "新清單分類", items: ["點擊編輯"] }); saveState(); renderItin(); }
-        function delItinGroup(itinIdx, gIdx) { state.itin[state.currentDay][itinIdx].lists.splice(gIdx, 1); saveState(); renderItin(); }
-        function editItinListGroup(itinIdx, gIdx, v) { state.itin[state.currentDay][itinIdx].lists[gIdx].title = v; saveState(); }
-        function addItinSub(itinIdx, gIdx) { state.itin[state.currentDay][itinIdx].lists[gIdx].items.push("新細項"); saveState(); renderItin(); }
-        function delItinSub(itinIdx, gIdx, sIdx) { state.itin[state.currentDay][itinIdx].lists[gIdx].items.splice(sIdx, 1); saveState(); renderItin(); }
-        function editItinListItem(itinIdx, gIdx, sIdx, v) { state.itin[state.currentDay][itinIdx].lists[gIdx].items[sIdx] = v; saveState(); }
+        function addMotherItem(idx) { state.itin[state.currentDay][idx].nestedList.push({ title: "新清單分類", subs: ["點擊編輯內容"] }); saveState(); renderItin(); }
+        function delMother(i, m) { state.itin[state.currentDay][i].nestedList.splice(m,1); saveState(); renderItin(); }
+        function addSubItem(i, m) { state.itin[state.currentDay][i].nestedList[m].subs.push("新細項"); saveState(); renderItin(); }
+        function delSub(i, m, s) { state.itin[state.currentDay][i].nestedList[m].subs.splice(s,1); saveState(); renderItin(); }
+        function editMotherTitle(i, m, v) { state.itin[state.currentDay][i].nestedList[m].title = v; saveState(); }
+        function editSubItem(i, m, s, v) { state.itin[state.currentDay][i].nestedList[m].subs[s] = v; saveState(); }
         
-        function moveItinGroup(itinIdx, gIdx, dir) {
-            const arr = state.itin[state.currentDay][itinIdx].lists;
-            const target = gIdx + dir;
-            if(target >= 0 && target < arr.length) { [arr[gIdx], arr[target]] = [arr[target], arr[gIdx]]; saveState(); renderItin(); }
+        function moveMother(i, m, dir) {
+            const arr = state.itin[state.currentDay][i].nestedList; const t = m + dir;
+            if(t >= 0 && t < arr.length) { [arr[m], arr[t]] = [arr[t], arr[m]]; saveState(); renderItin(); }
         }
-        function moveItinSub(itinIdx, gIdx, sIdx, dir) {
-            const arr = state.itin[state.currentDay][itinIdx].lists[gIdx].items;
-            const target = sIdx + dir;
-            if(target >= 0 && target < arr.length) { [arr[sIdx], arr[target]] = [arr[target], arr[sIdx]]; saveState(); renderItin(); }
+        function moveSub(i, m, s, dir) {
+            const arr = state.itin[state.currentDay][i].nestedList[m].subs; const t = s + dir;
+            if(t >= 0 && t < arr.length) { [arr[s], arr[t]] = [arr[t], arr[s]]; saveState(); renderItin(); }
         }
-
         function moveItin(idx, dir) {
-            const arr = state.itin[state.currentDay]; const target = idx + dir;
-            if(target >= 0 && target < arr.length) { [arr[idx], arr[target]] = [arr[target], arr[idx]]; saveState(); renderItin(); }
+            const arr = state.itin[state.currentDay]; const t = idx + dir;
+            if (t >= 0 && t < arr.length) { [arr[idx], arr[t]] = [arr[t], arr[idx]]; saveState(); renderItin(); }
         }
-        function delItin(idx) { if(confirm("確定刪除此行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
+        function delItin(idx) { if(confirm("確定刪除行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
         function editItin(idx, f, v) { state.itin[state.currentDay][idx][f] = v; saveState(); if(f==='type') renderItin(); }
 
-        // --- 其餘功能模組 (代辦/記帳/資訊) ---
+        // --- 其餘模組 (代辦/記帳/資訊 - 維持原邏輯) ---
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             state.todoGroups.forEach((group, gIdx) => {
                 const gDiv = document.createElement('div'); gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative mb-4";
-                gDiv.innerHTML = `
-                    <button onclick
+                gDiv.innerHTML = `<button onclick="delTodoG(${gIdx})" class="absolute top-6 right-6 text-gray-200">✕</button>
+                    <h3 contenteditable="true" onblur="editTodoG(${gIdx}, this.innerText)" class="editable text-base font-black mb-4 pr-6 italic uppercase tracking-widest">${group.title}</h3>
+                    <div class="space-y-3">${group.items.map((item, iIdx) => `<div class="flex items-center justify-between group">
+                        <div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200"></div>
+                        <span contenteditable="true" onblur="editTodoI(${gIdx},${iIdx},this.innerText)" class="editable text-sm font-bold text-gray-500">${item}</span></div>
+                        <button onclick="delTodoI(${gIdx},${iIdx})" class="text-gray-200 text-xs">✕</button></div>`).join('')}</div>
+                    <button onclick="addTodoI(${gIdx})" class="mt-4 text-[10px] font-black text-cream-accent uppercase tracking-widest">+ 新增子項目</button>`;
+                container.appendChild(gDiv);
+            });
+        }
+        function addTodoGroup() { state.todoGroups.push({ id: Date.now(), title: "母標題: 新群組", items: ["代辦項目"] }); saveState(); renderTodos(); }
+        function delTodoG(idx) { if(confirm("刪除整個分類？")) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); } }
+        function editTodoG(idx, v) { state.todoGroups[idx].title = v; saveState(); }
+        function addTodoI(idx) { state.todoGroups[idx].items.push("點擊編輯"); saveState(); renderTodos(); }
+        function delTodoI(gIdx, iIdx) { state.todoGroups[gIdx].items.splice(iIdx,1); saveState(); renderTodos(); }
+        function editTodoI(gIdx, iIdx, v) { state.todoGroups[gIdx].items[iIdx] = v; saveState(); }
+
+        function setField(type, val) {
+            document.querySelectorAll(`.${type}-btn`).forEach(b => {
+                b.classList.remove('active'); if (b.innerText === val) b.classList.add('active');
+            });
+            if(type === 'payer') curPayer = val; if(type === 'payment') curPayment = val; if(type === 'tax') curTax = val;
+        }
+
+        function renderExpenses(filter = 'all') {
+            const list = document.getElementById('expense-list'); list.innerHTML = "";
+            const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
+            renderDateFilters(uniqueDates, filter);
+            const filtered = filter === 'all' ? state.expenses : state.expenses.filter(e => e.date.endsWith(filter));
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e) => {
+                const idx = state.expenses.findIndex(x => x.id === e.id);
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative transition active:scale-95";
+                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${idx})">
+                    <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic tracking-widest font-mono">${e.payer[0]}</div>
+                    <div class="flex-1"><div class="flex items-center space-x-2"><p class="text-sm font-black italic tracking-tighter">${e.item}</p>${e.tax === '已退稅'?'<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退</span>':''}</div>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.payment}</p></div></div>
+                    <div class="text-right shrink-0"><p class="text-sm font-black italic tracking-tighter">NT$ ${e.twd.toLocaleString()}</p><p class="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic font-mono">(₩ ${e.amount.toLocaleString()})</p>
+                    <button onclick="delExp(${idx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase tracking-tighter italic">✕ 刪除</button></div>`;
+                list.appendChild(div);
+            });
+            updateSummary();
+        }
+        function renderDateFilters(dates, cur) {
+            const container = document.getElementById('expense-date-filter'); container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2 rounded-full text-[10px] font-black ${cur === 'all' ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm uppercase italic">全部</button>`;
+            dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2 rounded-full text-[10px] font-black ${cur === d ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm uppercase italic">${d}</button>`; });
+        }
+        function calcHint() {
+            const a = parseFloat(document.getElementById('exp-amount').value) || 0; const r = parseFloat(document.getElementById('exp-rate').value) || 1;
+            document.getElementById('exp-twd-hint').innerText = `台幣: NT$ ${Math.round(a * r).toLocaleString()}`;
+        }
+        function openExpenseModal() {
+            document.getElementById('exp-modal-title').innerText = "新增記帳"; document.getElementById('edit-exp-id').value = "";
+            document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate = new Date();
+            setField('payer', '文哥'); setField('payment', '現金'); setField('tax', '無');
+            document.getElementById('exp-item').value = ""; document.getElementById('exp-amount').value = ""; calcHint();
+        }
+        function editExp(idx) {
+            const e = state.expenses[idx]; document.getElementById('exp-modal-title').innerText = "編輯帳目";
+            document.getElementById('edit-exp-id').value = e.id; document.getElementById('exp-item').value = e.item;
+            document.getElementById('exp-date').value = e.date; document.getElementById('exp-amount').value = e.amount;
+            document.getElementById('exp-rate').value = e.rate; setField('payer', e.payer); setField('payment', e.payment); setField('tax', e.tax);
+            document.getElementById('expense-modal').classList.remove('hidden'); calcHint();
+        }
+        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
+        function saveExpense() {
+            const item = document.getElementById('exp-item').value, date = document.getElementById('exp-date').value, amount = parseFloat(document.getElementById('exp-amount').value) || 0, rate = parseFloat(document.getElementById('exp-rate').value) || 1, id = document.getElementById('edit-exp-id').value;
+            if (item && amount) {
+                const rec = { id: id || Date.now(), item, date, amount, rate, payer: curPayer, payment: curPayment, tax: curTax, twd: Math.round(amount * rate) };
+                if (id) { const idx = state.expenses.findIndex(x => x.id == id); state.expenses[idx] = rec; } else { state.expenses.push(rec); }
+                saveState(); renderExpenses(); closeExpenseModal();
+            }
+        }
+        function delExp(idx) { if(confirm("確定刪除？")) { state.expenses.splice(idx,1); saveState(); renderExpenses(); } }
+        function updateSummary() {
+            const total = state.expenses.reduce((s, e) => s + e.twd, 0); document.getElementById('total-spent').innerText = `NT$ ${total.toLocaleString()}`;
+            document.getElementById('budget-left').innerText = `$ ${(state.budget - total).toLocaleString()}`;
+            document.getElementById('budget-bar').style.width = Math.min(100, (total / state.budget) * 100) + '%';
+        }
+        function toggleSettlement() {
+            const modal = document.getElementById('settlement-modal'), content = document.getElementById('settlement-content');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden'); const pList = ["小慌", "昱凱", "小安", "文哥"], total = state.expenses.reduce((s, e) => s + e.twd, 0), avg = total / pList.length, paid = {}; pList.forEach(p => paid[p] = 0);
+                state.expenses.forEach(e => paid[e.payer] += e.twd); content.innerHTML = "";
+                pList.forEach(p => { const diff = paid[p] - avg; content.innerHTML += `<div class="flex justify-between items-center py-2 border-b border-gray-50 font-mono"><span class="text-sm font-bold uppercase italic">${p}</span><div class="text-right"><p class="text-[10px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="text-xs font-black ${diff >= 0 ? 'text-green-500' : 'text-red-400'} italic">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p></div></div>`; });
+            } else { modal.classList.add('hidden'); }
+        }
+
+        function renderInfo() {
+            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
+            state.customInfo.forEach((info, idx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative mb-4";
+                div.innerHTML = `<button onclick="delInfo(${idx})" class="absolute top-4 right-4 text-gray-200">✕</button><h4 contenteditable="true" onblur="editInfo(${idx},'title',this.innerText)" class="editable font-black text-sm mb-2 italic tracking-widest uppercase underline decoration-cream-accent/20">${info.title}</h4><div contenteditable="true" onblur="editInfo(${idx},'content',this.innerText)" class="editable text-xs text-gray-500 leading-relaxed font-medium font-mono">${info.content}</div>`;
+                container.appendChild(div);
+            });
+        }
+        function addCustomInfo() { state.customInfo.push({ title: "新資訊區塊", content: "點擊編輯內容..." }); saveState(); renderInfo(); }
+        function delInfo(idx) { state.customInfo.splice(idx,1); saveState(); renderInfo(); }
+        function editInfo(idx, f, v) { state.customInfo[idx][f] = v; saveState(); }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav-btn'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('nav-' + tab).classList.add('active-nav-btn');
+            document.getElementById('nav-' + tab).classList.remove('text-gray-300');
+            document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
+        }
+        function openM(type, loc) { 
+            if(!loc || loc === "地標名稱") return alert("請先輸入地標名稱名稱");
+            const q = encodeURIComponent(loc); 
+            window.open(type === 'google' ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://map.naver.com/v5/search/${q}`, '_blank'); 
+        }
+    </script>
+</body>
+</html>
