@@ -40,9 +40,8 @@
         #detail-modal.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .placeholder-hint { color: #D1D5DB !important; font-weight: 300 !important; }
-        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234A342E'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; padding-right: 2.5rem; }
     </style>
- head>
+</head>
 <body class="flex justify-center">
 
     <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg shadow-inner">
@@ -60,10 +59,10 @@
             <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-cream-accent font-bold text-sm tracking-widest">+ 新增行程項目</button>
         </section>
 
-        <!-- [分頁 2] 採購 -->
+        <!-- [分頁 2] 採購頁面 (Wishlist) -->
         <section id="tab-wishlist" class="tab-content px-6 pt-8">
-            <div class="flex justify-between items-center mb-6 text-gray-800">
-                <h2 class="text-2xl font-black italic tracking-tight flex items-center"><i class="fa-solid fa-basket-shopping mr-2 text-cream-accent"></i>待採購清單</h2>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-black italic tracking-tight">待採購清單</h2>
                 <button onclick="addWishGroup()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase shadow-lg shadow-cream-accent/20">+ Add Shop</button>
             </div>
             <div id="wishlist-module-area" class="space-y-6"></div>
@@ -71,61 +70,28 @@
 
         <!-- [分頁 3] 待辦 -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black italic tracking-tight mb-6 text-gray-800 flex items-center"><i class="fa-solid fa-list-check mr-2 text-cream-accent"></i>行前待辦事項</h2>
+            <h2 class="text-2xl font-black italic tracking-tight mb-6 text-gray-800">行前待辦事項</h2>
             <div id="todo-groups" class="space-y-6"></div>
             <button onclick="addTodoGroup()" class="mt-6 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增分類母項目</button>
         </section>
 
         <!-- [分頁 4] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-black italic text-cream-accent tracking-tighter flex items-center"><i class="fa-solid fa-sack-dollar mr-2"></i>旅遊記帳</h2>
-            </div>
-            
-            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-6">
-                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tighter">
-                    <span>預算進度 (NT$ <span contenteditable="true" id="budget-val" class="editable font-mono"></span>)</span>
-                    <span>剩餘: <span id="budget-left" class="text-cream-accent font-mono">0</span></span>
-                </div>
-                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div id="budget-bar" class="bg-cream-accent h-full transition-all duration-700" style="width: 0%"></div>
-                </div>
-            </div>
-
-            <!-- 匯率計算機區塊 -->
-            <div class="grid grid-cols-1 gap-4 mb-6">
-                <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-widest flex items-center"><i class="fa-solid fa-calculator mr-1"></i> 標準匯率換算 (0.024)</p>
-                    <div class="flex items-center space-x-2">
-                        <input type="number" id="calc-krw" oninput="calcQuick('krw')" placeholder="KRW ₩" class="w-full bg-gray-50 p-3 rounded-xl outline-none text-xs font-bold font-mono">
-                        <i class="fa-solid fa-right-left text-gray-200 text-[10px]"></i>
-                        <input type="number" id="calc-twd" oninput="calcQuick('twd')" placeholder="TWD $" class="w-full bg-gray-50 p-3 rounded-xl outline-none text-xs font-bold font-mono">
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100">
-                    <p class="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-widest flex items-center"><i class="fa-solid fa-sliders mr-1"></i> 自訂匯率換算</p>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <input type="number" id="calc-custom-rate" value="0.024" step="0.001" placeholder="輸入匯率" class="w-full bg-gray-50 p-3 rounded-xl outline-none text-[10px] font-bold">
-                        <input type="number" id="calc-custom-amt" oninput="calcCustom()" placeholder="輸入金額" class="w-full bg-gray-50 p-3 rounded-xl outline-none text-[10px] font-bold">
-                    </div>
-                    <p id="calc-custom-result" class="text-center text-xs font-black text-cream-accent italic tracking-widest uppercase py-1 mt-1 border-t border-dashed border-gray-50">Result: NT$ 0</p>
-                </div>
-            </div>
-
+            <h2 class="text-2xl font-black mb-6 italic text-cream-accent tracking-tighter">旅遊記帳</h2>
             <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-6 relative overflow-hidden text-center">
                 <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase font-mono">總支出 (TWD)</p>
-                <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter font-mono">NT$ 0</h3>
+                <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter font-mono underline decoration-white/20 decoration-2">NT$ 0</h3>
                 <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30 italic">查看分帳統計</button>
-                <i class="fa-solid fa-wallet absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
+                <i class="fa-solid fa-sack-dollar absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
             </div>
-
             <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 px-1"></div>
             <div id="expense-list" class="space-y-4"></div>
         </section>
 
         <!-- [分頁 5] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black mb-6 italic text-cream-accent tracking-widest flex items-center"><i class="fa-solid fa-circle-info mr-2"></i>資訊</h2>
+            <h2 class="text-2xl font-black mb-6 italic text-cream-accent">旅遊資訊</h2>
+            <!-- 靜態航班飯店 -->
             <div class="space-y-4 mb-8">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                     <p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️⏰ 去程班機時刻</p>
@@ -150,10 +116,10 @@
                 </div>
             </div>
             <div id="custom-info-list" class="space-y-4"></div>
-            <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增自訂資訊</button>
+            <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm">+ 新增自訂資訊</button>
         </section>
 
-        <!-- 底部導覽 -->
+        <!-- 底部導覽 (5 欄位新排序) -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[420px] bg-white/80 backdrop-blur-2xl border border-white/50 h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around px-2 z-[100]">
             <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center space-y-1 active-nav-btn text-gray-300 transition-all">
                 <i class="fa-solid fa-compass text-lg"></i><span class="text-[8px] font-black uppercase">行程</span>
@@ -172,95 +138,96 @@
             </button>
         </nav>
 
-        <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90] active:scale-90 transition"><i class="fa-solid fa-plus"></i></button>
+        <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90] active:scale-90 transition">
+            <i class="fa-solid fa-plus"></i>
+        </button>
     </div>
 
-    <!-- [詳細頁 Modal] -->
+    <!-- [詳細頁] Full Screen Modal -->
     <div id="detail-modal" class="no-scrollbar">
         <div class="sticky top-0 z-[510] bg-white/95 backdrop-blur-md px-6 py-5 border-b border-gray-100 flex justify-between items-center">
             <button onclick="closeDetailModal()" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400">✕</button>
             <h3 class="text-[10px] font-black italic tracking-widest text-cream-accent uppercase">Detailed Itinerary</h3>
             <button onclick="saveCurrentDetail()" class="px-6 py-2 bg-cream-accent text-white rounded-full text-xs font-black shadow-lg">SAVE</button>
         </div>
+
         <div class="p-8 pb-40 space-y-8">
             <input type="hidden" id="detail-idx">
+            
             <div class="space-y-6">
                 <input id="detail-title" type="text" class="w-full text-3xl font-black border-none outline-none italic tracking-tighter" placeholder="景點名稱">
+                
                 <div class="grid grid-cols-1 gap-4 bg-gray-50/50 p-6 rounded-[2rem]">
-                    <div class="flex items-center justify-between"><label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">中文地址</label><button onclick="copyToClipboard(document.getElementById('detail-loc-cn').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button></div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">中文地址 (Google Maps)</label>
+                        <button onclick="copyToClipboard(document.getElementById('detail-loc-cn').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button>
+                    </div>
                     <input id="detail-loc-cn" type="text" class="bg-white p-3 rounded-xl border-none outline-none text-xs font-bold" placeholder="輸入中文地址">
-                    <div class="flex items-center justify-between"><label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">韓文地址</label><button onclick="copyToClipboard(document.getElementById('detail-loc-kr').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button></div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">韓文地址 (NAVER Maps)</label>
+                        <button onclick="copyToClipboard(document.getElementById('detail-loc-kr').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button>
+                    </div>
                     <input id="detail-loc-kr" type="text" class="bg-white p-3 rounded-xl border-none outline-none text-xs font-bold" placeholder="輸入韓文地址">
+                    
                     <div class="grid grid-cols-2 gap-3 mt-2">
-                        <button onclick="openM('google', document.getElementById('detail-loc-cn').value || document.getElementById('detail-title').value)" class="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase italic">Google</button>
-                        <button onclick="openM('naver', document.getElementById('detail-loc-kr').value || document.getElementById('detail-title').value)" class="py-3 bg-green-50 text-green-700 border border-green-100 rounded-xl text-[10px] font-black uppercase italic">Naver</button>
+                        <button onclick="openM('google', document.getElementById('detail-loc-cn').value || document.getElementById('detail-title').value)" class="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase">Google Maps</button>
+                        <button onclick="openM('naver', document.getElementById('detail-loc-kr').value || document.getElementById('detail-title').value)" class="py-3 bg-green-50 text-green-700 border border-green-100 rounded-xl text-[10px] font-black uppercase">NAVER Map</button>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2 bg-cream-bg/50 px-4 py-2 rounded-xl w-fit"><i class="fa-regular fa-clock text-cream-accent"></i><input id="detail-time" type="time" class="bg-transparent border-none outline-none font-mono font-black italic"></div>
+
+                <div class="flex items-center space-x-2 bg-cream-bg/50 px-4 py-2 rounded-xl w-fit">
+                    <i class="fa-regular fa-clock text-cream-accent"></i>
+                    <input id="detail-time" type="time" class="bg-transparent border-none outline-none font-mono font-black italic">
+                </div>
             </div>
+
             <div class="space-y-6">
-                <div><label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">行程詳細描述</label><textarea id="detail-desc" rows="3" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm font-medium leading-relaxed" placeholder="請輸入詳細描述..."></textarea></div>
-                <div><label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">備註</label><textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm font-medium italic" placeholder="請輸入備註內容..."></textarea></div>
+                <div>
+                    <label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">行程詳細描述</label>
+                    <textarea id="detail-desc" rows="3" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm font-medium leading-relaxed" placeholder="請輸入詳細描述..."></textarea>
+                </div>
+                <div>
+                    <label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">備註</label>
+                    <textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm font-medium italic" placeholder="請輸入備註內容..."></textarea>
+                </div>
             </div>
-            <div id="detail-shopping-list-area" class="space-y-6 pt-8 border-t border-gray-100"></div>
+
+            <div class="pt-8 border-t border-gray-100">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h4 class="text-xl font-black italic">Shopping List 🧾</h4>
+                        <p id="shop-progress-text" class="text-[9px] font-black text-gray-400 uppercase mt-1">0 Items (0%)</p>
+                    </div>
+                    <button onclick="addShopGroupDetail()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase shadow-lg shadow-cream-accent/20">+ Add Shop</button>
+                </div>
+                <div id="detail-shopping-list-area" class="space-y-6"></div>
+            </div>
         </div>
     </div>
 
-    <!-- [記帳 Modal] -->
+    <!-- 記帳 Modal -->
     <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
-        <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s] pb-12 overflow-y-auto max-h-[90vh] no-scrollbar text-gray-800">
-            <div class="flex justify-between items-center mb-8">
-                <h3 id="exp-modal-title" class="text-xl font-black italic tracking-tighter uppercase underline decoration-cream-accent/20">Record Expense</h3>
-                <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 text-xs font-black">✕</button>
-            </div>
+        <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s] pb-12 overflow-y-auto max-h-[90vh] no-scrollbar">
+            <div class="flex justify-between items-center mb-8"><h3 id="exp-modal-title" class="text-xl font-black italic italic tracking-tighter">新增記帳</h3><button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 text-xs">✕</button></div>
             <div class="space-y-6">
                 <input type="hidden" id="edit-exp-id">
                 <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold border-none">
                 <input id="exp-date" type="date" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold border-none font-mono">
-                
+                <div><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">付款人</label><div class="grid grid-cols-4 gap-2" id="payer-btns"></div></div>
+                <div><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">花費分類</label><div class="grid grid-cols-4 gap-2" id="cat-btns"></div></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">付款方式</label>
-                        <select id="exp-payment" class="w-full bg-gray-50 p-4 rounded-xl outline-none text-xs font-bold border-none appearance-none italic">
-                            <option value="現金">現金</option>
-                            <option value="旅遊金">旅遊金</option>
-                            <option value="信用卡">信用卡</option>
-                            <option value="Line Pay">Line Pay</option>
-                            <option value="Wowpass">Wowpass</option>
-                            <option value="其他">其他</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">退稅</label>
-                        <select id="exp-tax" class="w-full bg-gray-50 p-4 rounded-xl outline-none text-xs font-bold border-none appearance-none italic">
-                            <option value="無">無</option>
-                            <option value="未退稅">未退稅</option>
-                            <option value="已退稅">已退稅</option>
-                        </select>
-                    </div>
+                    <div><label class="text-[10px] font-black text-gray-400 mb-2 block uppercase tracking-widest">方式</label><div class="grid grid-cols-1 gap-2" id="payment-btns"></div></div>
+                    <div><label class="text-[10px] font-black text-gray-400 mb-2 block uppercase tracking-widest">退稅</label><div class="grid grid-cols-1 gap-2" id="tax-btns"></div></div>
                 </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">付款人</label>
-                    <div class="grid grid-cols-3 gap-2" id="payer-btns"></div>
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">花費分類</label>
-                    <div class="grid grid-cols-4 gap-2" id="cat-btns"></div>
-                </div>
-
                 <div class="flex items-center space-x-2">
-                    <select id="exp-currency" onchange="calcHint()" class="w-1/3 bg-gray-50 p-5 rounded-2xl text-[10px] font-black outline-none appearance-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select>
-                    <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-5 rounded-2xl outline-none text-2xl font-black italic tracking-tighter">
+                    <select id="exp-currency" class="w-1/3 bg-gray-50 p-5 rounded-2xl text-[10px] font-black outline-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select>
+                    <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-5 rounded-2xl outline-none text-base font-black italic tracking-tighter">
                 </div>
-                
-                <div class="flex justify-between px-3 text-[10px] font-black font-mono">
-                    <span class="text-gray-400">匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b border-gray-200 outline-none text-cream-accent font-black"></span>
-                    <span id="exp-twd-hint" class="text-cream-accent font-black uppercase italic">台幣換算: NT$ 0</span>
+                <div class="flex justify-between px-3 text-[10px] font-bold font-mono text-gray-400 italic">
+                    <span>匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b outline-none text-cream-accent font-black"></span>
+                    <span id="exp-twd-hint" class="text-cream-accent font-black uppercase">台幣: NT$ 0</span>
                 </div>
-                
-                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg shadow-cream-accent/30 tracking-widest uppercase italic">Save Transaction</button>
+                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg tracking-widest uppercase italic">Save Now</button>
             </div>
         </div>
     </div>
@@ -270,16 +237,18 @@
 
     <script>
         // --- 核心資料 ---
-        let state = JSON.parse(localStorage.getItem('korea_final_vMax_v2')) || {
+        let state = JSON.parse(localStorage.getItem('korea_vFinal_2026')) || {
             title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
             todoGroups: [], expenses: [], customInfo: [], wishGroups: []
         };
 
         const dayArr = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
-        const payers = ["小慌", "昱凱", "小安", "文哥", "零用金"];
+        const payers = ["小慌", "昱凱", "小安", "文哥"];
         const expCats = ["吃飯", "購物", "景點費用", "其他"];
-        let curPayer="文哥", curExpCat="其他";
+        const payments = ["信用卡", "現金", "行動支付"];
+        const taxes = ["無", "未退稅", "已退稅"];
+        let curPayer="文哥", curPayment="現金", curTax="無", curExpCat="其他";
 
         function setupAutoClear(el, placeholder) {
             if (!el.innerText.trim() || el.innerText.trim() === placeholder) {
@@ -291,32 +260,16 @@
 
         function saveState() {
             state.title = document.getElementById('trip-title').innerText;
-            state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
-            localStorage.setItem('korea_final_vMax_v2', JSON.stringify(state));
+            localStorage.setItem('korea_vFinal_2026', JSON.stringify(state));
             updateSummary();
         }
 
-        window.onload = () => { renderAll(); setupAutoClear(document.getElementById('trip-title'), "🇰🇷 韓國之旅 2026"); setupAutoClear(document.getElementById('budget-val'), "50000"); document.getElementById('exp-amount').oninput = calcHint; document.getElementById('exp-rate').oninput = calcHint; };
+        window.onload = () => { renderAll(); setupAutoClear(document.getElementById('trip-title'), "🇰🇷 韓國之旅 2026"); document.getElementById('exp-amount').oninput = calcHint; document.getElementById('exp-rate').oninput = calcHint; };
 
         function renderAll() {
             renderDayNav(); renderItin(); renderWishlist(); renderTodos(); renderExpenses('all'); renderCustomInfo(); updateSummary();
         }
 
-        // --- 匯率計算機邏輯 ---
-        function calcQuick(source) {
-            const rate = 0.024;
-            const krwIn = document.getElementById('calc-krw');
-            const twdIn = document.getElementById('calc-twd');
-            if(source === 'krw') twdIn.value = Math.round(krwIn.value * rate);
-            else krwIn.value = Math.round(twdIn.value / rate);
-        }
-        function calcCustom() {
-            const rate = parseFloat(document.getElementById('calc-custom-rate').value) || 0;
-            const amt = parseFloat(document.getElementById('calc-custom-amt').value) || 0;
-            document.getElementById('calc-custom-result').innerText = `Result: NT$ ${Math.round(amt * rate).toLocaleString()}`;
-        }
-
-        // --- 分頁功能 ---
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
@@ -333,7 +286,7 @@
                 const btn = document.createElement('button');
                 btn.className = `day-btn flex-none rounded-2xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == i+1 ? 'active' : 'bg-white text-cream-sub'}`;
                 btn.onclick = () => { state.currentDay = i+1; renderAll(); };
-                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1">Day ${i+1}</span><span class="text-[10px] font-bold tracking-tighter">${d.w}</span><span class="text-base font-black italic underline decoration-cream-primary/30">${d.d}</span>`;
+                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1">Day ${i+1}</span><span class="text-[10px] font-bold">${d.w}</span><span class="text-base font-black italic underline decoration-cream-primary/30">${d.d}</span>`;
                 container.appendChild(btn);
             });
         }
@@ -349,16 +302,17 @@
                             <button onclick="event.stopPropagation(); moveItin(${idx},1)"><i class="fa-solid fa-chevron-down text-xs"></i></button>
                             <button onclick="event.stopPropagation(); delItin(${idx})" class="hover:text-red-400 ml-1"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <div class="flex justify-between mb-2 pr-14 font-mono italic font-black text-cream-accent text-xs"><span>${item.time || '12:00'}</span></div>
+                        <div class="flex justify-between mb-2 pr-14"><span class="text-xs font-black text-cream-accent italic font-mono">${item.time || '12:00'}</span></div>
                         <h3 class="font-black text-base italic tracking-tight uppercase">${item.title || '地標名稱'}</h3>
                     </div>`;
                 list.appendChild(div);
             });
         }
-        function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新行程", locCN:"", locKR:"", desc:"", notes:"", shops:[] }); saveState(); renderItin(); }
-        function delItin(idx) { if(confirm("刪除行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
+        function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新景點", locCN:"", locKR:"", desc:"", notes:"", shops:[] }); saveState(); renderItin(); }
+        function delItin(idx) { if(confirm("刪除行程項目？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
         function moveItin(idx, dir) { const arr = state.itin[state.currentDay]; const t = idx+dir; if(t>=0 && t<arr.length) { [arr[idx],arr[t]]=[arr[t],arr[idx]]; saveState(); renderItin(); } }
 
+        // --- 詳細頁與購物模組 (含排序邏輯) ---
         function openDetailModal(idx) {
             const item = state.itin[state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
@@ -384,19 +338,41 @@
             const area = document.getElementById('detail-shopping-list-area'); area.innerHTML = "";
             let tItems=0, bItems=0;
             shops.forEach((shop, sIdx) => {
+                // 排序邏輯：未打勾在上，已打勾在下
                 const sortedItems = [...shop.items].sort((a,b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
                 const bCount = shop.items.filter(i=>i.done).length, tCount = shop.items.length;
                 const pct = tCount>0 ? Math.round((bCount/tCount)*100) : 0;
                 tItems += tCount; bItems += bCount;
                 const div = document.createElement('div'); div.className = "bg-white border border-gray-100 rounded-[2.5rem] p-5 shadow-sm space-y-4";
-                div.innerHTML = `<div class="flex justify-between items-center cursor-pointer" onclick="toggleShopCollapseDetail(${sIdx})">
-                    <div class="flex-1"><h5 contenteditable="true" onclick="event.stopPropagation()" id="dsn-${sIdx}" class="font-black text-sm italic uppercase tracking-widest">${shop.name}</h5><div class="mt-2 flex items-center space-x-2"><div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent" style="width:${pct}%"></div></div><span class="text-[9px] font-black font-mono text-cream-accent">${bCount}/${tCount}</span></div></div>
-                    <button onclick="event.stopPropagation(); delShopDetail(${sIdx})" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button></div>
-                    <div class="${shop.collapsed?'hidden':'space-y-3'}">${sortedItems.map((i, iIdx) => { const origIdx = shop.items.indexOf(i); return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative group"><div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="toggleShopItemDetail(${sIdx},${origIdx})" class="w-5 h-5 accent-cream-accent"><div class="flex-1 min-w-0"><div contenteditable="true" id="dsi-${sIdx}-${origIdx}" class="text-[11px] font-black truncate ${i.done?'line-through opacity-30':''}">${i.name}</div><div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="dsp-${sIdx}-${origIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="dsq-${sIdx}-${origIdx}">${i.qty}</span></span></div></div><button onclick="delShopItemDetail(${sIdx},${origIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button></div>
-                    <div class="flex items-center space-x-3 pl-8"><div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative">${i.img?`<img src="${i.img}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}<input type="file" accept="image/*" onchange="uploadImageDetail(event,${sIdx},${origIdx})" class="absolute inset-0 opacity-0"></div><textarea id="dsnt-${sIdx}-${origIdx}" placeholder="商品備註..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note||''}</textarea></div></div>`}).join('')}<button onclick="addShopItemDetail(${sIdx})" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button></div>`;
+                div.innerHTML = `
+                    <div class="flex justify-between items-center cursor-pointer" onclick="toggleShopCollapseDetail(${sIdx})">
+                        <div class="flex-1"><h5 contenteditable="true" onclick="event.stopPropagation()" id="dsn-${sIdx}" class="font-black text-sm italic uppercase tracking-widest">${shop.name}</h5>
+                        <div class="mt-2 flex items-center space-x-2"><div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent" style="width:${pct}%"></div></div><span class="text-[9px] font-black font-mono text-cream-accent">${bCount}/${tCount}</span></div></div>
+                        <button onclick="event.stopPropagation(); delShopDetail(${sIdx})" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                    <div class="${shop.collapsed?'hidden':'space-y-3'}">
+                        ${sortedItems.map((i, iIdx) => {
+                            const originalIdx = shop.items.indexOf(i);
+                            return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative">
+                                <div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="toggleShopItemDetail(${sIdx},${originalIdx})" class="w-5 h-5 accent-cream-accent">
+                                <div class="flex-1"><div contenteditable="true" id="dsi-${sIdx}-${originalIdx}" class="text-[11px] font-black ${i.done?'line-through opacity-30':''}">${i.name}</div>
+                                <div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="dsp-${sIdx}-${originalIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="dsq-${sIdx}-${originalIdx}">${i.qty}</span></span></div></div>
+                                <button onclick="delShopItemDetail(${sIdx},${originalIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button></div>
+                                <div class="flex items-center space-x-3 pl-8"><div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative">${i.img?`<img src="${i.img}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}<input type="file" accept="image/*" onchange="uploadImageDetail(event,${sIdx},${originalIdx})" class="absolute inset-0 opacity-0"></div>
+                                <textarea id="dsnt-${sIdx}-${originalIdx}" placeholder="商品備註..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note||''}</textarea></div>
+                            </div>`}).join('')}
+                        <button onclick="addShopItemDetail(${sIdx})" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button>
+                    </div>`;
                 area.appendChild(div);
                 setupAutoClear(div.querySelector(`#dsn-${sIdx}`), "商店名稱");
-                shop.items.forEach((item, iIdx) => { setupAutoClear(div.querySelector(`#dsi-${sIdx}-${iIdx}`), "商品名稱"); div.querySelector(`#dsn-${sIdx}`).onblur=(e)=>{ shop.name=e.target.innerText; saveState(); }; div.querySelector(`#dsi-${sIdx}-${iIdx}`).onblur=(e)=>{ item.name=e.target.innerText; saveState(); }; div.querySelector(`#dsp-${sIdx}-${iIdx}`).onblur=(e)=>{ item.price=e.target.innerText; saveState(); }; div.querySelector(`#dsq-${sIdx}-${iIdx}`).onblur=(e)=>{ item.qty=e.target.innerText; saveState(); }; div.querySelector(`#dsnt-${sIdx}-${iIdx}`).onblur=(e)=>{ item.note=e.target.value; saveState(); }; });
+                shop.items.forEach((item, iIdx) => {
+                    setupAutoClear(div.querySelector(`#dsi-${sIdx}-${iIdx}`), "商品名稱");
+                    div.querySelector(`#dsn-${sIdx}`).onblur=(e)=>{ shop.name=e.target.innerText; saveState(); };
+                    div.querySelector(`#dsi-${sIdx}-${iIdx}`).onblur=(e)=>{ item.name=e.target.innerText; saveState(); };
+                    div.querySelector(`#dsp-${sIdx}-${iIdx}`).onblur=(e)=>{ item.price=e.target.innerText; saveState(); };
+                    div.querySelector(`#dsq-${sIdx}-${iIdx}`).onblur=(e)=>{ item.qty=e.target.innerText; saveState(); };
+                    div.querySelector(`#dsnt-${sIdx}-${iIdx}`).onblur=(e)=>{ item.note=e.target.value; saveState(); };
+                });
             });
             document.getElementById('shop-progress-text').innerText = `${bItems} / ${tItems} Items (${Math.round((bItems/tItems)*100)||0}%)`;
         }
@@ -409,6 +385,7 @@
         function toggleShopCollapseDetail(s) { const idx=document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].collapsed=!state.itin[state.currentDay][idx].shops[s].collapsed; saveState(); renderDetailShopping(state.itin[state.currentDay][idx].shops); }
         function uploadImageDetail(e,s,i) { const idx=document.getElementById('detail-idx').value; const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=(event)=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const mw=200, scale=mw/img.width; canvas.width=mw; canvas.height=img.height*scale; canvas.getContext('2d').drawImage(img,0,0,mw,canvas.height); state.itin[state.currentDay][idx].shops[s].items[i].img=canvas.toDataURL('image/jpeg',0.7); saveState(); renderDetailShopping(state.itin[state.currentDay][idx].shops); }; img.src=event.target.result; }; reader.readAsDataURL(file); }
 
+        // --- 採購分頁 (Wishlist - 跟 Shopping List 一模一樣) ---
         function renderWishlist() {
             const area = document.getElementById('wishlist-module-area'); area.innerHTML = "";
             (state.wishGroups || []).forEach((shop, sIdx) => {
@@ -416,11 +393,18 @@
                 const bCount = shop.items.filter(i=>i.done).length, tCount = shop.items.length, pct = tCount>0 ? Math.round((bCount/tCount)*100) : 0;
                 const div = document.createElement('div'); div.className = "bg-white border border-gray-100 rounded-[2.5rem] p-5 shadow-sm space-y-4";
                 div.innerHTML = `<div class="flex justify-between items-center cursor-pointer" onclick="toggleWishCollapse(${sIdx})"><div class="flex-1"><h5 contenteditable="true" onclick="event.stopPropagation()" id="wsn-${sIdx}" class="font-black text-sm italic uppercase tracking-widest">${shop.name}</h5><div class="mt-2 flex items-center space-x-2"><div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent" style="width:${pct}%"></div></div><span class="text-[9px] font-black font-mono text-cream-accent">${bCount}/${tCount}</span></div></div><button onclick="event.stopPropagation(); delWishG(${sIdx})" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button></div>
-                    <div class="${shop.collapsed?'hidden':'space-y-3'}">${sortedItems.map((i, iIdx) => { const origIdx = shop.items.indexOf(i); return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative"><div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="toggleWishItem(${sIdx},${origIdx})" class="w-5 h-5 accent-cream-accent"><div class="flex-1 min-w-0"><div contenteditable="true" id="wsi-${sIdx}-${origIdx}" class="text-[11px] font-black ${i.done?'line-through opacity-30':''}">${i.name}</div><div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="wsp-${sIdx}-${origIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="wsq-${sIdx}-${origIdx}">${i.qty}</span></span></div></div><button onclick="delWishItem(${sIdx},${origIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button></div>
+                    <div class="${shop.collapsed?'hidden':'space-y-3'}">${sortedItems.map((i, iIdx) => { const origIdx = shop.items.indexOf(i); return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative"><div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="toggleWishItem(${sIdx},${origIdx})" class="w-5 h-5 accent-cream-accent"><div class="flex-1"><div contenteditable="true" id="wsi-${sIdx}-${origIdx}" class="text-[11px] font-black ${i.done?'line-through opacity-30':''}">${i.name}</div><div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="wsp-${sIdx}-${origIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="wsq-${sIdx}-${origIdx}">${i.qty}</span></span></div></div><button onclick="delWishItem(${sIdx},${origIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button></div>
                     <div class="flex items-center space-x-3 pl-8"><div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative">${i.img?`<img src="${i.img}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}<input type="file" accept="image/*" onchange="uploadImageWish(event,${sIdx},${origIdx})" class="absolute inset-0 opacity-0"></div><textarea id="wsnt-${sIdx}-${origIdx}" placeholder="商品備註..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note||''}</textarea></div></div>`}).join('')}<button onclick="addWishItem(${sIdx})" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button></div>`;
                 area.appendChild(div);
                 setupAutoClear(div.querySelector(`#wsn-${sIdx}`), "商店名稱");
-                shop.items.forEach((item, iIdx) => { setupAutoClear(div.querySelector(`#wsi-${sIdx}-${iIdx}`), "商品名稱"); div.querySelector(`#wsn-${sIdx}`).onblur=(e)=>{ shop.name=e.target.innerText; saveState(); }; div.querySelector(`#wsi-${sIdx}-${iIdx}`).onblur=(e)=>{ item.name=e.target.innerText; saveState(); }; div.querySelector(`#wsp-${sIdx}-${origIdx}`).onblur=(e)=>{ item.price=e.target.innerText; saveState(); }; div.querySelector(`#wsq-${sIdx}-${origIdx}`).onblur=(e)=>{ item.qty=e.target.innerText; saveState(); }; div.querySelector(`#wsnt-${sIdx}-${origIdx}`).onblur=(e)=>{ item.note=e.target.value; saveState(); }; });
+                shop.items.forEach((item, iIdx) => {
+                    setupAutoClear(div.querySelector(`#wsi-${sIdx}-${iIdx}`), "商品名稱");
+                    div.querySelector(`#wsn-${sIdx}`).onblur=(e)=>{ shop.name=e.target.innerText; saveState(); };
+                    div.querySelector(`#wsi-${sIdx}-${iIdx}`).onblur=(e)=>{ item.name=e.target.innerText; saveState(); };
+                    div.querySelector(`#wsp-${sIdx}-${iIdx}`).onblur=(e)=>{ item.price=e.target.innerText; saveState(); };
+                    div.querySelector(`#wsq-${sIdx}-${iIdx}`).onblur=(e)=>{ item.qty=e.target.innerText; saveState(); };
+                    div.querySelector(`#wsnt-${sIdx}-${iIdx}`).onblur=(e)=>{ item.note=e.target.value; saveState(); };
+                });
             });
         }
         function addWishGroup() { if(!state.wishGroups) state.wishGroups=[]; state.wishGroups.push({name:"商店名稱",items:[],collapsed:false}); saveState(); renderWishlist(); }
@@ -431,23 +415,24 @@
         function toggleWishCollapse(s) { state.wishGroups[s].collapsed=!state.wishGroups[s].collapsed; saveState(); renderWishlist(); }
         function uploadImageWish(e,s,i) { const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const mw=200, scale=mw/img.width; canvas.width=mw; canvas.height=img.height*scale; canvas.getContext('2d').drawImage(img,0,0,mw,canvas.height); state.wishGroups[s].items[i].img=canvas.toDataURL('image/jpeg',0.7); saveState(); renderWishlist(); }; img.src=ev.target.result; }; reader.readAsDataURL(file); }
 
+        // --- 代辦功能 ---
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             state.todoGroups.forEach((group, gIdx) => {
                 const gDiv = document.createElement('div'); gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative mb-4";
-                gDiv.innerHTML = `<button onclick="delTodoG(${gIdx})" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h3 id="tg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-4 pr-6 italic uppercase underline decoration-cream-primary/40">${group.title}</h3><div class="space-y-3">${group.items.map((item, iIdx) => `<div class="flex items-center justify-between group"><div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200 flex-shrink-0"></div><span id="ti-${gIdx}-${iIdx}" contenteditable="true" class="editable text-sm font-bold text-gray-500">${item}</span></div><button onclick="delTodoI(${gIdx},${iIdx})" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button></div>`).join('')}</div><button onclick="addTodoI(${gIdx})" class="mt-4 text-[10px] font-black text-gray-300 uppercase tracking-widest hover:text-cream-accent transition">+ 新增事項</button>`;
+                gDiv.innerHTML = `<button onclick="delTodoG(${gIdx})" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h3 id="tg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-4 pr-6 italic uppercase underline decoration-cream-primary/40">${group.title}</h3><div class="space-y-3">${group.items.map((item, iIdx) => `<div class="flex items-center justify-between group"><div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200 flex-shrink-0"></div><span id="ti-${gIdx}-${iIdx}" contenteditable="true" class="editable text-sm font-bold text-gray-500">${item}</span></div><button onclick="delTodoI(${gIdx},${iIdx})" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button></div>`).join('')}</div><button onclick="addTodoI(${gIdx})" class="mt-4 text-[10px] font-black text-gray-300 uppercase tracking-widest hover:text-cream-accent transition">+ 新增事項內容</button>`;
                 container.appendChild(gDiv);
                 const tgEl = gDiv.querySelector(`#tg-${gIdx}`); setupAutoClear(tgEl, "分類標題"); tgEl.onblur=()=>{ group.title=tgEl.innerText; saveState(); };
-                group.items.forEach((_, iIdx) => { const tiEl = gDiv.querySelector(`#ti-${gIdx}-${iIdx}`); setupAutoClear(tiEl, "事項內容"); tiEl.onblur=()=>{ group.items[iIdx]=tiEl.innerText; saveState(); }; });
+                group.items.forEach((_, iIdx) => { const tiEl = gDiv.querySelector(`#ti-${gIdx}-${iIdx}`); setupAutoClear(tiEl, "代辦細項內容"); tiEl.onblur=()=>{ group.items[iIdx]=tiEl.innerText; saveState(); }; });
             });
         }
-        function addTodoGroup() { state.todoGroups.push({ title: "分類標題", items: ["事項內容"] }); saveState(); renderTodos(); }
+        function addTodoGroup() { state.todoGroups.push({ title: "分類標題", items: ["代辦細項內容"] }); saveState(); renderTodos(); }
         function delTodoG(idx) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); }
-        function addTodoI(idx) { state.todoGroups[idx].items.push("事項內容"); saveState(); renderTodos(); }
+        function addTodoI(idx) { state.todoGroups[idx].items.push("代辦細項內容"); saveState(); renderTodos(); }
         function delTodoI(g, i) { state.todoGroups[g].items.splice(i,1); saveState(); renderTodos(); }
 
         // --- 記帳功能 ---
-        function setField(type, val) { document.querySelectorAll(`.${type}-btn`).forEach(b => { b.classList.remove('active'); if (b.innerText === val) b.classList.add('active'); }); if(type==='payer') curPayer=val; if(type==='cat') curExpCat=val; }
+        function setField(type, val) { document.querySelectorAll(`.${type}-btn`).forEach(b => { b.classList.remove('active'); if (b.innerText === val) b.classList.add('active'); }); if(type==='payer') curPayer=val; if(type==='payment') curPayment=val; if(type==='tax') curTax=val; if(type==='cat') curExpCat=val; }
         function renderExpenses(filter = 'all') {
             const list = document.getElementById('expense-list'); list.innerHTML = "";
             const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
@@ -456,28 +441,29 @@
             filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e) => {
                 const globalIdx = state.expenses.findIndex(x => x.id === e.id);
                 const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative transition active:scale-95";
-                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})"><div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div><div class="flex-1"><div class="flex items-center space-x-2"><p class="text-sm font-black italic tracking-tighter uppercase font-sans">${e.item}</p>${e.tax==='已退稅'?'<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退</span>':''}</div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.payment} · ${e.cat}</p></div></div><div class="text-right shrink-0"><p class="text-sm font-black italic tracking-tighter font-mono">NT$ ${e.twd.toLocaleString()}</p><p class="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic font-mono">(₩ ${e.amount.toLocaleString()})</p><button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase tracking-tighter italic">✕</button></div>`;
+                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})"><div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div><div class="flex-1"><div class="flex items-center space-x-2"><p class="text-sm font-black italic tracking-tighter uppercase font-sans">${e.item}</p>${e.tax==='已退稅'?'<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退</span>':''}</div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.cat||'其他'}</p></div></div><div class="text-right shrink-0"><p class="text-sm font-black italic tracking-tighter font-mono">NT$ ${e.twd.toLocaleString()}</p><p class="text-[9px] text-gray-300 font-bold uppercase tracking-widest italic font-mono">(₩ ${e.amount.toLocaleString()})</p><button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase tracking-tighter italic">✕</button></div>`;
                 list.appendChild(div);
             });
-            updateSummary();
         }
         function renderExpDateFilter(dates, cur) { const container = document.getElementById('expense-date-filter'); container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur==='all'?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm uppercase italic">全部</button>`; dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur===d?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm uppercase italic">${d}</button>`; }); }
-        function openExpenseModal() { document.getElementById('exp-modal-title').innerText="Record Expense"; document.getElementById('edit-exp-id').value=""; document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate=new Date(); initExpBtns(); document.getElementById('exp-item').value=""; document.getElementById('exp-amount').value=""; calcHint(); }
-        function initExpBtns() { document.getElementById('payer-btns').innerHTML=payers.map(p=>`<button onclick="setField('payer','${p}')" class="payer-btn seg-btn ${p===curPayer?'active':''}">${p}</button>`).join(''); document.getElementById('cat-btns').innerHTML=expCats.map(p=>`<button onclick="setField('cat','${p}')" class="cat-btn seg-btn ${p===curExpCat?'active':''}">${p}</button>`).join(''); }
-        function editExp(idx) { const e=state.expenses[idx]; document.getElementById('exp-modal-title').innerText="Edit Transaction"; document.getElementById('edit-exp-id').value=e.id; document.getElementById('exp-item').value=e.item; document.getElementById('exp-date').value=e.date; document.getElementById('exp-amount').value=e.amount; document.getElementById('exp-rate').value=e.rate; document.getElementById('exp-payment').value=e.payment; document.getElementById('exp-tax').value=e.tax; document.getElementById('exp-currency').value=e.currency; setField('payer',e.payer); setField('cat',e.cat||"其他"); initExpBtns(); document.getElementById('expense-modal').classList.remove('hidden'); calcHint(); }
-        function saveExpense() { const item=document.getElementById('exp-item').value, date=document.getElementById('exp-date').value, amount=parseFloat(document.getElementById('exp-amount').value)||0, rate=parseFloat(document.getElementById('exp-rate').value)||1, id=document.getElementById('edit-exp-id').value, pay=document.getElementById('exp-payment').value, tx=document.getElementById('exp-tax').value, curr=document.getElementById('exp-currency').value; if(item && amount){ let twd=0; if(curr==='KRW') twd=Math.round(amount*rate); else twd=Math.round(amount); const rec={id:id||Date.now(),item,date,amount,rate,payer:curPayer,payment:pay,tax:tx,cat:curExpCat,currency:curr,twd:twd}; if(id){ const idx=state.expenses.findIndex(x=>x.id==id); state.expenses[idx]=rec; } else { state.expenses.push(rec); } saveState(); renderExpenses(); closeExpenseModal(); } }
+        function openExpenseModal() { document.getElementById('exp-modal-title').innerText="新增記帳"; document.getElementById('edit-exp-id').value=""; document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate=new Date(); initExpBtns(); document.getElementById('exp-item').value=""; document.getElementById('exp-amount').value=""; calcHint(); }
+        function initExpBtns() { document.getElementById('payer-btns').innerHTML=payers.map(p=>`<button onclick="setField('payer','${p}')" class="payer-btn seg-btn ${p===curPayer?'active':''}">${p}</button>`).join(''); document.getElementById('cat-btns').innerHTML=expCats.map(p=>`<button onclick="setField('cat','${p}')" class="cat-btn seg-btn ${p===curExpCat?'active':''}">${p}</button>`).join(''); document.getElementById('payment-btns').innerHTML=payments.map(p=>`<button onclick="setField('payment','${p}')" class="payment-btn seg-btn ${p===curPayment?'active':''}">${p}</button>`).join(''); document.getElementById('tax-btns').innerHTML=taxes.map(p=>`<button onclick="setField('tax','${p}')" class="tax-btn seg-btn ${p===curTax?'active':''}">${p}</button>`).join(''); }
+        function saveExpense() { const item=document.getElementById('exp-item').value, date=document.getElementById('exp-date').value, amount=parseFloat(document.getElementById('exp-amount').value)||0, rate=parseFloat(document.getElementById('exp-rate').value)||1, id=document.getElementById('edit-exp-id').value; if(item && amount){ const rec={id:id||Date.now(),item,date,amount,rate,payer:curPayer,payment:curPayment,tax:curTax,cat:curExpCat,twd:Math.round(amount*rate)}; if(id){ const idx=state.expenses.findIndex(x=>x.id==id); state.expenses[idx]=rec; } else { state.expenses.push(rec); } saveState(); renderExpenses(); closeExpenseModal(); } }
+        function editExp(idx) { const e=state.expenses[idx]; document.getElementById('exp-modal-title').innerText="編輯帳目"; document.getElementById('edit-exp-id').value=e.id; document.getElementById('exp-item').value=e.item; document.getElementById('exp-date').value=e.date; document.getElementById('exp-amount').value=e.amount; document.getElementById('exp-rate').value=e.rate; setField('payer',e.payer); setField('payment',e.payment); setField('tax',e.tax); setField('cat',e.cat||"其他"); initExpBtns(); document.getElementById('expense-modal').classList.remove('hidden'); calcHint(); }
         function delExp(idx) { if(confirm("確定刪除？")) { state.expenses.splice(idx,1); saveState(); renderExpenses(); } }
         function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
-        function calcHint() { const a=parseFloat(document.getElementById('exp-amount').value)||0, r=parseFloat(document.getElementById('exp-rate').value)||1, c=document.getElementById('exp-currency').value; if(c==='KRW') document.getElementById('exp-twd-hint').innerText=`台幣換算: NT$ ${Math.round(a*r).toLocaleString()}`; else document.getElementById('exp-twd-hint').innerText=`韓元換算: ₩ ${Math.round(a/r).toLocaleString()}`; }
+        function calcHint() { const a=parseFloat(document.getElementById('exp-amount').value)||0, r=parseFloat(document.getElementById('exp-rate').value)||1; document.getElementById('exp-twd-hint').innerText=`台幣: NT$ ${Math.round(a*r).toLocaleString()}`; }
         function updateSummary() { const total=state.expenses.reduce((s,e)=>s+e.twd,0); document.getElementById('total-spent').innerText=`NT$ ${total.toLocaleString()}`; const left=state.budget-total; document.getElementById('budget-left').innerText=`$ ${left.toLocaleString()}`; document.getElementById('budget-bar').style.width=Math.min(100,(total/state.budget)*100)+'%'; }
-        function toggleSettlement() { const modal=document.getElementById('settlement-modal'), content=document.getElementById('settlement-content'); if(modal.classList.contains('hidden')){ modal.classList.remove('hidden'); const total=state.expenses.reduce((s,e)=>s+e.twd,0), avg=total/4, paid={}; payers.slice(0,4).forEach(p=>paid[p]=0); state.expenses.forEach(e=>{if(paid[e.payer]!==undefined) paid[e.payer]+=e.twd;}); content.innerHTML=""; payers.slice(0,4).forEach(p=>{ const diff=paid[p]-avg; content.innerHTML+=`<div class="flex justify-between py-2 border-b border-gray-50"><span class="text-sm font-bold uppercase italic">${p}</span><div class="text-right font-mono"><p class="text-[10px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="text-xs font-black italic ${diff>=0?'text-green-500':'text-red-400'}">${diff>=0?'+':''}${Math.round(diff).toLocaleString()}</p></div></div>`; }); } else { modal.classList.add('hidden'); } }
+        function toggleSettlement() { const modal=document.getElementById('settlement-modal'), content=document.getElementById('settlement-content'); if(modal.classList.contains('hidden')){ modal.classList.remove('hidden'); const total=state.expenses.reduce((s,e)=>s+e.twd,0), avg=total/payers.length, paid={}; payers.forEach(p=>paid[p]=0); state.expenses.forEach(e=>paid[e.payer]+=e.twd); content.innerHTML=""; payers.forEach(p=>{ const diff=paid[p]-avg; content.innerHTML+=`<div class="flex justify-between py-2 border-b border-gray-50"><span class="text-sm font-bold uppercase italic">${p}</span><div class="text-right font-mono"><p class="text-[10px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="text-xs font-black italic ${diff>=0?'text-green-500':'text-red-400'}">${diff>=0?'+':''}${Math.round(diff).toLocaleString()}</p></div></div>`; }); } else { modal.classList.add('hidden'); } }
 
+        // --- 資訊頁面 ---
         function renderCustomInfo() { const container=document.getElementById('custom-info-list'); container.innerHTML=""; (state.customInfo||[]).forEach((info, idx)=>{ const div=document.createElement('div'); div.className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative mb-4"; div.innerHTML=`<button onclick="delInfo(${idx})" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h4 contenteditable="true" id="inf-t-${idx}" class="editable font-black text-sm mb-2 italic tracking-widest uppercase underline decoration-cream-accent/20">${info.title}</h4><div contenteditable="true" id="inf-c-${idx}" class="editable text-[11px] text-gray-500 leading-relaxed font-mono">${info.content}</div>`; container.appendChild(div); const tEl=div.querySelector(`#inf-t-${idx}`), cEl=div.querySelector(`#inf-c-${idx}`); setupAutoClear(tEl,"資訊標題"); setupAutoClear(cEl,"資訊內容..."); tEl.onblur=()=>{info.title=tEl.innerText; saveState();}; cEl.onblur=()=>{info.content=cEl.innerText; saveState();}; }); }
         function addCustomInfo() { if(!state.customInfo)state.customInfo=[]; state.customInfo.push({title:"資訊標題",content:"資訊內容..."}); saveState(); renderCustomInfo(); }
         function delInfo(idx) { state.customInfo.splice(idx,1); saveState(); renderCustomInfo(); }
 
-        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(()=>alert("已複製: " + text)); }
-        function openM(type, loc) { if(!loc)return alert("請輸入地標"); const q=encodeURIComponent(loc); window.open(type==='google'?`https://www.google.com/maps/search/?api=1&query=${q}`:`https://map.naver.com/v5/search/${q}`,'_blank'); }
+        // --- 共通工具 ---
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(()=>alert("已複製到剪貼簿: " + text)); }
+        function openM(type, loc) { if(!loc)return alert("請輸入地標名稱"); const q=encodeURIComponent(loc); window.open(type==='google'?`https://www.google.com/maps/search/?api=1&query=${q}`:`https://map.naver.com/v5/search/${q}`,'_blank'); }
     </script>
 </body>
 </html>
