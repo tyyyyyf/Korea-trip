@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026 Pro Max</title>
+    <title>🇰🇷 韓國之旅 2026 Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"></script>
-    <!-- 引入拖移排序插件 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
         tailwind.config = {
@@ -24,7 +23,7 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F8F5F2; color: #2C2C2C; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F8F5F2; color: #2C2C2C; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -39,18 +38,17 @@
         #detail-modal, #calc-modal { position: fixed; inset: 0; z-index: 500; background: #FFFFFF; display: none; overflow-y: auto; }
         #detail-modal.active, #calc-modal.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .placeholder-hint { color: #D1D5DB !important; }
-        /* 拖移時的樣式 */
+        .placeholder-hint { color: #D1D5DB !important; font-weight: 300 !important; }
         .sortable-ghost { opacity: 0.3; background: #E8DCCF !important; }
     </style>
 </head>
 <body class="flex justify-center">
 
-    <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg shadow-inner text-gray-800">
+    <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg shadow-inner">
         
         <!-- Header -->
         <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20 flex justify-between items-center">
-            <h1 id="trip-title" contenteditable="true" class="editable text-lg font-black tracking-tight italic"></h1>
+            <h1 id="trip-title" contenteditable="true" class="editable text-lg font-black tracking-tight italic" onblur="saveState()"></h1>
             <div class="w-8 h-8 rounded-full bg-cream-accent text-white flex items-center justify-center text-[10px] font-bold font-mono">2026</div>
         </header>
 
@@ -70,9 +68,9 @@
             <div id="wishlist-module-area" class="space-y-6"></div>
         </section>
 
-        <!-- [分頁 3] 待辦 -->
+        <!-- [分頁 3] 待辦 (行前待辦事項) -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black italic tracking-tight mb-6 flex items-center text-gray-800"><i class="fa-solid fa-list-check mr-2 text-cream-accent"></i>行前待辦事項</h2>
+            <h2 class="text-2xl font-black italic tracking-tight mb-6 text-gray-800 flex items-center"><i class="fa-solid fa-list-check mr-2 text-cream-accent"></i>行前待辦事項</h2>
             <div id="todo-groups" class="space-y-6"></div>
             <button onclick="addTodoGroup()" class="mt-6 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增母項目名稱</button>
         </section>
@@ -80,10 +78,10 @@
         <!-- [分頁 4] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-cream-accent flex items-center"><i class="fa-solid fa-sack-dollar mr-2"></i>旅遊記帳</h2>
-            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-6 font-mono font-black">
-                <div class="flex justify-between text-[11px] text-gray-400 mb-2 uppercase tracking-tighter">
-                    <span>預算 (NT$ <span contenteditable="true" id="budget-val" class="editable"></span>)</span>
-                    <span>剩餘: <span id="budget-left" class="text-cream-accent">0</span></span>
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-6 font-mono">
+                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tighter">
+                    <span>預算進度 (NT$ <span contenteditable="true" id="budget-val" class="editable font-black"></span>)</span>
+                    <span>剩餘: <span id="budget-left" class="text-cream-accent font-black">0</span></span>
                 </div>
                 <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden"><div id="budget-bar" class="bg-cream-accent h-full transition-all duration-700"></div></div>
             </div>
@@ -91,14 +89,15 @@
                 <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase">總支出 (TWD)</p>
                 <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter">NT$ 0</h3>
                 <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30 italic">查看分帳統計</button>
+                <i class="fa-solid fa-sack-dollar absolute -right-4 -bottom-4 text-white/10 text-9xl"></i>
             </div>
             <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 px-1"></div>
-            <div id="expense-list" class="space-y-4"></div>
+            <div id="expense-list" class="space-y-4 text-gray-800"></div>
         </section>
 
         <!-- [分頁 5] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8">
-            <h2 class="text-2xl font-black mb-6 italic text-cream-accent tracking-widest flex items-center"><i class="fa-solid fa-circle-info mr-2"></i>資訊</h2>
+            <h2 class="text-2xl font-black mb-6 italic text-cream-accent flex items-center"><i class="fa-solid fa-circle-info mr-2"></i>資訊</h2>
             <div id="info-static-area" class="space-y-4 mb-8 text-gray-800"></div>
             <div id="custom-info-list" class="space-y-4"></div>
             <button onclick="addCustomInfo()" class="mt-4 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增自訂資訊</button>
@@ -128,36 +127,38 @@
         <div class="p-8 pb-40 space-y-8">
             <input type="hidden" id="detail-idx">
             <div class="space-y-6">
-                <input id="detail-title" type="text" class="w-full text-3xl font-black border-none outline-none italic tracking-tighter" placeholder="目的地名稱">
+                <input id="detail-title" type="text" class="w-full text-3xl font-black border-none outline-none italic tracking-tighter text-gray-800" placeholder="目的地名稱">
                 <div class="grid grid-cols-1 gap-4 bg-gray-50/50 p-6 rounded-[2rem]">
                     <div class="flex items-center justify-between"><label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">中文地址</label><button onclick="copyToClipboard(document.getElementById('detail-loc-cn').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button></div>
-                    <input id="detail-loc-cn" type="text" class="bg-white p-3 rounded-xl border-none outline-none text-xs font-bold" placeholder="輸入目的地或中文地址">
+                    <input id="detail-loc-cn" type="text" class="bg-white p-3 rounded-xl border-none outline-none text-xs font-bold" placeholder="輸入中文地址">
                     <div class="flex items-center justify-between"><label class="text-[9px] font-black text-gray-400 uppercase tracking-widest">韓文地址</label><button onclick="copyToClipboard(document.getElementById('detail-loc-kr').value)"><i class="fa-regular fa-copy text-gray-300 text-xs"></i></button></div>
                     <input id="detail-loc-kr" type="text" class="bg-white p-3 rounded-xl border-none outline-none text-xs font-bold" placeholder="輸入韓文地址">
                     <div class="grid grid-cols-2 gap-3 mt-2">
-                        <button onclick="openM('google', document.getElementById('detail-loc-cn').value || document.getElementById('detail-title').value)" class="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase italic">Google</button>
-                        <button onclick="openM('naver', document.getElementById('detail-loc-kr').value || document.getElementById('detail-title').value)" class="py-3 bg-green-50 text-green-700 border border-green-100 rounded-xl text-[10px] font-black uppercase italic">Naver</button>
+                        <button onclick="openM('google', document.getElementById('detail-loc-cn').value || document.getElementById('detail-title').value)" class="py-3 bg-white border border-gray-100 rounded-xl text-[10px] font-black uppercase italic shadow-sm">Google Map</button>
+                        <button onclick="openM('naver', document.getElementById('detail-loc-kr').value || document.getElementById('detail-title').value)" class="py-3 bg-green-50 text-green-700 border border-green-100 rounded-xl text-[10px] font-black uppercase italic shadow-sm">Naver Map</button>
                     </div>
                 </div>
                 <div class="flex items-center space-x-2 bg-cream-bg/50 px-4 py-2 rounded-xl w-fit font-mono font-black italic"><i class="fa-regular fa-clock text-cream-accent"></i><input id="detail-time" type="time" class="bg-transparent border-none outline-none"></div>
+                <div><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">Category</label><select id="detail-category" class="w-full bg-gray-50 p-4 rounded-xl outline-none text-xs font-bold border-none appearance-none italic"><option value="景點">景點</option><option value="購物">購物</option><option value="餐廳">餐廳</option><option value="住宿">住宿</option><option value="其他">其他</option></select></div>
             </div>
             <div class="space-y-6">
                 <div><label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">行程詳細描述</label><textarea id="detail-desc" rows="3" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm font-medium leading-relaxed" placeholder="請輸入詳細描述..."></textarea></div>
                 <div><label class="text-[11px] font-black text-gray-800 uppercase mb-2 block tracking-tight">備註</label><textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm font-medium italic" placeholder="請輸入備註內容..."></textarea></div>
             </div>
-            <div id="detail-shopping-list-area" class="space-y-6 pt-8 border-t border-gray-100 text-gray-800"></div>
+            <div id="detail-shopping-list-area" class="space-y-6 pt-8 border-t border-gray-100"></div>
+            <button onclick="addShopGroupDetail()" class="w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-cream-accent font-bold text-sm tracking-widest">+ Add Shop</button>
         </div>
     </div>
 
-    <!-- 記帳 & 計算機 Modal (內容略，邏輯保持) -->
-    <div id="calc-modal" class="no-scrollbar">
-        <div class="sticky top-0 z-[510] bg-white/95 backdrop-blur-md px-6 py-5 border-b border-gray-100 flex justify-between items-center"><button onclick="closeCalcModal()" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400">✕</button><h3 class="text-[10px] font-black italic tracking-widest text-cream-accent uppercase">Converter</h3><div class="w-10"></div></div>
+    <!-- 匯率計算機 Modal -->
+    <div id="calc-modal" class="no-scrollbar text-gray-800">
+        <div class="sticky top-0 z-[510] bg-white/95 backdrop-blur-md px-6 py-5 border-b border-gray-100 flex justify-between items-center"><button onclick="closeCalcModal()" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 font-black">✕</button><h3 class="text-[10px] font-black italic tracking-widest text-cream-accent uppercase">Converter</h3><div class="w-10"></div></div>
         <div class="p-8 space-y-10">
             <div class="bg-cream-bg p-4 rounded-2xl flex justify-between items-center"><span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Rate</span><div class="flex items-center space-x-2 font-mono"><span class="text-[10px] font-bold">1 KRW =</span><input type="number" id="main-calc-rate" value="0.024" step="0.001" oninput="syncKRW()" class="w-16 bg-white border-none rounded-lg p-2 text-center text-xs font-black text-cream-accent outline-none"><span class="text-[10px] font-bold">TWD</span></div></div>
-            <div class="space-y-8">
-                <div><label class="text-[11px] font-black text-gray-300 uppercase tracking-widest ml-2">KRW (₩)</label><input type="number" id="main-calc-krw" oninput="syncKRW()" placeholder="0" class="w-full bg-gray-50 p-6 rounded-[2rem] text-4xl font-black italic outline-none tracking-tighter"></div>
+            <div class="space-y-8 text-center">
+                <div><label class="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-2 block">KRW (₩)</label><input type="number" id="main-calc-krw" oninput="syncKRW()" placeholder="0" class="w-full bg-gray-50 p-6 rounded-[2rem] text-4xl font-black italic outline-none tracking-tighter text-center"></div>
                 <div class="flex justify-center"><div class="w-12 h-12 bg-cream-accent rounded-full flex items-center justify-center text-white shadow-lg"><i class="fa-solid fa-right-left rotate-90"></i></div></div>
-                <div><label class="text-[11px] font-black text-gray-300 uppercase tracking-widest ml-2">TWD ($)</label><input type="number" id="main-calc-twd" oninput="syncTWD()" placeholder="0" class="w-full bg-gray-50 p-6 rounded-[2rem] text-4xl font-black italic outline-none tracking-tighter text-cream-accent"></div>
+                <div><label class="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-2 block">TWD ($)</label><input type="number" id="main-calc-twd" oninput="syncTWD()" placeholder="0" class="w-full bg-gray-50 p-6 rounded-[2rem] text-4xl font-black italic outline-none tracking-tighter text-cream-accent text-center"></div>
             </div>
         </div>
     </div>
@@ -165,7 +166,7 @@
     <!-- 記帳 Modal -->
     <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end text-gray-800">
         <div class="w-full bg-white rounded-t-[3rem] p-8 animate-[slideUp_0.3s] pb-12 overflow-y-auto max-h-[90vh] no-scrollbar">
-            <div class="flex justify-between items-center mb-6"><h3 id="exp-modal-title" class="text-xl font-black italic">Record Transaction</h3><button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 text-xs font-black">✕</button></div>
+            <div class="flex justify-between items-center mb-8"><h3 id="exp-modal-title" class="text-xl font-black italic tracking-tighter uppercase underline decoration-cream-accent/20">Recording</h3><button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 font-black">✕</button></div>
             <div class="space-y-6">
                 <input type="hidden" id="edit-exp-id">
                 <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold border-none">
@@ -174,36 +175,36 @@
                     <div><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">付款方式</label><select id="exp-payment" class="w-full bg-gray-50 p-4 rounded-xl outline-none text-xs font-bold border-none italic"><option value="現金">現金</option><option value="旅遊金">旅遊金</option><option value="信用卡">信用卡</option><option value="Line Pay">Line Pay</option><option value="Wowpass">Wowpass</option><option value="其他">其他</option></select></div>
                     <div><label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">退稅</label><select id="exp-tax" class="w-full bg-gray-50 p-4 rounded-xl outline-none text-xs font-bold border-none italic"><option value="無">無</option><option value="未退稅">未退稅</option><option value="已退稅">已退稅</option></select></div>
                 </div>
-                <div><label class="text-[10px] font-black text-gray-400 uppercase mb-3 block font-mono">Paid By</label><div class="grid grid-cols-3 gap-2" id="payer-btns"></div></div>
-                <div><label class="text-[10px] font-black text-gray-400 uppercase mb-3 block font-mono">Category</label><div class="grid grid-cols-4 gap-2" id="cat-btns"></div></div>
-                <div class="flex items-center space-x-2"><select id="exp-currency" onchange="calcExpHint()" class="w-1/3 bg-gray-50 p-5 rounded-2xl text-[10px] font-black border-none outline-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select><input id="exp-amount" type="number" placeholder="0" class="flex-1 bg-gray-50 p-5 rounded-2xl outline-none text-2xl font-black italic tracking-tighter"></div>
-                <div class="flex justify-between px-3 text-[10px] font-black font-mono italic text-gray-400"><span>Rate: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b border-gray-200 outline-none text-cream-accent font-black"></span><span id="exp-twd-hint" class="text-cream-accent uppercase">台幣: NT$ 0</span></div>
+                <div><label class="text-[10px] font-black text-gray-400 uppercase mb-3 block">付款人</label><div class="grid grid-cols-3 gap-2" id="payer-btns"></div></div>
+                <div><label class="text-[10px] font-black text-gray-400 uppercase mb-3 block">分類</label><div class="grid grid-cols-4 gap-2" id="cat-btns"></div></div>
+                <div class="flex items-center space-x-2"><select id="exp-currency" onchange="calcExpHint()" class="w-1/3 bg-gray-50 p-5 rounded-2xl text-[10px] font-black border-none outline-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select><input id="exp-amount" type="number" placeholder="0" class="flex-1 bg-gray-50 p-5 rounded-2xl outline-none text-2xl font-black italic"></div>
+                <div class="flex justify-between px-3 text-[10px] font-black font-mono italic text-gray-400"><span>匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b border-gray-200 outline-none text-cream-accent font-black"></span><span id="exp-twd-hint" class="text-cream-accent uppercase">台幣: NT$ 0</span></div>
                 <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black shadow-lg">Save Transaction</button>
             </div>
         </div>
     </div>
 
-    <!-- 分帳統計 Modal -->
-    <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center text-gray-800"><div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8"><h3 class="text-lg font-black italic mb-6 tracking-widest uppercase">Settlement</h3><div id="settlement-content" class="space-y-3 mb-6"></div><button onclick="toggleSettlement()" class="w-full bg-cream-accent text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg italic">Close</button></div></div>
+    <!-- Settlement Modal -->
+    <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 text-center text-gray-800"><div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8 font-mono"><h3 class="text-lg font-black italic mb-6 tracking-widest uppercase">Settlement</h3><div id="settlement-content" class="space-y-3 mb-6"></div><button onclick="toggleSettlement()" class="w-full bg-cream-accent text-white py-4 rounded-2xl font-black text-xs uppercase shadow-lg italic">Close</button></div></div>
 
     <script>
         // --- 核心資料 ---
-        let state = JSON.parse(localStorage.getItem('korea_vFinal_2026_V10')) || {
+        let state = JSON.parse(localStorage.getItem('korea_final_ultimate_stable')) || {
             title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
             todoGroups: [], expenses: [], customInfo: [], wishGroups: []
         };
 
-        const dayList = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
+        const dayArr = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
         const payers = ["小慌", "昱凱", "小安", "文哥", "零用金"];
-        const expCats = ["吃飯", "購物", "景點費用", "其他"];
+        const expCats = ["吃飯", "購物", "景點", "其他"];
         let curPayer="文哥", curExpCat="其他";
 
         // --- 初始化 & 保存 ---
         function saveState() {
             state.title = document.getElementById('trip-title').innerText;
             state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
-            localStorage.setItem('korea_vFinal_2026_V10', JSON.stringify(state));
+            localStorage.setItem('korea_final_ultimate_stable', JSON.stringify(state));
             updateSummary();
         }
 
@@ -234,12 +235,11 @@
         // --- 行程功能 (含拖移排序) ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
-            dayArr = dayList;
-            dayList.forEach((d, i) => {
+            dayArr.forEach((d, i) => {
                 const btn = document.createElement('button');
                 btn.className = `day-btn flex-none rounded-2xl flex flex-col items-center justify-center shadow-sm transition-all ${state.currentDay == i+1 ? 'active' : 'bg-white text-cream-sub'}`;
                 btn.onclick = () => { state.currentDay = i+1; renderAll(); };
-                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1">Day ${i+1}</span><span class="text-[10px] font-bold">${d.w}</span><span class="text-base font-black italic underline decoration-cream-primary/30">${d.d}</span>`;
+                btn.innerHTML = `<span class="text-[9px] font-black opacity-40 mb-1 tracking-widest font-mono italic">Day ${i+1}</span><span class="text-[10px] font-bold">${d.w}</span><span class="text-base font-black italic tracking-tighter underline decoration-cream-primary/30">${d.d}</span>`;
                 container.appendChild(btn);
             });
         }
@@ -249,71 +249,55 @@
             const currentItin = state.itin[state.currentDay] || [];
             currentItin.forEach((item, idx) => {
                 const div = document.createElement('div'); 
-                div.className = "relative pl-10 mb-8 itin-item-card";
-                div.dataset.index = idx;
+                div.className = "relative pl-10 mb-8";
                 div.innerHTML = `<div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
                     <div onclick="openDetailModal(${idx})" class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative transition active:scale-95 flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-gray-50 rounded-2xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-100">${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-map-location-dot text-gray-200"></i>`}</div>
+                        <div class="w-16 h-16 bg-gray-50 rounded-2xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-100">${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-map-location-dot text-gray-200 text-lg"></i>`}</div>
                         <div class="flex-1 overflow-hidden">
-                            <div class="absolute top-4 right-4 text-gray-300"><i class="fa-solid fa-grip-lines text-[10px]"></i></div>
-                            <div class="flex justify-between mb-1 pr-10 font-mono italic font-black text-cream-accent text-[11px]"><span>${item.time || '12:00'}</span><span class="text-[9px] opacity-40 uppercase">${item.type || '景點'}</span></div>
-                            <h3 class="font-black text-sm italic tracking-tight uppercase truncate">${item.title || '點擊編輯'}</h3>
+                            <div class="absolute top-4 right-4 text-gray-200"><i class="fa-solid fa-grip-lines text-[10px]"></i></div>
+                            <div class="flex justify-between mb-1 pr-10 font-mono italic font-black text-cream-accent text-[11px]"><span>${item.time || '12:00'}</span><span class="text-[8px] opacity-40 uppercase tracking-widest">${item.type || '景點'}</span></div>
+                            <h3 class="font-black text-sm italic tracking-tight uppercase truncate text-gray-800">${item.title || '地標名稱'}</h3>
                             <div class="flex space-x-2 mt-2">
-                                <button onclick="event.stopPropagation(); openM('google','${item.locCN || item.title}')" class="px-3 py-1 bg-gray-50 rounded-lg text-[8px] font-black uppercase italic text-gray-400">Google</button>
-                                <button onclick="event.stopPropagation(); openM('naver','${item.locKR || item.title}')" class="px-3 py-1 bg-green-50 rounded-lg text-[8px] font-black uppercase italic text-green-700">Naver</button>
+                                <button onclick="event.stopPropagation(); openM('google','${item.locCN || item.title}')" class="px-3 py-1 bg-gray-50 rounded-lg text-[8px] font-black uppercase text-gray-400 border border-gray-100 italic">Google</button>
+                                <button onclick="event.stopPropagation(); openM('naver','${item.locKR || item.title}')" class="px-3 py-1 bg-green-50 rounded-lg text-[8px] font-black uppercase text-green-700 border border-green-100 italic">Naver</button>
                             </div>
-                            <button onclick="event.stopPropagation(); delItin(${idx})" class="mt-2 text-[8px] text-red-200 font-bold uppercase">✕ Delete</button>
                         </div>
                     </div>`;
                 list.appendChild(div);
             });
-            // 初始化拖移
-            new Sortable(list, {
-                animation: 150, ghostClass: 'sortable-ghost',
-                onEnd: function(evt) {
-                    const arr = state.itin[state.currentDay];
-                    const item = arr.splice(evt.oldIndex, 1)[0];
-                    arr.splice(evt.newIndex, 0, item);
-                    saveState();
-                }
-            });
+            new Sortable(list, { animation: 150, ghostClass: 'sortable-ghost', onEnd: (e) => { const arr = state.itin[state.currentDay]; const item = arr.splice(e.oldIndex, 1)[0]; arr.splice(e.newIndex, 0, item); saveState(); } });
         }
-        function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新景點", locCN:"", locKR:"", desc:"", notes:"", type:"景點", shops:[], image: null }); saveState(); renderItin(); }
-        function delItin(idx) { if(confirm("確定刪除行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
+        function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新行程", locCN:"", locKR:"", desc:"", notes:"", type:"景點", shops:[], image: null }); saveState(); renderItin(); }
 
-        // --- 共通購物模組 (修復 Add Item) ---
+        // --- 共通購物模組 (修復與優化) ---
         function renderCommonShop(shops, containerId, onUpdate, statId) {
-            const area = document.getElementById(containerId); area.innerHTML = "";
+            const area = document.getElementById(containerId); if(!area) return;
+            area.innerHTML = "";
             let tTotal=0, bTotal=0;
             shops.forEach((shop, sIdx) => {
                 const sorted = [...shop.items].sort((a,b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
                 const bCount = shop.items.filter(i=>i.done).length, tCount = shop.items.length, pct = tCount>0 ? Math.round((bCount/tCount)*100) : 0;
                 tTotal += tCount; bTotal += bCount;
-                const div = document.createElement('div'); div.className = "bg-white border border-gray-100 rounded-[2.5rem] p-5 shadow-sm space-y-4 mb-4";
-                div.innerHTML = `<div class="flex justify-between items-center cursor-pointer" onclick="shop.collapsed=!shop.collapsed; renderCommonShop(state.wishGroups,'wishlist-module-area',onUpdate,statId)">
-                    <div class="flex-1"><h5 contenteditable="true" onclick="event.stopPropagation()" id="${containerId}-sn-${sIdx}" class="font-black text-sm italic uppercase tracking-widest">${shop.name}</h5><div class="mt-2 flex items-center space-x-2"><div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent" style="width:${pct}%"></div></div><span class="text-[9px] font-black font-mono text-cream-accent">${bCount}/${tCount}</span></div></div>
-                    <button onclick="event.stopPropagation(); shops.splice(${sIdx},1); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,statId)" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button></div>
-                    <div class="${shop.collapsed?'hidden':'space-y-3'}">${sorted.map((i) => { 
-                        const origIdx = shop.items.indexOf(i);
-                        return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative group"><div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="shop.items[${origIdx}].done=!shop.items[${origIdx}].done; onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,statId)" class="w-5 h-5 accent-cream-accent shadow-sm"><div class="flex-1 overflow-hidden"><div contenteditable="true" id="${containerId}-si-${sIdx}-${origIdx}" class="text-[12px] font-black ${i.done?'line-through opacity-30':''}">${i.name}</div><div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="${containerId}-sp-${sIdx}-${origIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="${containerId}-sq-${sIdx}-${origIdx}">${i.qty}</span></span></div></div><button onclick="shop.items.splice(${origIdx},1); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,statId)" class="text-gray-200 text-xs">✕</button></div>
-                        <div class="flex items-center space-x-3 pl-8"><div class="w-12 h-12 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative shadow-inner">${i.img?`<img src="${i.img}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}<input type="file" accept="image/*" onchange="uploadImg(event,shop.items[${origIdx}],shops,'${containerId}',onUpdate,statId)" class="absolute inset-0 opacity-0 cursor-pointer"></div><textarea id="${containerId}-st-${sIdx}-${origIdx}" placeholder="商品備註..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note||''}</textarea></div></div>`}).join('')}
-                    <button onclick="shop.items.push({name:'新商品',price:0,qty:1,done:false,img:'',note:''}); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,statId)" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button></div>`;
+                const div = document.createElement('div'); div.className = "bg-white border border-gray-100 rounded-[2.5rem] p-5 shadow-sm space-y-4 mb-4 transition-all";
+                div.innerHTML = `<div class="flex justify-between items-center cursor-pointer" onclick="shop.collapsed=!shop.collapsed; renderCommonShop(shops,'${containerId}',onUpdate,'${statId}')">
+                    <div class="flex-1"><h5 contenteditable="true" onclick="event.stopPropagation()" id="${containerId}-sn-${sIdx}" class="font-black text-sm italic uppercase tracking-widest text-gray-700">${shop.name}</h5><div class="mt-2 flex items-center space-x-2"><div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent transition-all duration-500" style="width:${pct}%"></div></div><span class="text-[9px] font-black font-mono text-cream-accent">${bCount}/${tCount}</span></div></div>
+                    <button onclick="event.stopPropagation(); shops.splice(${sIdx},1); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,'${statId}')" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button></div>
+                    <div class="${shop.collapsed?'hidden':'space-y-3'}">${sorted.map((i) => { const origIdx = shop.items.indexOf(i); return `<div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative group"><div class="flex items-center space-x-3"><input type="checkbox" ${i.done?'checked':''} onchange="shop.items[${origIdx}].done=!shop.items[${origIdx}].done; onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,'${statId}')" class="w-5 h-5 accent-cream-accent shadow-sm"><div class="flex-1 min-w-0"><div contenteditable="true" id="${containerId}-si-${sIdx}-${origIdx}" class="text-[12px] font-black ${i.done?'line-through opacity-30':''}">${i.name}</div><div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase"><span>₩ <span contenteditable="true" id="${containerId}-sp-${sIdx}-${origIdx}">${i.price}</span></span><span>Qty: <span contenteditable="true" id="${containerId}-sq-${sIdx}-${origIdx}">${i.qty}</span></span></div></div><button onclick="shop.items.splice(${origIdx},1); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,'${statId}')" class="text-gray-200 text-xs">✕</button></div><div class="flex items-center space-x-4 pl-9"><div class="w-14 h-14 rounded-2xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative shadow-inner">${i.img?`<img src="${i.img}" class="w-full h-full object-cover">`:`<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}<input type="file" accept="image/*" onchange="uploadShopImage(event,shop.items[${origIdx}],shops,'${containerId}',onUpdate,'${statId}')" class="absolute inset-0 opacity-0 cursor-pointer"></div><textarea id="${containerId}-st-${sIdx}-${origIdx}" placeholder="商品備註..." class="flex-1 bg-transparent text-[10px] italic border-none outline-none resize-none">${i.note||''}</textarea></div></div>`}).join('')}
+                    <button onclick="shop.items.push({name:'商品名稱',price:0,qty:1,done:false,img:'',note:''}); onUpdate(shops); renderCommonShop(shops,'${containerId}',onUpdate,'${statId}')" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button></div>`;
                 area.appendChild(div);
                 setupAutoClear(div.querySelector(`#${containerId}-sn-${sIdx}`), "商店名稱");
                 div.querySelector(`#${containerId}-sn-${sIdx}`).onblur=(e)=>{ shop.name=e.target.innerText; onUpdate(shops); };
-                shop.items.forEach((item, iIdx) => { 
-                    const iEl = div.querySelector(`#${containerId}-si-${sIdx}-${iIdx}`); if(iEl) { setupAutoClear(iEl, "商品名稱"); iEl.onblur=(e)=>{ item.name=e.target.innerText; onUpdate(shops); }; }
-                    const prEl = div.querySelector(`#${containerId}-sp-${sIdx}-${iIdx}`); if(prEl) prEl.onblur=(e)=>{ item.price=e.target.innerText; onUpdate(shops); };
-                    const qtEl = div.querySelector(`#${containerId}-sq-${sIdx}-${iIdx}`); if(qtEl) qtEl.onblur=(e)=>{ item.qty=e.target.innerText; onUpdate(shops); };
-                    const ntEl = div.querySelector(`#${containerId}-st-${sIdx}-${iIdx}`); if(ntEl) ntEl.onblur=(e)=>{ item.note=e.target.value; onUpdate(shops); };
-                });
+                shop.items.forEach((item, iIdx) => { const iEl=div.querySelector(`#${containerId}-si-${sIdx}-${iIdx}`); if(iEl){ setupAutoClear(iEl, "商品名稱"); iEl.onblur=(e)=>{item.name=e.target.innerText;onUpdate(shops);}; } const pEl=div.querySelector(`#${containerId}-sp-${sIdx}-${iIdx}`); if(pEl)pEl.onblur=(e)=>{item.price=e.target.innerText;onUpdate(shops);}; const qEl=div.querySelector(`#${containerId}-sq-${sIdx}-${iIdx}`); if(qEl)qEl.onblur=(e)=>{item.qty=e.target.innerText;onUpdate(shops);}; const tEl=div.querySelector(`#${containerId}-st-${sIdx}-${iIdx}`); if(tEl)tEl.onblur=(e)=>{item.note=e.target.value;onUpdate(shops);}; });
             });
-            if(statId) document.getElementById(statId).innerText = `${bTotal} / ${tTotal} Items (${Math.round((bTotal/tTotal)*100)||0}%)`;
+            if(statId && document.getElementById(statId)) { const ovPct = tTotal>0 ? Math.round((bTotal/tTotal)*100) : 0; document.getElementById(statId).innerText = `${bTotal} / ${tTotal} Items (${ovPct}%)`; }
         }
-
-        // --- 分頁對接 ---
         function addWishGroup() { if(!state.wishGroups) state.wishGroups=[]; state.wishGroups.push({name:"商店名稱",items:[],collapsed:false}); saveState(); renderWishlist(); }
-        function renderWishlist() { renderCommonShop(state.wishGroups, 'wishlist-module-area', (s)=> { state.wishGroups=s; saveState(); }, null); }
+        function renderWishlist() { renderCommonShop(state.wishGroups || [], 'wishlist-module-area', (s)=> { state.wishGroups=s; saveState(); }, null); }
+        function addShopGroupDetail() { const idx=document.getElementById('detail-idx').value; if(!state.itin[state.currentDay][idx].shops) state.itin[state.currentDay][idx].shops=[]; state.itin[state.currentDay][idx].shops.push({name:"商店名稱",items:[],collapsed:false}); saveState(); renderDetailShopping(); }
+        function renderDetailShopping() { const idx=document.getElementById('detail-idx').value; renderCommonShop(state.itin[state.currentDay][idx].shops || [], 'detail-shopping-list-area', (s)=> { state.itin[state.currentDay][idx].shops=s; saveState(); }, 'shop-progress-text'); }
+        function uploadShopImage(e,item,shops,tid,onUp,sid) { const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=(event)=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const mw=300; canvas.width=mw; canvas.height=img.height*(mw/img.width); canvas.getContext('2d').drawImage(img,0,0,mw,canvas.height); item.img=canvas.toDataURL('image/jpeg',0.7); onUp(shops); renderCommonShop(shops,tid,onUp,sid); }; img.src=event.target.result; }; reader.readAsDataURL(file); }
+
+        // --- 詳細頁核心 ---
         function openDetailModal(idx) {
             const item = state.itin[state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
@@ -321,37 +305,18 @@
             document.getElementById('detail-loc-cn').value = item.locCN || "";
             document.getElementById('detail-loc-kr').value = item.locKR || "";
             document.getElementById('detail-time').value = item.time || "12:00";
+            document.getElementById('detail-category').value = item.type || "景點";
             document.getElementById('detail-desc').value = item.desc || "";
             document.getElementById('detail-notes').value = item.notes || "";
             document.getElementById('detail-img-preview').innerHTML = item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-gray-200"></i>`;
-            renderCommonShop(item.shops || [], 'detail-shopping-list-area', (s)=> { state.itin[state.currentDay][idx].shops=s; saveState(); }, 'shop-progress-text');
+            renderDetailShopping();
             document.getElementById('detail-modal').classList.add('active');
         }
-        function addShopGroupDetail() { const idx=document.getElementById('detail-idx').value; if(!state.itin[state.currentDay][idx].shops) state.itin[state.currentDay][idx].shops=[]; state.itin[state.currentDay][idx].shops.push({name:"商店名稱",items:[],collapsed:false}); saveState(); openDetailModal(idx); }
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
-        function saveCurrentDetail() { const idx=document.getElementById('detail-idx').value; const item=state.itin[state.currentDay][idx]; item.title=document.getElementById('detail-title').value; item.locCN=document.getElementById('detail-loc-cn').value; item.locKR=document.getElementById('detail-loc-kr').value; item.time=document.getElementById('detail-time').value; item.desc=document.getElementById('detail-desc').value; item.notes=document.getElementById('detail-notes').value; saveState(); renderItin(); closeDetailModal(); }
-
-        // --- 輔助功能 (圖片/導航/計算機/代辦) ---
-        function uploadImg(e,item,shops,tid,onUp,sid) { const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=(event)=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const mw=300, sc=mw/img.width; canvas.width=mw; canvas.height=img.height*sc; canvas.getContext('2d').drawImage(img,0,0,mw,canvas.height); item.img=canvas.toDataURL('image/jpeg',0.7); onUp(shops); renderCommonShop(shops,tid,onUp,sid); }; img.src=event.target.result; }; reader.readAsDataURL(file); }
+        function saveCurrentDetail() { const idx=document.getElementById('detail-idx').value; const item=state.itin[state.currentDay][idx]; item.title=document.getElementById('detail-title').value; item.locCN=document.getElementById('detail-loc-cn').value; item.locKR=document.getElementById('detail-loc-kr').value; item.time=document.getElementById('detail-time').value; item.type=document.getElementById('detail-category').value; item.desc=document.getElementById('detail-desc').value; item.notes=document.getElementById('detail-notes').value; saveState(); renderItin(); closeDetailModal(); }
         function uploadLocationImage(e) { const idx=document.getElementById('detail-idx').value; const file=e.target.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=(ev)=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); canvas.width=400; canvas.height=img.height*(400/img.width); canvas.getContext('2d').drawImage(img,0,0,400,canvas.height); state.itin[state.currentDay][idx].image=canvas.toDataURL('image/jpeg',0.7); document.getElementById('detail-img-preview').innerHTML=`<img src="${state.itin[state.currentDay][idx].image}" class="w-full h-full object-cover">`; saveState(); }; img.src=ev.target.result; }; reader.readAsDataURL(file); }
-        function renderTodos() {
-            const container = document.getElementById('todo-groups'); container.innerHTML = "";
-            (state.todoGroups || []).forEach((group, gIdx) => {
-                const gDiv = document.createElement('div'); gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative mb-4";
-                gDiv.innerHTML = `<button onclick="state.todoGroups.splice(${gIdx},1); saveState(); renderTodos()" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h3 id="tg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-4 pr-6 italic uppercase underline decoration-cream-primary/40">${group.title}</h3><div class="space-y-3">${group.items.map((item, iIdx) => `<div class="flex items-center justify-between group"><div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200 flex-shrink-0"></div><span id="ti-${gIdx}-${iIdx}" contenteditable="true" class="editable text-sm font-bold text-gray-500">${item}</span></div><button onclick="state.todoGroups[${gIdx}].items.splice(${iIdx},1); saveState(); renderTodos()" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button></div>`).join('')}</div><button onclick="state.todoGroups[${gIdx}].items.push('事項細目內容'); saveState(); renderTodos()" class="mt-4 text-[10px] font-black text-gray-300 uppercase">+ 新增事項</button>`;
-                container.appendChild(gDiv);
-                const tgEl=gDiv.querySelector(`#tg-${gIdx}`); setupAutoClear(tgEl,"母項目名稱"); tgEl.onblur=()=>{group.title=tgEl.innerText;saveState();};
-                group.items.forEach((_, iIdx) => { const tiEl=gDiv.querySelector(`#ti-${gIdx}-${iIdx}`); setupAutoClear(tiEl,"細目內容"); tiEl.onblur=()=>{group.items[iIdx]=tiEl.innerText;saveState();}; });
-            });
-        }
-        function addTodoGroup() { if(!state.todoGroups) state.todoGroups=[]; state.todoGroups.push({title:"母項目名稱",items:["細目內容"]}); saveState(); renderTodos(); }
-        function renderInfo() {
-            document.getElementById('info-static-area').innerHTML = `<div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100"><p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️⏰ 去程班機</p><h4 class="font-black text-base italic">濟州航空 7C6102</h4><div class="mt-2 text-sm text-gray-500 font-mono">11:55 桃機 T1 / 15:35 抵達仁川機場 T1</div></div>
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100"><p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest font-mono italic">✈️⏰ 回程班機</p><h4 class="font-black text-base italic">長榮航空 BR159</h4><div class="mt-2 text-sm text-gray-500 font-mono">19:45 仁川 T1 / 21:25 抵達桃機 T2</div></div>
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 text-center"><p class="text-[10px] font-black text-green-600 uppercase mb-3 tracking-widest font-mono italic">🏠 飯店地址</p><h4 class="font-black text-[11px] mb-4 uppercase">Seoul Jung-gu Sogong-ro 6na-gil 11</h4><div class="grid grid-cols-2 gap-2"><button onclick="openM('google','Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-2.5 bg-gray-50 rounded-xl text-[9px] font-black">Google</button><button onclick="openM('naver','서울특별시 중구 소공로6나길 11')" class="py-2.5 bg-green-50 text-green-700 rounded-xl text-[9px] font-black">Naver</button></div><button onclick="copyToClipboard('Seoul Jung-gu Sogong-ro 6na-gil 11')" class="mt-3 text-[8px] text-gray-300 uppercase font-black tracking-widest"><i class="fa-regular fa-copy mr-1"></i> 複製地址</button></div>`;
-            const container=document.getElementById('custom-info-list'); container.innerHTML=""; (state.customInfo||[]).forEach((info,idx)=>{ const div=document.createElement('div'); div.className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative mb-4"; div.innerHTML=`<button onclick="state.customInfo.splice(${idx},1);saveState();renderInfo();" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h4 contenteditable="true" id="inf-t-${idx}" class="editable font-black text-sm mb-2 italic tracking-widest uppercase underline decoration-cream-accent/20">${info.title}</h4><div contenteditable="true" id="inf-c-${idx}" class="editable text-[11px] text-gray-500 font-mono">${info.content}</div>`; container.appendChild(div); const tEl=div.querySelector(`#inf-t-${idx}`),cEl=div.querySelector(`#inf-c-${idx}`); setupAutoClear(tEl,"標題"); setupAutoClear(cEl,"資訊內容..."); tEl.onblur=()=>{info.title=tEl.innerText;saveState();}; cEl.onblur=()=>{info.content=cEl.innerText;saveState();}; });
-        }
-        function addCustomInfo() { if(!state.customInfo)state.customInfo=[]; state.customInfo.push({title:"標題名稱",content:"資訊內容"}); saveState(); renderInfo(); }
+
+        // --- 記帳、代辦、資訊 ---
         function openCalcModal() { document.getElementById('calc-modal').classList.add('active'); }
         function closeCalcModal() { document.getElementById('calc-modal').classList.remove('active'); }
         function syncKRW() { const r=parseFloat(document.getElementById('main-calc-rate').value)||0; const k=parseFloat(document.getElementById('main-calc-krw').value)||0; document.getElementById('main-calc-twd').value=Math.round(k*r); }
@@ -361,23 +326,43 @@
             const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort(); renderExpDateFilter(uniqueDates, filter);
             const filtered = filter === 'all' ? state.expenses : state.expenses.filter(e => e.date.endsWith(filter));
             filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e) => {
-                const globalIdx = state.expenses.findIndex(x => x.id === e.id); const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative transition active:scale-95";
-                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})"><div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div><div class="flex-1"><div class="flex items-center space-x-2"><p class="text-sm font-black italic tracking-tighter uppercase font-sans text-gray-800">${e.item}</p>${e.tax==='已退稅'?'<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退</span>':''}</div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.payment} · ${e.cat}</p></div></div><div class="text-right shrink-0 font-mono"><p class="text-sm font-black italic tracking-tighter text-red-400">NT$ ${e.twd.toLocaleString()}</p><p class="text-[9px] text-gray-300 font-bold uppercase italic">(₩ ${e.amount.toLocaleString()})</p><button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase italic">✕</button></div>`;
+                const globalIdx = state.expenses.findIndex(x => x.id === e.id);
+                const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative mb-4 transition active:scale-95";
+                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})"><div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic font-mono uppercase">${e.payer[0]}</div><div class="flex-1"><div class="flex items-center space-x-2"><p class="text-sm font-black italic tracking-tighter uppercase font-sans text-gray-800 underline decoration-cream-primary/40 decoration-2">${e.item}</p>${e.tax==='已退稅'?'<span class="bg-green-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-bold uppercase">已退</span>':''}</div><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest font-mono">${e.date.slice(5)} · ${e.payer} · ${e.payment} · ${e.cat}</p></div></div><div class="text-right shrink-0 font-mono italic"><p class="text-sm font-black text-red-400 tracking-tighter">NT$ ${e.twd.toLocaleString()}</p><p class="text-[9px] text-gray-300 uppercase tracking-widest">(₩ ${e.amount.toLocaleString()})</p><button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold mt-1 uppercase tracking-tighter">✕</button></div>`;
                 list.appendChild(div);
             });
+            updateSummary();
         }
-        function renderExpDateFilter(dates, cur) { const container = document.getElementById('expense-date-filter'); container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur==='all'?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm uppercase italic">全部</button>`; dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur===d?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm uppercase italic">${d}</button>`; }); }
+        function renderExpDateFilter(dates, cur) { const container = document.getElementById('expense-date-filter'); container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur==='all'?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm uppercase italic">全部</button>`; dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur===d?'bg-cream-accent text-white':'bg-white text-gray-400'} shadow-sm font-mono uppercase italic">${d}</button>`; }); }
         function openExpenseModal() { document.getElementById('exp-modal-title').innerText="Recording"; document.getElementById('edit-exp-id').value=""; document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate=new Date(); initExpBtns(); document.getElementById('exp-item').value=""; document.getElementById('exp-amount').value=""; calcExpHint(); }
         function initExpBtns() { document.getElementById('payer-btns').innerHTML=payers.map(p=>`<button onclick="setField('payer','${p}')" class="payer-btn seg-btn ${p===curPayer?'active':''}">${p}</button>`).join(''); document.getElementById('cat-btns').innerHTML=expCats.map(p=>`<button onclick="setField('cat','${p}')" class="cat-btn seg-btn ${p===curExpCat?'active':''}">${p}</button>`).join(''); }
+        function setField(type, val) { document.querySelectorAll(`.${type}-btn`).forEach(b => { b.classList.remove('active'); if (b.innerText === val) b.classList.add('active'); }); if(type==='payer') curPayer=val; if(type==='cat') curExpCat=val; }
+        function calcExpHint() { const a=parseFloat(document.getElementById('exp-amount').value)||0, r=parseFloat(document.getElementById('exp-rate').value)||1, c=document.getElementById('exp-currency').value; if(c==='KRW') document.getElementById('exp-twd-hint').innerText=`台幣: NT$ ${Math.round(a*r).toLocaleString()}`; else document.getElementById('exp-twd-hint').innerText=`韓元: ₩ ${Math.round(a/r).toLocaleString()}`; }
         function saveExpense() { const item=document.getElementById('exp-item').value, date=document.getElementById('exp-date').value, amount=parseFloat(document.getElementById('exp-amount').value)||0, rate=parseFloat(document.getElementById('exp-rate').value)||1, id=document.getElementById('edit-exp-id').value, pay=document.getElementById('exp-payment').value, tx=document.getElementById('exp-tax').value, curr=document.getElementById('exp-currency').value; if(item && amount){ let twd=0; if(curr==='KRW') twd=Math.round(amount*rate); else twd=Math.round(amount); const rec={id:id||Date.now(),item,date,amount,rate,payer:curPayer,payment:pay,tax:tx,cat:curExpCat,currency:curr,twd:twd}; if(id){ const idx=state.expenses.findIndex(x=>x.id==id); state.expenses[idx]=rec; } else { state.expenses.push(rec); } saveState(); renderExpenses(); closeExpenseModal(); } }
         function editExp(idx) { const e=state.expenses[idx]; document.getElementById('exp-modal-title').innerText="Editing"; document.getElementById('edit-exp-id').value=e.id; document.getElementById('exp-item').value=e.item; document.getElementById('exp-date').value=e.date; document.getElementById('exp-amount').value=e.amount; document.getElementById('exp-rate').value=e.rate; document.getElementById('exp-payment').value=e.payment; document.getElementById('exp-tax').value=e.tax; document.getElementById('exp-currency').value=e.currency; setField('payer',e.payer); setField('cat',e.cat||"其他"); initExpBtns(); document.getElementById('expense-modal').classList.remove('hidden'); calcExpHint(); }
         function delExp(idx) { if(confirm("確定刪除？")) { state.expenses.splice(idx,1); saveState(); renderExpenses(); } }
         function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
-        function setField(type, val) { document.querySelectorAll(`.${type}-btn`).forEach(b => { b.classList.remove('active'); if (b.innerText === val) b.classList.add('active'); }); if(type==='payer') curPayer=val; if(type==='cat') curExpCat=val; }
-        function calcExpHint() { const a=parseFloat(document.getElementById('exp-amount').value)||0, r=parseFloat(document.getElementById('exp-rate').value)||1, c=document.getElementById('exp-currency').value; if(c==='KRW') document.getElementById('exp-twd-hint').innerText=`台幣換算: NT$ ${Math.round(a*r).toLocaleString()}`; else document.getElementById('exp-twd-hint').innerText=`韓元換算: ₩ ${Math.round(a/r).toLocaleString()}`; }
         function updateSummary() { const total=state.expenses.reduce((s,e)=>s+e.twd,0); document.getElementById('total-spent').innerText=`NT$ ${total.toLocaleString()}`; const left=state.budget-total; document.getElementById('budget-left').innerText=`$ ${left.toLocaleString()}`; document.getElementById('budget-bar').style.width=Math.min(100,(total/state.budget)*100)+'%'; }
-        function toggleSettlement() { const modal=document.getElementById('settlement-modal'), content=document.getElementById('settlement-content'); if(modal.classList.contains('hidden')){ modal.classList.remove('hidden'); const total = state.expenses.reduce((s, e) => s + e.twd, 0), avg = total / 4, paid = {}; payers.slice(0,4).forEach(p => paid[p] = 0); state.expenses.forEach(e => { if(paid[e.payer] !== undefined) paid[e.payer] += e.twd; }); content.innerHTML = ""; payers.slice(0,4).forEach(p => { const diff = paid[p] - avg; content.innerHTML += `<div class="flex justify-between py-2 border-b border-gray-50"><span class="text-sm font-bold uppercase italic">${p}</span><div class="text-right font-mono text-[11px]"><p class="text-[10px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="font-black ${diff >= 0 ? 'text-green-500' : 'text-red-400'}">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p></div></div>`; }); } else { modal.classList.add('hidden'); } }
-        function copyToClipboard(text) { if(!text) return; navigator.clipboard.writeText(text).then(()=>alert("已複製: " + text)); }
+        function toggleSettlement() { const modal = document.getElementById('settlement-modal'), content = document.getElementById('settlement-content'); if (modal.classList.contains('hidden')) { modal.classList.remove('hidden'); const total = state.expenses.reduce((s, e) => s + e.twd, 0), avg = total / 4, paid = {}; payers.slice(0, 4).forEach(p => paid[p] = 0); state.expenses.forEach(e => { if (paid[e.payer] !== undefined) paid[e.payer] += e.twd; }); content.innerHTML = ""; payers.slice(0, 4).forEach(p => { const diff = paid[p] - avg; content.innerHTML += `<div class="flex justify-between py-2 border-b border-gray-50 uppercase italic font-black text-[11px]"><span>${p}</span><div class="text-right"><p class="text-[9px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="${diff >= 0 ? 'text-green-500' : 'text-red-400'} font-mono">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p></div></div>`; }); } else { modal.classList.add('hidden'); } }
+
+        function renderTodos() {
+            const container = document.getElementById('todo-groups'); container.innerHTML = "";
+            (state.todoGroups || []).forEach((group, gIdx) => {
+                const gDiv = document.createElement('div'); gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative mb-4";
+                gDiv.innerHTML = `<button onclick="state.todoGroups.splice(${gIdx},1); saveState(); renderTodos()" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h3 id="tg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-4 pr-6 italic uppercase underline decoration-cream-primary/40 font-mono">${group.title}</h3><div class="space-y-3">${group.items.map((item, iIdx) => `<div class="flex items-center justify-between group"><div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200 flex-shrink-0"></div><span id="ti-${gIdx}-${iIdx}" contenteditable="true" class="editable text-sm font-bold text-gray-500">${item}</span></div><button onclick="state.todoGroups[${gIdx}].items.splice(${iIdx},1); saveState(); renderTodos()" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button></div>`).join('')}</div><button onclick="state.todoGroups[${gIdx}].items.push('細項內容'); saveState(); renderTodos()" class="mt-4 text-[10px] font-black text-gray-300 uppercase">+ 新增事項</button>`;
+                container.appendChild(gDiv);
+                const tgEl = gDiv.querySelector(`#tg-${gIdx}`); setupAutoClear(tgEl, "母項目名稱"); tgEl.onblur=()=>{ group.title=tgEl.innerText; saveState(); };
+                group.items.forEach((_, iIdx) => { const tiEl = gDiv.querySelector(`#ti-${gIdx}-${iIdx}`); setupAutoClear(tiEl, "細項內容"); tiEl.onblur=()=>{ group.items[iIdx]=tiEl.innerText; saveState(); }; });
+            });
+        }
+        function addTodoGroup() { if(!state.todoGroups) state.todoGroups=[]; state.todoGroups.push({ title: "母項目名稱", items: ["細項內容"] }); saveState(); renderTodos(); }
+
+        function renderInfo() {
+            document.getElementById('info-static-area').innerHTML = `<div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100"><p class="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 去程</p><h4 class="font-black text-base italic">濟州航空 7C6102</h4><div class="mt-2 text-sm text-gray-500 font-mono italic">11:55 桃機 T1 / 15:35 抵達仁川 T1</div></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100"><p class="text-[10px] font-black text-orange-500 uppercase mb-3 tracking-widest font-mono italic">✈️ 回程</p><h4 class="font-black text-base italic">長榮航空 BR159</h4><div class="mt-2 text-sm text-gray-500 font-mono italic">19:45 仁川 T1 / 21:25 抵達桃機 T2</div></div><div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 text-center"><p class="text-[10px] font-black text-green-600 uppercase mb-3 tracking-widest font-mono italic">🏠 飯店地址</p><h4 class="font-black text-[11px] mb-4">Seoul Jung-gu Sogong-ro 6na-gil 11</h4><div class="grid grid-cols-2 gap-2"><button onclick="openM('google','Seoul Jung-gu Sogong-ro 6na-gil 11')" class="py-2.5 bg-gray-50 rounded-xl text-[9px] font-black uppercase shadow-sm">Google</button><button onclick="openM('naver','서울특별시 중구 소공로6나길 11')" class="py-2.5 bg-green-50 text-green-700 rounded-xl text-[9px] font-black uppercase shadow-sm">Naver</button></div><button onclick="copyToClipboard('Seoul Jung-gu Sogong-ro 6na-gil 11')" class="mt-3 text-[8px] text-gray-300 uppercase font-black tracking-widest"><i class="fa-regular fa-copy mr-1"></i> 一鍵複製地址</button></div>`;
+            const container=document.getElementById('custom-info-list'); container.innerHTML=""; (state.customInfo||[]).forEach((info,idx)=>{ const div=document.createElement('div'); div.className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 relative mb-4"; div.innerHTML=`<button onclick="state.customInfo.splice(${idx},1);saveState();renderInfo();" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button><h4 contenteditable="true" id="inf-t-${idx}" class="editable font-black text-sm mb-2 italic tracking-widest uppercase underline decoration-cream-accent/20">${info.title}</h4><div contenteditable="true" id="inf-c-${idx}" class="editable text-[11px] text-gray-500 font-mono italic font-medium leading-relaxed">${info.content}</div>`; container.appendChild(div); const tEl=div.querySelector(`#inf-t-${idx}`),cEl=div.querySelector(`#inf-c-${idx}`); setupAutoClear(tEl,"標題"); setupAutoClear(cEl,"內容..."); tEl.onblur=()=>{info.title=tEl.innerText;saveState();}; cEl.onblur=()=>{info.content=cEl.innerText;saveState();}; });
+        }
+        function addCustomInfo() { if(!state.customInfo)state.customInfo=[]; state.customInfo.push({title:"自訂資訊標題",content:"點擊編輯內容..."}); saveState(); renderInfo(); }
+        function copyToClipboard(t) { navigator.clipboard.writeText(t).then(()=>alert("已複製: "+t)); }
         function openM(type, loc) { if(!loc)return alert("請輸入地標"); const q=encodeURIComponent(loc); window.open(type==='google'?`https://www.google.com/maps/search/?api=1&query=${q}`:`https://map.naver.com/v5/search/${q}`,'_blank'); }
     </script>
 </body>
