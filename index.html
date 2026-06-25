@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 Pro Max+ Photo</title>
+    <title>🇰🇷 韓國之旅 Pro Max+ (V5)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -25,29 +25,33 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #F8F5F2; color: #2C2C2C; -webkit-tap-highlight-color: transparent; }
+        
         .tab-content { display: none; width: 100%; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .editable:focus { outline: 2px dashed #4A342E; background: rgba(74, 52, 46, 0.05); border-radius: 4px; color: #2C2C2C !important; }
         .active-nav-btn { color: #4A342E !important; }
+        
         .day-btn { width: 75px; height: 75px; flex-shrink: 0; transition: all 0.2s; }
         .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); }
         .timeline-line::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #E8DCCF; opacity: 0.5; }
+        
+        .seg-btn { background-color: #FFFFFF; color: #8B8B8B; border: 1px solid #F3F0ED; font-size: 10px; font-weight: bold; padding: 10px 0; border-radius: 12px; }
+        .seg-btn.active { background-color: #4A342E; color: #FFFFFF; border-color: #4A342E; }
+        
         #detail-modal { position: fixed; inset: 0; z-index: 500; background: #FFFFFF; display: none; overflow-y: auto; }
         #detail-modal.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
         /* 隱私控制 */
-        .owner-only { display: none !important; }
-        body.is-owner .owner-only { display: block !important; }
-        body.is-owner .owner-only-flex { display: flex !important; }
-        
-        /* 圖片容器 */
-        .photo-box { width: 100%; aspect-ratio: 4/3; background: #F3F4F6; border-radius: 1rem; overflow: hidden; position: relative; border: 2px dashed #E5E7EB; }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .img-fullscreen { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; items-center: center; justify-content: center; padding: 20px; }
-        .img-fullscreen.active { display: flex; }
+        .owner-only-nav { display: none !important; }
+        body.is-owner .owner-only-nav { display: flex !important; }
+        .owner-only-block { display: none !important; }
+        body.is-owner .owner-only-block { display: block !important; }
+
+        .img-preview { width: 100%; border-radius: 1.5rem; object-fit: cover; margin-top: 10px; display: block; background: #eee; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -71,42 +75,44 @@
 
         <!-- [分頁 2] 待辦 -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black italic tracking-tight">行前待辦</h2>
-                <button onclick="addTodoGroup()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase">+ 新增分類</button>
-            </div>
+            <h2 class="text-2xl font-black mb-6 italic tracking-tight">行前待辦事項</h2>
             <div id="todo-groups" class="space-y-6"></div>
+            <button onclick="addTodoGroup()" class="mt-6 w-full py-4 bg-white border border-gray-100 rounded-3xl text-gray-400 font-bold text-sm">+ 新增分類標題</button>
         </section>
 
-        <!-- [分頁 3] 採購 (私密) -->
-        <section id="tab-wishlist" class="tab-content px-6 pt-8 owner-only">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black italic tracking-tight">採購清單</h2>
-                <button onclick="addWishGroup()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase">+ 新增分類</button>
-            </div>
+        <!-- [分頁 3] 採購 (主人限定) -->
+        <section id="tab-wishlist" class="tab-content px-6 pt-8">
+            <h2 class="text-2xl font-black mb-6 italic tracking-tight">待採購項目 (私密)</h2>
             <div id="wishlist-groups" class="space-y-6"></div>
+            <button onclick="addWishGroup()" class="mt-6 w-full py-4 bg-white border border-gray-100 rounded-3xl text-gray-400 font-bold text-sm">+ 新增採購分類</button>
         </section>
 
         <!-- [分頁 4] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-cream-accent tracking-tighter">旅遊記帳</h2>
-            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4 text-center">
-                <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">總預算進度</p>
-                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden mb-2">
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 mb-4">
+                <div class="flex justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-tighter">
+                    <span>預算進度 (NT$ <span contenteditable="true" id="budget-val" onblur="saveState()" class="editable font-mono">50000</span>)</span>
+                    <span>剩餘: <span id="budget-left" class="text-cream-accent font-mono">0</span></span>
+                </div>
+                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                     <div id="budget-bar" class="bg-cream-accent h-full transition-all duration-700" style="width: 0%"></div>
                 </div>
-                <h3 id="total-spent" class="text-3xl font-black italic">NT$ 0</h3>
             </div>
+            <div class="bg-cream-accent text-white p-8 rounded-[2.5rem] shadow-lg mb-6 relative overflow-hidden text-center">
+                <p class="text-[10px] opacity-70 font-bold mb-1 tracking-widest uppercase font-mono">總支出 (TWD)</p>
+                <h3 id="total-spent" class="text-4xl font-black italic tracking-tighter font-mono">NT$ 0</h3>
+                <button onclick="toggleSettlement()" class="mt-4 bg-white/20 px-4 py-2 rounded-full text-[10px] font-bold border border-white/30 italic">查看分帳統計</button>
+            </div>
+            <div id="expense-date-filter" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 px-1"></div>
             <div id="expense-list" class="space-y-4"></div>
         </section>
 
         <!-- [分頁 5] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-black italic text-cream-accent tracking-widest">資訊</h2>
-                <button onclick="addCustomInfo()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase">+ 新增區塊</button>
-            </div>
+            <h2 class="text-2xl font-black mb-6 italic text-cream-accent tracking-widest">資訊</h2>
             <div id="custom-info-list" class="space-y-4"></div>
+            <button onclick="addCustomInfo()" class="mt-6 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增資訊區塊</button>
         </section>
 
         <!-- 底部導覽 -->
@@ -117,7 +123,7 @@
             <button onclick="switchTab('todo')" id="nav-todo" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
                 <i class="fa-solid fa-list-check text-lg"></i><span class="text-[8px] font-black uppercase">待辦</span>
             </button>
-            <button onclick="switchTab('wishlist')" id="nav-wishlist" class="nav-btn owner-only-flex flex-col items-center space-y-1 text-gray-300">
+            <button onclick="switchTab('wishlist')" id="nav-wishlist" class="nav-btn owner-only-nav flex-col items-center space-y-1 text-gray-300">
                 <i class="fa-solid fa-basket-shopping text-lg"></i><span class="text-[8px] font-black uppercase">採購</span>
             </button>
             <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn flex flex-col items-center space-y-1 text-gray-300">
@@ -127,90 +133,123 @@
                 <i class="fa-solid fa-circle-info text-lg"></i><span class="text-[8px] font-black uppercase">資訊</span>
             </button>
         </nav>
+
+        <!-- 記帳新增浮動按鈕 -->
+        <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-cream-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90]">
+            <i class="fa-solid fa-plus"></i>
+        </button>
     </div>
 
     <!-- [詳細頁 Modal] -->
     <div id="detail-modal" class="no-scrollbar">
         <div class="sticky top-0 z-[510] bg-white/90 backdrop-blur-md px-6 py-5 border-b border-gray-100 flex justify-between items-center">
             <button onclick="closeDetailModal()" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400">✕</button>
-            <h3 class="text-[10px] font-black italic text-cream-accent uppercase">Detailed View</h3>
-            <button onclick="saveCurrentDetail()" class="px-6 py-2 bg-cream-accent text-white rounded-full text-xs font-black">SAVE</button>
+            <h3 class="text-[10px] font-black italic tracking-widest text-cream-accent uppercase">Detailed Info</h3>
+            <button onclick="saveCurrentDetail()" class="px-6 py-2 bg-cream-accent text-white rounded-full text-xs font-black shadow-lg">SAVE</button>
         </div>
         <div class="p-8 pb-40 space-y-8">
             <input type="hidden" id="detail-idx">
             <div class="space-y-4">
                 <input id="detail-title" type="text" class="w-full text-3xl font-black border-none outline-none italic tracking-tighter" placeholder="景點名稱">
-                <div class="flex items-center space-x-2">
-                    <input id="detail-time" type="time" class="bg-gray-100 p-2 rounded-xl font-mono text-sm">
-                    <select id="detail-type" class="bg-gray-100 p-2 rounded-xl text-xs font-black uppercase italic">
-                        <option value="景點">景點</option><option value="餐廳">餐廳</option><option value="購物">購物</option><option value="住宿">住宿</option><option value="交通">交通</option>
+                <input id="detail-loc" type="text" class="w-full text-sm font-bold text-gray-400 border-none outline-none italic" placeholder="📍 地標名稱用於導航">
+                <div class="flex items-center space-x-2 mt-2">
+                    <div class="flex items-center space-x-2 text-cream-accent font-bold text-sm bg-cream-bg/50 px-4 py-2 rounded-xl w-fit">
+                        <i class="fa-regular fa-clock"></i>
+                        <input id="detail-time" type="time" class="bg-transparent border-none outline-none font-mono">
+                    </div>
+                    <select id="detail-type" class="text-[10px] font-black bg-white border border-cream-primary rounded-xl px-3 py-2 outline-none uppercase italic">
+                        <option value="景點">景點</option><option value="餐廳">餐廳</option><option value="購物">購物</option><option value="住宿">住宿</option><option value="交通">交通</option><option value="宵夜">宵夜</option><option value="其他">其他</option>
                     </select>
                 </div>
-                <textarea id="detail-desc" rows="3" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-sm" placeholder="行程詳細描述..."></textarea>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="openM('google', document.getElementById('detail-loc').value)" class="py-4 bg-gray-50 rounded-2xl text-[10px] font-black uppercase italic">Google Maps</button>
+                <button onclick="openM('naver', document.getElementById('detail-loc').value)" class="py-4 bg-green-50 rounded-2xl text-[10px] font-black text-green-700 uppercase italic">NAVER Map</button>
             </div>
 
-            <div id="detail-shopping-section" class="owner-only border-t pt-8">
+            <div class="space-y-6 pt-4">
+                <textarea id="detail-desc" rows="4" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm font-medium" placeholder="行程詳細描述..."></textarea>
+                <textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm font-medium italic" placeholder="重要備註事項..."></textarea>
+            </div>
+
+            <!-- 詳細頁購物清單 -->
+            <div id="private-shopping-section" class="pt-8 border-t border-gray-100 owner-only-block">
                 <div class="flex justify-between items-end mb-6">
-                    <h4 class="text-xl font-black italic text-cream-accent">Shopping List</h4>
-                    <button onclick="addDetailShop()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px]">+ Add Item</button>
+                    <h4 class="text-xl font-black italic tracking-tighter text-cream-accent">Shopping List 🧾</h4>
+                    <button onclick="addShopGroup()" class="bg-cream-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase">+ Add Store</button>
                 </div>
-                <div id="detail-shopping-list" class="space-y-6"></div>
+                <div id="shopping-list-area" class="space-y-4"></div>
             </div>
         </div>
     </div>
 
-    <!-- 全螢幕大圖查看 -->
-    <div id="img-fullscreen" class="img-fullscreen" onclick="this.classList.remove('active')">
-        <img src="" id="full-img-src" class="max-w-full max-h-full rounded-lg shadow-2xl">
+    <!-- 記帳 Modal, 分帳 Modal (同之前代碼) -->
+    <div id="expense-modal" class="fixed inset-0 z-[200] hidden bg-black/40 backdrop-blur-sm flex items-end">
+        <div class="w-full bg-white rounded-t-[3rem] p-8 pb-12 overflow-y-auto max-h-[90vh] no-scrollbar">
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-black italic">記帳項目</h3><button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full">✕</button></div>
+            <div class="space-y-4">
+                <input type="hidden" id="edit-exp-id">
+                <input id="exp-item" type="text" placeholder="項目" class="w-full bg-gray-50 p-5 rounded-2xl font-bold">
+                <input id="exp-date" type="date" class="w-full bg-gray-50 p-5 rounded-2xl font-mono">
+                <div class="grid grid-cols-3 gap-2" id="payer-btns"></div>
+                <div class="flex items-center space-x-2">
+                    <select id="exp-currency" class="bg-gray-50 p-5 rounded-2xl"><option value="KRW">KRW</option><option value="TWD">TWD</option></select>
+                    <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-5 rounded-2xl font-black">
+                </div>
+                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black italic">SAVE EXPENSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+        <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8 text-center"><h3 class="text-lg font-black mb-6">代墊統計</h3><div id="settlement-content" class="space-y-3 mb-6 text-sm"></div><button onclick="toggleSettlement()" class="w-full bg-cream-accent text-white py-4 rounded-2xl">CLOSE</button></div>
     </div>
 
     <script>
-        // --- 初始化狀態 ---
-        let state = JSON.parse(localStorage.getItem('korea_v3_data')) || {
+        // --- 核心資料 ---
+        let state = JSON.parse(localStorage.getItem('korea_final_vMax')) || {
             title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
-            todoGroups: [{ title: "重要證件", items: ["護照", "簽證"] }],
-            expenses: [], customInfo: [], 
-            wishGroups: [{ title: "美妝保養", items: [{ name: "眼霜", img: null, done: false }] }]
+            todoGroups: [], expenses: [], customInfo: [], wishGroups: []
         };
-
         let isOwner = false;
         const dayList = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
+        const payers = ["小慌", "昱凱", "小安", "文哥", "共同費用"];
+        const payMethods = ["Wowpass", "Line Pay", "現金", "信用卡"];
+        let curPayer="文哥", curMethod="Wowpass";
 
-        function unlockSystem() {
-            if (!isOwner) {
-                const pass = prompt("請輸入密碼：");
-                if (pass === "8888") {
-                    isOwner = true;
-                    document.body.classList.add('is-owner');
-                    document.getElementById('lock-icon').className = "fa-solid fa-lock-open text-xs";
-                }
-            } else {
-                isOwner = false;
-                document.body.classList.remove('is-owner');
-                document.getElementById('lock-icon').className = "fa-solid fa-lock text-xs";
-            }
-        }
-
+        // --- 系統初始化 ---
+        window.onload = () => { renderAll(); };
         function saveState() {
             state.title = document.getElementById('trip-title').innerText;
-            localStorage.setItem('korea_v3_data', JSON.stringify(state));
+            state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
+            localStorage.setItem('korea_final_vMax', JSON.stringify(state));
             updateSummary();
         }
 
+        function unlockSystem() {
+            const pass = prompt("密碼：");
+            if (pass === "2002") {
+                isOwner = true;
+                document.body.classList.add('is-owner');
+                document.getElementById('lock-icon').className = "fa-solid fa-lock-open";
+                renderAll();
+            } else { alert("錯誤"); }
+        }
+
         function switchTab(tab) {
+            if(tab === 'wishlist' && !isOwner) { alert("小慌專用"); return; }
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('active-nav-btn', 'text-gray-300'));
             document.getElementById('tab-' + tab).classList.add('active');
             document.getElementById('nav-' + tab).classList.replace('text-gray-300', 'active-nav-btn');
+            document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
         }
 
-        // --- 核心渲染函數 ---
-        function renderAll() {
-            renderDayNav(); renderItin(); renderTodos(); renderWishlist(); renderExpenses(); renderInfo(); updateSummary();
-        }
+        function renderAll() { renderDayNav(); renderItin(); renderTodos(); renderWishlist(); renderExpenses(); renderInfo(); updateSummary(); }
 
-        // 1. 行程渲染
+        // --- 行程功能 ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
             dayList.forEach((d, i) => {
@@ -218,218 +257,239 @@
                 const btn = document.createElement('button');
                 btn.className = `day-btn flex flex-col items-center justify-center rounded-2xl ${state.currentDay == num ? 'active' : 'bg-white shadow-sm'}`;
                 btn.onclick = () => { state.currentDay = num; renderAll(); };
-                btn.innerHTML = `<span class="text-[9px] font-black opacity-40">Day ${num}</span><span class="text-sm font-black italic">${d.d}</span>`;
+                btn.innerHTML = `<span class="text-[9px] font-black opacity-40">Day ${num}</span><span class="text-sm font-black">${d.d}</span>`;
                 container.appendChild(btn);
             });
         }
-
         function renderItin() {
             const list = document.getElementById('itinerary-list'); list.innerHTML = "";
-            const items = state.itin[state.currentDay] || [];
-            items.forEach((item, idx) => {
+            (state.itin[state.currentDay] || []).forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = "relative pl-10 mb-8";
+                div.className = "relative pl-10 mb-8 itin-item";
                 div.innerHTML = `
-                    <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white z-10"></div>
-                    <div onclick="openDetailModal(${idx})" class="bg-white p-5 rounded-[2rem] shadow-sm relative">
-                        <div class="flex justify-between mb-2">
-                            <span class="text-xs font-black text-cream-accent italic">${item.time || '12:00'}</span>
-                            <button onclick="event.stopPropagation(); delItin(${idx})" class="text-gray-200">✕</button>
-                        </div>
-                        <h3 class="font-black text-base uppercase">${item.title}</h3>
+                    <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
+                    <div onclick="openDetailModal(${idx})" class="bg-white p-5 rounded-[2rem] shadow-sm relative active:scale-95 transition">
+                        <button onclick="event.stopPropagation(); delItin(${idx})" class="absolute top-4 right-4 text-gray-200">✕</button>
+                        <span class="text-xs font-mono text-cream-accent">${item.time}</span>
+                        <h3 class="font-black text-base italic uppercase">${item.title}</h3>
+                        ${item.loc ? `<p class="text-[9px] text-gray-400 mt-1">📍 ${item.loc}</p>` : ''}
                     </div>`;
                 list.appendChild(div);
             });
         }
-        function addNewItinerary() { state.itin[state.currentDay].push({ time: "12:00", title: "新行程", type: "景點", shops: [] }); saveState(); renderItin(); }
-        function delItin(idx) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); }
+        function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新行程", type:"景點", shops:[] }); saveState(); renderItin(); }
+        function delItin(idx) { if(confirm("刪除？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
 
-        // 2. 待辦事項修復
-        function renderTodos() {
-            const container = document.getElementById('todo-groups'); container.innerHTML = "";
-            state.todoGroups.forEach((group, gIdx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-6 rounded-[2rem] shadow-sm";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 contenteditable="true" onblur="updateTodoG(${gIdx}, this)" class="font-black italic underline decoration-cream-primary">${group.title}</h3>
-                        <button onclick="delTodoG(${gIdx})" class="text-gray-200 text-xs">✕</button>
-                    </div>
-                    <div class="space-y-3">
-                        ${group.items.map((item, iIdx) => `
-                            <div class="flex items-center justify-between group bg-gray-50/50 p-2 rounded-xl">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-4 h-4 border border-gray-300 rounded"></div>
-                                    <span contenteditable="true" onblur="updateTodoI(${gIdx}, ${iIdx}, this)" class="text-sm font-medium">${item}</span>
-                                </div>
-                                <button onclick="delTodoI(${gIdx}, ${iIdx})" class="text-red-200 text-xs">✕</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button onclick="addTodoI(${gIdx})" class="mt-4 text-[10px] font-black text-gray-300 uppercase">+ 新增事項</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-        function addTodoGroup() { state.todoGroups.push({ title: "新分類", items: ["新事項"] }); saveState(); renderTodos(); }
-        function delTodoG(idx) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); }
-        function addTodoI(gIdx) { state.todoGroups[gIdx].items.push("新事項"); saveState(); renderTodos(); }
-        function delTodoI(gIdx, iIdx) { state.todoGroups[gIdx].items.splice(iIdx, 1); saveState(); renderTodos(); }
-        function updateTodoG(idx, el) { state.todoGroups[idx].title = el.innerText; saveState(); }
-        function updateTodoI(gIdx, iIdx, el) { state.todoGroups[gIdx].items[iIdx] = el.innerText; saveState(); }
-
-        // 3. 採購清單照片加強
-        function renderWishlist() {
-            const container = document.getElementById('wishlist-groups'); container.innerHTML = "";
-            state.wishGroups.forEach((group, gIdx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-6 rounded-[2rem] shadow-sm";
-                div.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 contenteditable="true" onblur="updateWishG(${gIdx}, this)" class="font-black italic underline decoration-cream-primary">${group.title}</h3>
-                        <button onclick="delWishG(${gIdx})" class="text-gray-200 text-xs">✕</button>
-                    </div>
-                    <div class="space-y-6">
-                        ${group.items.map((item, iIdx) => `
-                            <div class="bg-gray-50/50 p-4 rounded-[1.5rem] relative">
-                                <button onclick="delWishI(${gIdx}, ${iIdx})" class="absolute top-4 right-4 text-gray-300">✕</button>
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleWish(${gIdx}, ${iIdx})" class="w-5 h-5 accent-cream-accent">
-                                    <span contenteditable="true" onblur="updateWishIName(${gIdx}, ${iIdx}, this)" class="text-sm font-black ${item.done ? 'line-through opacity-30' : ''}">${item.name}</span>
-                                </div>
-                                <div class="photo-box" onclick="triggerImg('wish-${gIdx}-${iIdx}')">
-                                    ${item.img ? `<img src="${item.img}" onclick="viewFull('${item.img}')">` : '<div class="h-full flex items-center justify-center text-gray-300"><i class="fa-solid fa-camera text-2xl"></i></div>'}
-                                    <input type="file" id="wish-${gIdx}-${iIdx}" class="hidden" accept="image/*" onchange="handleImg(this, 'wish', ${gIdx}, ${iIdx})">
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <button onclick="addWishI(${gIdx})" class="mt-6 w-full py-3 border-2 border-dashed border-gray-100 text-[10px] font-black text-gray-300 uppercase rounded-xl">+ 新增商品</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-        function addWishGroup() { state.wishGroups.push({ title: "新分類", items: [{ name: "新商品", img: null, done: false }] }); saveState(); renderWishlist(); }
-        function delWishG(idx) { state.wishGroups.splice(idx,1); saveState(); renderWishlist(); }
-        function addWishI(gIdx) { state.wishGroups[gIdx].items.push({ name: "新商品", img: null, done: false }); saveState(); renderWishlist(); }
-        function delWishI(gIdx, iIdx) { state.wishGroups[gIdx].items.splice(iIdx,1); saveState(); renderWishlist(); }
-        function updateWishG(idx, el) { state.wishGroups[idx].title = el.innerText; saveState(); }
-        function updateWishIName(gIdx, iIdx, el) { state.wishGroups[gIdx].items[iIdx].name = el.innerText; saveState(); }
-        function toggleWish(gIdx, iIdx) { state.wishGroups[gIdx].items[iIdx].done = !state.wishGroups[gIdx].items[iIdx].done; saveState(); renderWishlist(); }
-
-        // 4. 資訊頁面修復
-        function renderInfo() {
-            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
-            state.customInfo.forEach((info, idx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative";
-                div.innerHTML = `
-                    <button onclick="delInfo(${idx})" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button>
-                    <h4 contenteditable="true" onblur="updateInfoT(${idx}, this)" class="font-black text-sm mb-2 italic underline decoration-cream-accent/20">${info.title || "標題"}</h4>
-                    <div contenteditable="true" onblur="updateInfoC(${idx}, this)" class="text-[11px] text-gray-500 leading-relaxed font-mono whitespace-pre-wrap">${info.content || "點擊編輯內容..."}</div>
-                `;
-                container.appendChild(div);
-            });
-        }
-        function addCustomInfo() { state.customInfo.push({ title: "新資訊區塊", content: "在這裡輸入重要資訊..." }); saveState(); renderInfo(); }
-        function delInfo(idx) { state.customInfo.splice(idx, 1); saveState(); renderInfo(); }
-        function updateInfoT(idx, el) { state.customInfo[idx].title = el.innerText; saveState(); }
-        function updateInfoC(idx, el) { state.customInfo[idx].content = el.innerText; saveState(); }
-
-        // --- 圖片處理系統 ---
-        function triggerImg(id) { document.getElementById(id).click(); }
-        function handleImg(input, type, gIdx, iIdx) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64 = e.target.result;
-                if (type === 'wish') {
-                    state.wishGroups[gIdx].items[iIdx].img = base64;
-                } else if (type === 'detail') {
-                    const dIdx = document.getElementById('detail-idx').value;
-                    state.itin[state.currentDay][dIdx].shops[iIdx].img = base64;
-                }
-                saveState();
-                if (type === 'wish') renderWishlist(); else renderDetailShops();
-            };
-            reader.readAsDataURL(file);
-        }
-        function viewFull(src) {
-            document.getElementById('full-img-src').src = src;
-            document.getElementById('img-fullscreen').classList.add('active');
-        }
-
-        // --- 詳細頁購物清單加強 ---
         function openDetailModal(idx) {
             const item = state.itin[state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
             document.getElementById('detail-title').value = item.title;
             document.getElementById('detail-time').value = item.time;
-            document.getElementById('detail-type').value = item.type;
+            document.getElementById('detail-loc').value = item.loc || "";
             document.getElementById('detail-desc').value = item.desc || "";
-            if(!item.shops) item.shops = [];
-            renderDetailShops();
+            document.getElementById('detail-notes').value = item.notes || "";
+            renderShopping(item.shops || []);
             document.getElementById('detail-modal').classList.add('active');
         }
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
-        function renderDetailShops() {
-            const dIdx = document.getElementById('detail-idx').value;
-            const shops = state.itin[state.currentDay][dIdx].shops;
-            const container = document.getElementById('detail-shopping-list');
-            container.innerHTML = shops.map((shop, iIdx) => `
-                <div class="bg-gray-50 p-4 rounded-2xl relative">
-                    <button onclick="delDetailShop(${iIdx})" class="absolute top-4 right-4 text-gray-300">✕</button>
-                    <input type="text" value="${shop.name}" onblur="updateDetailShopName(${iIdx}, this.value)" class="bg-transparent font-black text-sm mb-4 outline-none w-4/5" placeholder="商品名稱">
-                    <div class="photo-box" onclick="triggerImg('shop-${iIdx}')">
-                        ${shop.img ? `<img src="${shop.img}" onclick="viewFull('${shop.img}')">` : '<div class="h-full flex items-center justify-center text-gray-300"><i class="fa-solid fa-camera"></i></div>'}
-                        <input type="file" id="shop-${iIdx}" class="hidden" accept="image/*" onchange="handleImg(this, 'detail', 0, ${iIdx})">
-                    </div>
-                </div>
-            `).join('');
-        }
-        function addDetailShop() {
-            const dIdx = document.getElementById('detail-idx').value;
-            state.itin[state.currentDay][dIdx].shops.push({ name: "新商品", img: null });
-            saveState(); renderDetailShops();
-        }
-        function delDetailShop(iIdx) {
-            const dIdx = document.getElementById('detail-idx').value;
-            state.itin[state.currentDay][dIdx].shops.splice(iIdx, 1);
-            saveState(); renderDetailShops();
-        }
-        function updateDetailShopName(iIdx, val) {
-            const dIdx = document.getElementById('detail-idx').value;
-            state.itin[state.currentDay][dIdx].shops[iIdx].name = val;
-            saveState();
-        }
         function saveCurrentDetail() {
-            const dIdx = document.getElementById('detail-idx').value;
-            const item = state.itin[state.currentDay][dIdx];
+            const idx = document.getElementById('detail-idx').value;
+            const item = state.itin[state.currentDay][idx];
             item.title = document.getElementById('detail-title').value;
             item.time = document.getElementById('detail-time').value;
-            item.type = document.getElementById('detail-type').value;
+            item.loc = document.getElementById('detail-loc').value;
             item.desc = document.getElementById('detail-desc').value;
+            item.notes = document.getElementById('detail-notes').value;
             saveState(); renderItin(); closeDetailModal();
         }
 
-        // --- 記帳渲染 ---
-        function renderExpenses() {
-            const list = document.getElementById('expense-list'); list.innerHTML = "";
-            state.expenses.forEach((e, idx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-4 rounded-2xl shadow-sm flex justify-between";
-                div.innerHTML = `<div><p class="text-sm font-black">${e.item}</p><p class="text-[9px] text-gray-400">${e.payer}</p></div><p class="font-mono text-sm">NT$ ${e.twd}</p>`;
-                list.appendChild(div);
+        // --- 待辦功能 (修復) ---
+        function renderTodos() {
+            const container = document.getElementById('todo-groups'); container.innerHTML = "";
+            state.todoGroups.forEach((g, gIdx) => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative";
+                div.innerHTML = `
+                    <button onclick="delTodoGroup(${gIdx})" class="absolute top-6 right-6 text-gray-300">✕</button>
+                    <h3 contenteditable="true" onblur="updateTodoG(${gIdx}, this)" class="text-base font-black italic underline decoration-cream-primary">${g.title}</h3>
+                    <div class="mt-4 space-y-3">
+                        ${g.items.map((it, iIdx) => `
+                            <div class="flex items-center justify-between group">
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" ${it.done?'checked':''} onchange="toggleTodo(${gIdx},${iIdx})" class="accent-cream-accent">
+                                    <span contenteditable="true" onblur="updateTodoI(${gIdx},${iIdx}, this)" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span>
+                                </div>
+                                <button onclick="delTodoItem(${gIdx},${iIdx})" class="text-xs text-gray-200">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-cream-accent">+ ADD ITEM</button>`;
+                container.appendChild(div);
+            });
+        }
+        function addTodoGroup() { state.todoGroups.push({ title: "新清單", items: [] }); saveState(); renderTodos(); }
+        function delTodoGroup(idx) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); }
+        function addTodoItem(idx) { state.todoGroups[idx].items.push({ text: "新事項", done: false }); saveState(); renderTodos(); }
+        function delTodoItem(g, i) { state.todoGroups[g].items.splice(i,1); saveState(); renderTodos(); }
+        function toggleTodo(g, i) { state.todoGroups[g].items[i].done = !state.todoGroups[g].items[i].done; saveState(); renderTodos(); }
+        function updateTodoG(idx, el) { state.todoGroups[idx].title = el.innerText; saveState(); }
+        function updateTodoI(g, i, el) { state.todoGroups[g].items[i].text = el.innerText; saveState(); }
+
+        // --- 資訊頁面 (修復) ---
+        function renderInfo() {
+            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
+            state.customInfo.forEach((info, idx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative";
+                div.innerHTML = `
+                    <button onclick="delInfo(${idx})" class="absolute top-6 right-6 text-gray-200">✕</button>
+                    <h4 contenteditable="true" onblur="updateInfoT(${idx}, this)" class="font-black text-sm mb-2 uppercase italic">${info.title}</h4>
+                    <div contenteditable="true" onblur="updateInfoC(${idx}, this)" class="text-[11px] text-gray-500 font-mono">${info.content}</div>`;
+                container.appendChild(div);
+            });
+        }
+        function addCustomInfo() { state.customInfo.push({ title: "標題", content: "內容" }); saveState(); renderInfo(); }
+        function delInfo(idx) { state.customInfo.splice(idx,1); saveState(); renderInfo(); }
+        function updateInfoT(idx, el) { state.customInfo[idx].title = el.innerText; saveState(); }
+        function updateInfoC(idx, el) { state.customInfo[idx].content = el.innerText; saveState(); }
+
+        // --- 採購清單 (圖片大圖功能) ---
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-groups'); container.innerHTML = "";
+            state.wishGroups.forEach((g, gIdx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2.5rem] shadow-sm mb-4 relative";
+                div.innerHTML = `
+                    <button onclick="delWishGroup(${gIdx})" class="absolute top-6 right-6 text-gray-200">✕</button>
+                    <h3 contenteditable="true" onblur="updateWishG(${gIdx}, this)" class="text-base font-black italic underline decoration-cream-primary">${g.title}</h3>
+                    <div class="mt-4 space-y-6">
+                        ${g.items.map((it, iIdx) => `
+                            <div class="space-y-2 border-b border-gray-50 pb-4">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="checkbox" ${it.done?'checked':''} onchange="toggleWish(${gIdx},${iIdx})" class="accent-cream-accent">
+                                        <span contenteditable="true" onblur="updateWishI(${gIdx},${iIdx}, this)" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <label class="cursor-pointer text-cream-accent"><i class="fa-solid fa-camera"></i><input type="file" class="hidden" accept="image/*" onchange="uploadWishImg(${gIdx},${iIdx},this)"></label>
+                                        <button onclick="delWishItem(${gIdx},${iIdx})" class="text-gray-200">✕</button>
+                                    </div>
+                                </div>
+                                ${it.img ? `<img src="${it.img}" class="img-preview" onclick="window.open(this.src)">` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="addWishItem(${gIdx})" class="mt-4 text-[10px] font-black text-cream-accent uppercase">+ ADD ITEM</button>`;
+                container.appendChild(div);
+            });
+        }
+        function addWishGroup() { state.wishGroups.push({ title: "新採購分類", items: [] }); saveState(); renderWishlist(); }
+        function delWishGroup(idx) { state.wishGroups.splice(idx,1); saveState(); renderWishlist(); }
+        function addWishItem(idx) { state.wishGroups[idx].items.push({ text: "商品名稱", done: false, img: "" }); saveState(); renderWishlist(); }
+        function delWishItem(g, i) { state.wishGroups[g].items.splice(i,1); saveState(); renderWishlist(); }
+        function toggleWish(g, i) { state.wishGroups[g].items[i].done = !state.wishGroups[g].items[i].done; saveState(); renderWishlist(); }
+        function updateWishG(idx, el) { state.wishGroups[idx].title = el.innerText; saveState(); }
+        function updateWishI(g, i, el) { state.wishGroups[g].items[i].text = el.innerText; saveState(); }
+
+        // --- 詳細頁內的 Shopping List (圖片大圖) ---
+        function renderShopping(shops) {
+            const area = document.getElementById('shopping-list-area'); area.innerHTML = "";
+            shops.forEach((shop, sIdx) => {
+                const div = document.createElement('div'); div.className = "bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm space-y-4";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <h5 contenteditable="true" onblur="updateShopN(${sIdx}, this)" class="font-black text-sm italic uppercase">${shop.name}</h5>
+                        <button onclick="delShop(${sIdx})" class="text-gray-200">✕</button>
+                    </div>
+                    <div class="space-y-6">
+                        ${shop.items.map((i, iIdx) => `
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-3 bg-gray-50/50 p-3 rounded-2xl">
+                                    <input type="checkbox" ${i.done?'checked':''} onchange="toggleShopItem(${sIdx},${iIdx})" class="accent-cream-accent">
+                                    <div class="flex-1">
+                                        <div contenteditable="true" onblur="updateShopIN(${sIdx},${iIdx},this)" class="text-[11px] font-black">${i.name}</div>
+                                        <div class="text-[8px] font-mono">₩ <span contenteditable="true" onblur="updateShopIP(${sIdx},${iIdx},this)">${i.price||0}</span></div>
+                                    </div>
+                                    <label class="cursor-pointer text-cream-accent"><i class="fa-solid fa-camera"></i><input type="file" class="hidden" accept="image/*" onchange="uploadShopImg(${sIdx},${iIdx},this)"></label>
+                                    <button onclick="delShopItem(${sIdx},${iIdx})" class="text-gray-200">✕</button>
+                                </div>
+                                ${i.img ? `<img src="${i.img}" class="img-preview" onclick="window.open(this.src)">` : ''}
+                            </div>
+                        `).join('')}
+                        <button onclick="addShopItem(${sIdx})" class="text-[9px] font-black text-cream-accent uppercase">+ ADD ITEM</button>
+                    </div>`;
+                area.appendChild(div);
             });
         }
 
-        function updateSummary() {
-            const spent = state.expenses.reduce((s, e) => s + e.twd, 0);
-            document.getElementById('total-spent').innerText = `NT$ ${spent.toLocaleString()}`;
-            document.getElementById('budget-bar').style.width = Math.min(100, (spent / state.budget) * 100) + '%';
+        // --- 圖片上傳邏輯 ---
+        function uploadWishImg(g, i, el) {
+            const file = el.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                state.wishGroups[g].items[i].img = reader.result;
+                saveState(); renderWishlist();
+            };
+            if (file) reader.readAsDataURL(file);
+        }
+        function uploadShopImg(s, i, el) {
+            const idx = document.getElementById('detail-idx').value;
+            const file = el.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                state.itin[state.currentDay][idx].shops[s].items[i].img = reader.result;
+                saveState(); renderShopping(state.itin[state.currentDay][idx].shops);
+            };
+            if (file) reader.readAsDataURL(file);
         }
 
-        window.onload = () => { renderAll(); };
+        // --- 記帳邏輯 (維持穩定) ---
+        function updateSummary() {
+            const total = state.expenses.reduce((s, e) => s + e.twd, 0); 
+            document.getElementById('total-spent').innerText = `NT$ ${total.toLocaleString()}`;
+            const left = state.budget - total; 
+            document.getElementById('budget-left').innerText = `$ ${left.toLocaleString()}`;
+            document.getElementById('budget-bar').style.width = Math.min(100, (total / state.budget) * 100) + '%';
+        }
+        function openExpenseModal() { document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join(''); }
+        function initExpBtns() { document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join(''); }
+        function saveExpense() {
+            const amt = parseFloat(document.getElementById('exp-amount').value);
+            const rate = parseFloat(document.getElementById('exp-rate').value);
+            state.expenses.push({ 
+                item: document.getElementById('exp-item').value, 
+                date: document.getElementById('exp-date').value, 
+                amount: amt, twd: Math.round(amt * rate), payer: curPayer 
+            });
+            saveState(); renderExpenses(); document.getElementById('expense-modal').classList.add('hidden');
+        }
+        function renderExpenses() {
+            const list = document.getElementById('expense-list'); list.innerHTML = "";
+            state.expenses.forEach((e, idx) => {
+                list.innerHTML += `<div class="bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm">
+                    <div><p class="font-black italic">${e.item}</p><p class="text-[9px] text-gray-400">${e.payer} · ${e.date}</p></div>
+                    <div class="text-right"><p class="font-black italic">NT$ ${e.twd}</p><button onclick="delExp(${idx})" class="text-[8px] text-red-200 uppercase">Delete</button></div>
+                </div>`;
+            });
+        }
+        function delExp(idx) { state.expenses.splice(idx,1); saveState(); renderExpenses(); }
+        function toggleSettlement() {
+            const modal = document.getElementById('settlement-modal'), content = document.getElementById('settlement-content');
+            modal.classList.toggle('hidden');
+            const paid = {}; payers.forEach(p => paid[p] = 0);
+            state.expenses.forEach(e => paid[e.payer] += e.twd);
+            content.innerHTML = payers.map(p => `<div class="flex justify-between border-b py-2"><span>${p}</span><span>NT$ ${paid[p]}</span></div>`).join('');
+        }
+
+        // --- 其他工具 ---
+        function openM(type, loc) { if(!loc) return; window.open(type==='google' ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}` : `https://map.naver.com/v5/search/${encodeURIComponent(loc)}`); }
+        function addShopGroup() { const idx = document.getElementById('detail-idx').value; if(!state.itin[state.currentDay][idx].shops) state.itin[state.currentDay][idx].shops = []; state.itin[state.currentDay][idx].shops.push({ name: "新商店", items: [] }); saveState(); renderShopping(state.itin[state.currentDay][idx].shops); }
+        function addShopItem(s) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].items.push({ name: "商品", price: 0, done: false, img: "" }); saveState(); renderShopping(state.itin[state.currentDay][idx].shops); }
+        function delShop(s) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops.splice(s,1); saveState(); renderShopping(state.itin[state.currentDay][idx].shops); }
+        function delShopItem(s, i) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].items.splice(i,1); saveState(); renderShopping(state.itin[state.currentDay][idx].shops); }
+        function toggleShopItem(s, i) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].items[i].done = !state.itin[state.currentDay][idx].shops[s].items[i].done; saveState(); renderShopping(state.itin[state.currentDay][idx].shops); }
+        function updateShopN(s, el) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].name = el.innerText; saveState(); }
+        function updateShopIN(s, i, el) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].items[i].name = el.innerText; saveState(); }
+        function updateShopIP(s, i, el) { const idx = document.getElementById('detail-idx').value; state.itin[state.currentDay][idx].shops[s].items[i].price = el.innerText; saveState(); }
+        function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
     </script>
 </body>
 </html>
