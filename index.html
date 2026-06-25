@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 Pro Max+ V6.2</title>
+    <title>🇰🇷 韓國之旅 Pro Max+ V7.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -31,23 +31,19 @@
         #detail-modal { position: fixed; inset: 0; z-index: 500; background: #FFFFFF; display: none; overflow-y: auto; }
         #detail-modal.active { display: block; }
         
-        .thumb-box { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; cursor: zoom-in; border: 1px solid #eee; }
-        #image-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; padding: 20px; }
-        #image-overlay.active { display: flex; }
-        #image-overlay img { max-width: 100%; max-height: 90vh; border-radius: 10px; }
-
+        /* 記帳按鈕樣式 */
         .seg-btn { background-color: #FFFFFF; color: #8B8B8B; border: 1px solid #F3F0ED; font-size: 10px; font-weight: bold; padding: 8px 0; border-radius: 12px; transition: all 0.2s; }
         .seg-btn.active { background-color: #4A342E; color: #FFFFFF; border-color: #4A342E; }
+        
+        .active-nav-btn { color: #4A342E !important; opacity: 1 !important; }
     </style>
 </head>
 <body class="flex justify-center">
 
-    <div id="image-overlay" onclick="this.classList.remove('active')"><img id="overlay-img" src=""></div>
-
     <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-cream-bg shadow-inner">
         
         <!-- Header -->
-        <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20 flex justify-between items-center">
+        <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-cream-primary/20">
             <h1 id="trip-title" contenteditable="true" onblur="saveState()" class="editable text-lg font-black italic">🇰🇷 韓國之旅 2026</h1>
         </header>
 
@@ -93,7 +89,7 @@
 
         <!-- 底部導覽 -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[420px] bg-white/80 backdrop-blur-2xl border h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around z-[100]">
-            <button onclick="switchTab('schedule')" class="flex flex-col items-center text-gray-300" id="nav-schedule"><i class="fa-solid fa-compass"></i><span class="text-[8px] font-bold">行程</span></button>
+            <button onclick="switchTab('schedule')" class="flex flex-col items-center text-gray-300 active-nav-btn" id="nav-schedule"><i class="fa-solid fa-compass"></i><span class="text-[8px] font-bold">行程</span></button>
             <button onclick="switchTab('todo')" class="flex flex-col items-center text-gray-300" id="nav-todo"><i class="fa-solid fa-list-check"></i><span class="text-[8px] font-bold">待辦</span></button>
             <button onclick="switchTab('budget')" class="flex flex-col items-center text-gray-300" id="nav-budget"><i class="fa-solid fa-sack-dollar"></i><span class="text-[8px] font-bold">記帳</span></button>
             <button onclick="switchTab('info')" class="flex flex-col items-center text-gray-300" id="nav-info"><i class="fa-solid fa-circle-info"></i><span class="text-[8px] font-bold">資訊</span></button>
@@ -109,25 +105,28 @@
     <div id="detail-modal" class="no-scrollbar">
         <div class="sticky top-0 z-[510] bg-white/90 backdrop-blur-md px-6 py-5 border-b flex justify-between items-center">
             <button onclick="closeDetailModal()" class="text-gray-400">✕ 關閉</button>
-            <h3 class="text-xs font-black uppercase text-cream-accent italic">Details</h3>
+            <h3 class="text-xs font-black uppercase text-cream-accent italic">Itinerary Detail</h3>
             <button onclick="saveCurrentDetail()" class="px-6 py-2 bg-cream-accent text-white rounded-full text-xs font-black">SAVE</button>
         </div>
         <div class="p-8 pb-40 space-y-6">
             <input type="hidden" id="detail-idx">
             <input id="detail-title" type="text" class="w-full text-3xl font-black outline-none italic tracking-tighter" placeholder="行程名稱">
             <input id="detail-loc" type="text" class="w-full text-sm font-bold text-gray-400 outline-none italic" placeholder="📍 地標名稱用於導航">
+            
             <div class="flex items-center space-x-3">
                 <input id="detail-time" type="time" class="bg-gray-50 px-4 py-2 rounded-xl font-mono outline-none">
                 <select id="detail-type" class="bg-white border rounded-xl px-4 py-2 text-xs font-bold italic">
                     <option value="景點">景點</option><option value="餐廳">餐廳</option><option value="購物">購物</option><option value="住宿">住宿</option><option value="交通">交通</option><option value="其他">其他</option>
                 </select>
             </div>
+
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="openM('google', document.getElementById('detail-loc').value)" class="py-4 bg-gray-50 rounded-2xl text-[10px] font-black italic">GOOGLE MAPS</button>
                 <button onclick="openM('naver', document.getElementById('detail-loc').value)" class="py-4 bg-green-50 rounded-2xl text-[10px] font-black text-green-700 italic">NAVER MAP</button>
             </div>
-            <textarea id="detail-desc" rows="4" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm" placeholder="行程詳細描述..."></textarea>
-            <textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm italic" placeholder="重要備註..."></textarea>
+
+            <textarea id="detail-desc" rows="6" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm" placeholder="行程詳細描述..."></textarea>
+            <textarea id="detail-notes" rows="3" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm italic" placeholder="重要備註..."></textarea>
         </div>
     </div>
 
@@ -140,7 +139,7 @@
             </div>
             <div class="space-y-5">
                 <input type="hidden" id="edit-exp-id">
-                <input id="exp-item" type="text" placeholder="支出項目" class="w-full bg-gray-50 p-5 rounded-2xl font-bold outline-none">
+                <input id="exp-item" type="text" placeholder="支出項目 (例如：晚餐炸雞)" class="w-full bg-gray-50 p-5 rounded-2xl font-bold outline-none">
                 <input id="exp-date" type="date" class="w-full bg-gray-50 p-5 rounded-2xl font-mono outline-none">
                 
                 <div>
@@ -164,6 +163,7 @@
                             <option value="KRW">KRW ₩</option>
                             <option value="TWD">TWD $</option>
                         </select>
+                        <i class="fa-solid fa-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"></i>
                     </div>
                     <div class="flex-1 relative">
                         <input id="exp-amount" type="number" oninput="calcTwdHint()" placeholder="金額" class="w-full bg-gray-50 p-5 rounded-2xl font-black outline-none italic text-xl">
@@ -172,22 +172,27 @@
                 </div>
 
                 <div class="flex items-center space-x-2 px-2">
-                    <span class="text-[10px] font-bold text-gray-400">匯率:</span>
+                    <span class="text-[10px] font-bold text-gray-400">當前匯率設定:</span>
                     <input id="exp-rate-val" type="number" value="0.024" step="0.001" oninput="calcTwdHint()" class="w-16 bg-transparent border-b border-gray-200 text-center font-mono text-xs outline-none">
                 </div>
                 
-                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black tracking-widest italic shadow-lg">SAVE NOW</button>
+                <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black tracking-widest italic shadow-lg shadow-cream-accent/20">SAVE NOW</button>
             </div>
         </div>
     </div>
 
     <script>
-        let state = JSON.parse(localStorage.getItem('korea_vV6_2')) || {
-            title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
+        // --- 初始化狀態 ---
+        let state = JSON.parse(localStorage.getItem('korea_travel_v7')) || {
+            title: "🇰🇷 韓國之旅 2026", 
+            budget: 50000, 
+            currentDay: 1,
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
-            todoGroups: [], expenses: [], customInfo: []
+            todoGroups: [], 
+            expenses: [], 
+            customInfo: []
         };
-        
+
         const dayList = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
         const payers = ["小慌", "昱凱", "小安", "文哥", "零用金"];
         const payMethods = ["現金", "line pay", "Wowpass", "信用卡", "零用金", "其他"];
@@ -195,27 +200,24 @@
         
         let curPayer = "文哥", curMethod = "現金", curCat = "餐廳";
 
-        window.onload = () => { switchTab('schedule'); renderAll(); };
+        window.onload = () => { renderAll(); };
 
         function saveState() {
             state.title = document.getElementById('trip-title').innerText;
             state.budget = parseFloat(document.getElementById('budget-val').innerText) || 0;
-            localStorage.setItem('korea_vV6_2', JSON.stringify(state));
+            localStorage.setItem('korea_travel_v7', JSON.stringify(state));
             updateSummary();
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-cream-accent', 'opacity-100'));
-            
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav-btn'));
             document.getElementById('tab-' + tab).classList.add('active');
-            const navBtn = document.getElementById('nav-' + tab);
-            navBtn.classList.add('text-cream-accent', 'opacity-100');
-            
+            document.getElementById('nav-' + tab).classList.add('active-nav-btn');
             document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
         }
 
-        // --- 記帳功能 ---
+        // --- 記帳邏輯 ---
         function calcTwdHint() {
             const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
             const rate = parseFloat(document.getElementById('exp-rate-val').value) || 0.024;
@@ -225,9 +227,12 @@
         }
 
         function initExpenseBtns() {
-            document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpenseBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
-            document.getElementById('method-btns').innerHTML = payMethods.map(m => `<button onclick="curMethod='${m}'; initExpenseBtns()" class="seg-btn ${m===curMethod?'active':''}">${m}</button>`).join('');
-            document.getElementById('cat-btns').innerHTML = categories.map(c => `<button onclick="curCat='${c}'; initExpenseBtns()" class="seg-btn ${c===curCat?'active':''}">${c}</button>`).join('');
+            document.getElementById('payer-btns').innerHTML = payers.map(p => 
+                `<button onclick="curPayer='${p}'; initExpenseBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
+            document.getElementById('method-btns').innerHTML = payMethods.map(m => 
+                `<button onclick="curMethod='${m}'; initExpenseBtns()" class="seg-btn ${m===curMethod?'active':''}">${m}</button>`).join('');
+            document.getElementById('cat-btns').innerHTML = categories.map(c => 
+                `<button onclick="curCat='${c}'; initExpenseBtns()" class="seg-btn ${c===curCat?'active':''}">${c}</button>`).join('');
         }
 
         function openExpenseModal() { 
@@ -314,12 +319,12 @@
             m.innerHTML=`<div class="bg-white rounded-3xl p-8 w-full max-w-xs shadow-2xl">
                 <h3 class="font-black mb-4 italic text-center">代墊分帳統計</h3>
                 <div class="space-y-1">${payers.map(p => `<div class="flex justify-between border-b py-3 text-sm"><span>${p}</span><span class="font-mono text-cream-accent">NT$ ${paid[p].toLocaleString()}</span></div>`).join('')}</div>
-                <button onclick="this.parentElement.parentElement.remove()" class="mt-6 w-full py-4 bg-cream-accent text-white rounded-2xl font-black italic">關閉</button>
+                <button onclick="this.parentElement.parentElement.remove()" class="mt-6 w-full py-4 bg-cream-accent text-white rounded-2xl font-black italic">關閉視窗</button>
             </div>`;
             document.body.appendChild(m);
         }
 
-        // --- 行程功能 ---
+        // --- 行程邏輯 ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
             dayList.forEach((d, i) => {
@@ -343,7 +348,7 @@
         }
 
         function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新行程", loc:"", desc:"", notes:"" }); saveState(); renderItin(); }
-        function delItin(i) { if(confirm("刪除行程？")) { state.itin[state.currentDay].splice(i,1); saveState(); renderItin(); } }
+        function delItin(i) { if(confirm("刪除此行程？")) { state.itin[state.currentDay].splice(i,1); saveState(); renderItin(); } }
 
         function openDetailModal(idx) {
             const item = state.itin[state.currentDay][idx];
@@ -368,7 +373,7 @@
             saveState(); renderItin(); closeDetailModal();
         }
 
-        // --- 待辦功能 ---
+        // --- 待辦邏輯 ---
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             state.todoGroups.forEach((g, gIdx) => {
@@ -380,17 +385,18 @@
         function addTodoGroup() { state.todoGroups.push({ title: "新清單", items: [] }); saveState(); renderTodos(); }
         function delTodoGroup(idx) { if(confirm("確定刪除此分類？")) { state.todoGroups.splice(idx,1); saveState(); renderTodos(); } }
 
-        // --- 資訊功能 ---
+        // --- 資訊邏輯 ---
         function renderInfo() {
             const container = document.getElementById('custom-info-list'); container.innerHTML = "";
             state.customInfo.forEach((info, idx) => {
                 const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative";
-                div.innerHTML = `<button onclick="state.customInfo.splice(${idx},1); saveState(); renderInfo();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="state.customInfo[${idx}].title=this.innerText; saveState()" class="font-black text-sm uppercase italic mb-2">${info.title}</h4><div contenteditable="true" onblur="state.customInfo[${idx}].content=this.innerText; saveState()" class="text-[11px] text-gray-500 font-mono leading-relaxed">${info.content}</div>`;
+                div.innerHTML = `<button onclick="state.customInfo.splice(${idx},1); saveState(); renderInfo();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="state.customInfo[${idx}].title=this.innerText; saveState()" class="font-black text-sm uppercase italic mb-2">${info.title}</h4><div contenteditable="true" onblur="state.customInfo[${idx}].content=this.innerText; saveState()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap">${info.content}</div>`;
                 container.appendChild(div);
             });
         }
-        function addCustomInfo() { state.customInfo.push({ title: "新標題", content: "點擊編輯內容" }); saveState(); renderInfo(); }
+        function addCustomInfo() { state.customInfo.push({ title: "新資訊標題", content: "點擊編輯內容..." }); saveState(); renderInfo(); }
 
+        // --- 地圖跳轉 ---
         function openM(type, loc) { if(!loc) return; window.open(type==='google' ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}` : `https://map.naver.com/v5/search/${encodeURIComponent(loc)}`); }
 
         function renderAll() { renderDayNav(); renderItin(); renderTodos(); renderExpenses(); renderInfo(); updateSummary(); }
