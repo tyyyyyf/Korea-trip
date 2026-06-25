@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026</title>
+    <title>🇰🇷 韓國之旅 Pro Max (Shared Mode)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -158,6 +158,9 @@
                 <textarea id="detail-desc" rows="3" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm font-medium leading-relaxed" placeholder="行程詳細描述..."></textarea>
                 <textarea id="detail-notes" rows="2" class="w-full bg-orange-50/50 p-5 rounded-[2rem] outline-none text-sm font-medium italic" placeholder="重要備註事項..."></textarea>
             </div>
+            <div class="pt-8 border-t border-gray-100 admin-only">
+                <div id="shopping-list-area" class="space-y-4"></div>
+            </div>
         </div>
     </div>
 
@@ -197,67 +200,9 @@
     </div>
 
     <script>
-        // --- 完整行程數據注入 ---
         let state = JSON.parse(localStorage.getItem('korea_final_vMax')) || {
             title: "🇰🇷 韓國之旅 2026", budget: 50000, currentDay: 1,
-            itin: { 
-                1: [
-                    { time: "05:25", title: "小安家出發", loc: "", type: "其他", desc: "準備前往機場", notes: "" },
-                    { time: "06:20", title: "上高速公路", loc: "", type: "交通", desc: "車程約 2H30M", notes: "" },
-                    { time: "09:00", title: "抵達桃園機場 T1", loc: "桃園機場第一航廈", type: "交通", desc: "掛行李、領機票、逛街吃飯", notes: "機上無餐點" },
-                    { time: "11:20", title: "登機口集合", loc: "", type: "其他", desc: "最晚回到登機口時間", notes: "" },
-                    { time: "15:35", title: "抵達仁川機場", loc: "仁川國際機場", type: "交通", desc: "辦理入境手續", notes: "" },
-                    { time: "16:00", title: "接機前往飯店", loc: "Seoul Jung-gu Sogong-ro 6na-gil 11", type: "住宿", desc: "車程約 1.5H", notes: "" },
-                    { time: "17:30", title: "抵達飯店", loc: "Sogong-ro 6na-gil 11", type: "住宿", desc: "辦理 Check-in", notes: "" },
-                    { time: "18:00", title: "晚餐：Mongbeulli 明洞店", loc: "首尔特别市 中区 忠武路一街 24-6", type: "餐廳", desc: "無限供應肉品", notes: "其餘選項：\n1. Mongbeulli 2號店 (乙支路二街 199-22)\n2. 荒謬的生肉 (明洞二街 54-32)\n3. 黃金牧場 (明洞二街 27-1)\n4. 青瓦Town (乙支路二街 199-21)\n5. 樂天百貨 (xF4TNdqv)" },
-                    { time: "22:00", title: "買宵夜、酒", loc: "明洞街", type: "宵夜", desc: "回飯店休息享用", notes: "" }
-                ], 
-                2: [
-                    { time: "09:30", title: "出門 & 早餐：明洞餃子", loc: "首爾特別市中區明洞10街29", type: "餐廳", desc: "明洞人氣名店", notes: "" },
-                    { time: "11:00", title: "首爾塔", loc: "首爾塔", type: "景點", desc: "俯瞰首爾全景", notes: "" },
-                    { time: "13:30", title: "南山纜車", loc: "南山纜車", type: "景點", desc: "體驗纜車風光", notes: "" },
-                    { time: "15:30", title: "梨泰院商圈", loc: "梨泰院", type: "購物", desc: "逛街、異國風情", notes: "" },
-                    { time: "18:00", title: "晚餐 (梨泰院附近)", loc: "", type: "餐廳", desc: "當地挑選", notes: "" }
-                ], 
-                3: [
-                    { time: "09:00", title: "出門", loc: "", type: "其他", desc: "", notes: "" },
-                    { time: "10:00", title: "景福宮", loc: "首爾特別市鐘路區社稷路161", type: "景點", desc: "拍韓服體驗", notes: "預計停留 1.5-2H" },
-                    { time: "12:30", title: "北村韓屋村", loc: "鐘路區桂洞街 37", type: "景點", desc: "傳統建築美學", notes: "公休日：周一" },
-                    { time: "14:30", title: "昌德宮", loc: "首爾特別市鐘路區栗谷路99", type: "景點", desc: "世界文化遺產", notes: "" },
-                    { time: "16:30", title: "明洞逛街", loc: "明洞", type: "購物", desc: "明洞街頭美食與採購", notes: "必吃街頭食物" },
-                    { time: "18:30", title: "晚餐：王妃家 明洞本店", loc: "首爾特別市中區明洞8Ga街26", type: "餐廳", desc: "必吃韓式烤肉", notes: "其餘選項：\n1. 青瓦Town 乙支路店 (乙支路二街 199-21)\n備註：強烈建議吃總店，不推二店。" }
-                ], 
-                4: [
-                    { time: "09:00", title: "出門", loc: "", type: "其他", desc: "", notes: "" },
-                    { time: "10:30", title: "聖水洞", loc: "聖水洞", type: "景點", desc: "網美聚集地", notes: "逛街 ALL DAY" },
-                    { time: "12:30", title: "午餐：祖傳三代馬鈴薯湯", loc: "聖水洞馬鈴薯排骨湯", type: "餐廳", desc: "排隊名店", notes: "" },
-                    { time: "15:00", title: "狎鷗亭", loc: "狎鷗亭", type: "景點", desc: "潮流品牌聚集", notes: "逛街 ALL DAY" },
-                    { time: "17:00", title: "下午茶：網美咖啡廳", loc: "", type: "咖啡廳", desc: "狎鷗亭咖啡廳巡禮", notes: "" },
-                    { time: "19:00", title: "晚餐 (江南/狎鷗亭)", loc: "", type: "餐廳", desc: "江南逛街", notes: "" }
-                ], 
-                5: [
-                    { time: "09:00", title: "早餐：Tera 紫菜包飯", loc: "弘益大學總店", type: "餐廳", desc: "弘大必吃早餐", notes: "參考：tisshuang.com/blog/post/teraricerolls" },
-                    { time: "11:00", title: "弘大商圈", loc: "弘益大學商圈", type: "購物", desc: "年輕人購物首選", notes: "逛街 ALL DAY" },
-                    { time: "13:00", title: "延南洞", loc: "延南洞", type: "景點", desc: "文青街道、巷弄小店", notes: "逛街 ALL DAY" },
-                    { time: "15:30", title: "望遠市場", loc: "望遠市場", type: "景點", desc: "傳統市場小吃", notes: "" },
-                    { time: "18:00", title: "晚餐：首爾弘大兩餐", loc: "首爾特別市麻浦區弘益路6街8", type: "餐廳", desc: "韓式年糕火鍋吃到飽", notes: "" },
-                    { time: "21:00", title: "弘大餐酒館", loc: "서울특별시 마포구 어울마당로 123", type: "宵夜", desc: "體驗弘大夜生活", notes: "可選擇：\n1. 凌晨 (새벽) 弘大店\n2. 한사발포차 (연세로7안길 10-7)" }
-                ], 
-                6: [
-                    { time: "10:30", title: "東大門商圈", loc: "東大門", type: "購物", desc: "批發市場、DDP", notes: "食物參考：PURADAK CHICKEN、BHC 炸雞東大門店" },
-                    { time: "12:30", title: "漢南洞", loc: "漢南洞", type: "景點", desc: "高質感逛街區", notes: "" },
-                    { time: "13:30", title: "午餐：北倉洞嫩豆腐", loc: "首爾中區將忠丹路13街11", type: "餐廳", desc: "熱騰騰嫩豆腐鍋", notes: "" },
-                    { time: "16:00", title: "廣藏市場", loc: "廣藏市場", type: "景點", desc: "傳統美食集散地", notes: "" },
-                    { time: "19:00", title: "晚餐 (東大門區)", loc: "", type: "餐廳", desc: "", notes: "" }
-                ], 
-                7: [
-                    { time: "08:30", title: "出門 & 早餐", loc: "", type: "餐廳", desc: "", notes: "" },
-                    { time: "09:30", title: "醫美行程", loc: "首爾醫美中心", type: "其他", desc: "預約醫美項目", notes: "" },
-                    { time: "14:00", title: "離開首爾", loc: "", type: "交通", desc: "車程約 1.5H 前往機場", notes: "" },
-                    { time: "15:30", title: "抵達仁川機場", loc: "仁川國際機場", type: "交通", desc: "退稅、逛免稅店、吃最後一餐", notes: "" },
-                    { time: "19:10", title: "登機回台", loc: "", type: "交通", desc: "最晚 19:00 回到登機口", notes: "" }
-                ]
-            },
+            itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] },
             todoGroups: [], expenses: [], customInfo: [], wishGroups: []
         };
 
@@ -296,11 +241,18 @@
 
         function applyViewOnlyLock() {
             document.querySelectorAll('.admin-only').forEach(el => el.classList.add('view-only-hide'));
+            
+            // 鎖定行程與資訊
             const lockTargets = document.querySelectorAll('#tab-schedule [contenteditable], #tab-info [contenteditable], #detail-modal [contenteditable]');
             lockTargets.forEach(el => el.contentEditable = false);
+
             const lockInputs = document.querySelectorAll('#tab-schedule input, #tab-schedule textarea, #tab-schedule select, #tab-info input, #tab-info textarea, #detail-modal input, #detail-modal textarea, #detail-modal select');
             lockInputs.forEach(el => el.disabled = true);
-            document.querySelectorAll('#expense-modal input, #expense-modal select, #expense-modal textarea, #expense-modal button').forEach(el => el.disabled = false);
+
+            // !! 強制確保記帳彈窗的元件不被鎖定 !!
+            document.querySelectorAll('#expense-modal input, #expense-modal select, #expense-modal textarea, #expense-modal button').forEach(el => {
+                el.disabled = false;
+            });
         }
 
         function renderAll() {
@@ -318,6 +270,7 @@
             document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
         }
 
+        // --- 記帳 ---
         function renderExpenses(filter = 'all') {
             const list = document.getElementById('expense-list'); list.innerHTML = "";
             const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
@@ -350,6 +303,7 @@
             initExpBtns();
             document.getElementById('expense-modal').classList.remove('hidden');
             calcHint();
+            // 確保彈窗內容在編輯時也是可用的
             document.querySelectorAll('#expense-modal input, #expense-modal select').forEach(el => el.disabled = false);
         }
 
@@ -372,6 +326,7 @@
             document.querySelectorAll('#expense-modal input, #expense-modal select').forEach(el => el.disabled = false);
         }
 
+        // --- 其他輔助 ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
             dayList.forEach((d, i) => {
