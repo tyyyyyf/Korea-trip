@@ -1,3 +1,5 @@
+--- START OF FILE Paste June 25, 2026 - 1:38PM ---
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -40,6 +42,8 @@
         #detail-modal.active { display: block; animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .placeholder-hint { color: #D1D5DB !important; }
+        /* 拖拽樣式 */
+        .dragging { opacity: 0.5; transform: scale(0.95); }
     </style>
 </head>
 <body class="flex justify-center">
@@ -66,7 +70,7 @@
             <button onclick="addTodoGroup()" class="mt-6 w-full py-4 bg-white border border-gray-100 rounded-3xl text-gray-400 font-bold text-sm">+ 新增分類標題</button>
         </section>
 
-        <!-- [分頁 3] 採購 (全新獨立頁面) -->
+        <!-- [分頁 3] 採購 (設計已更新) -->
         <section id="tab-wishlist" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic tracking-tight">待採購項目</h2>
             <div id="wishlist-groups" class="space-y-6"></div>
@@ -102,7 +106,7 @@
             <button onclick="addCustomInfo()" class="mt-6 w-full py-4 border-2 border-dashed border-cream-primary rounded-3xl text-gray-400 font-bold text-sm tracking-widest">+ 新增資訊區塊</button>
         </section>
 
-        <!-- 底部導覽 (5 欄) -->
+        <!-- 底部導覽 -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[420px] bg-white/80 backdrop-blur-2xl border border-white/50 h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around px-1 z-[100]">
             <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center space-y-1 active-nav-btn text-gray-300">
                 <i class="fa-solid fa-compass text-lg"></i><span class="text-[8px] font-black uppercase">行程</span>
@@ -139,9 +143,20 @@
             <div class="space-y-4">
                 <input id="detail-title" type="text" class="w-full text-3xl font-black border-none outline-none italic tracking-tighter" placeholder="景點名稱">
                 <input id="detail-loc" type="text" class="w-full text-sm font-bold text-gray-400 border-none outline-none italic" placeholder="📍 地標名稱用於導航">
-                <div class="flex items-center space-x-2 text-cream-accent font-bold text-sm bg-cream-bg/50 px-4 py-2 rounded-xl w-fit mt-2">
-                    <i class="fa-regular fa-clock"></i>
-                    <input id="detail-time" type="time" class="bg-transparent border-none outline-none font-mono">
+                <div class="flex items-center space-x-2 mt-2">
+                    <div class="flex items-center space-x-2 text-cream-accent font-bold text-sm bg-cream-bg/50 px-4 py-2 rounded-xl w-fit">
+                        <i class="fa-regular fa-clock"></i>
+                        <input id="detail-time" type="time" class="bg-transparent border-none outline-none font-mono">
+                    </div>
+                    <!-- 新增類別下拉選單 -->
+                    <select id="detail-type" class="text-[10px] font-black bg-white border border-cream-primary rounded-xl px-3 py-2 outline-none uppercase italic">
+                        <option value="景點">景點</option>
+                        <option value="餐廳">餐廳</option>
+                        <option value="購物">購物</option>
+                        <option value="住宿">住宿</option>
+                        <option value="宵夜">宵夜</option>
+                        <option value="其他">其他</option>
+                    </select>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
@@ -222,7 +237,6 @@
         const taxes = ["無", "未退稅", "已退稅"];
         let curPayer="文哥", curPayment="現金", curTax="無", curExpCat="其他";
 
-        // --- 通用智慧佔位符 ---
         function setupAutoClear(el, placeholder) {
             if (!el.innerText.trim() || el.innerText.trim() === placeholder) {
                 el.innerText = placeholder;
@@ -261,7 +275,6 @@
             renderDayNav(); renderItin(); renderTodos(); renderWishlist(); renderExpenses('all'); renderInfo(); updateSummary();
         }
 
-        // --- 分頁功能 ---
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.add('text-gray-300'));
@@ -272,7 +285,7 @@
             document.getElementById('fab-budget').style.display = (tab === 'budget') ? 'flex' : 'none';
         }
 
-        // --- 行程功能 ---
+        // --- 行程功能 (修正：移除移動鍵改為拖放) ---
         function renderDayNav() {
             const container = document.getElementById('day-selector'); container.innerHTML = "";
             dayList.forEach((d, i) => {
@@ -286,7 +299,7 @@
         }
 
         function getCatColor(type) {
-            const map = {'景點':'bg-cat-att text-white','購物':'bg-cat-shp text-[#8B735B]','餐廳':'bg-cat-res text-cream-accent','咖啡廳':'bg-cat-caf text-[#8B7E74]','住宿':'bg-cat-bis text-white','交通':'bg-cat-mon text-white','其他':'bg-cat-oth text-gray-500'};
+            const map = {'景點':'bg-cat-att text-white','購物':'bg-cat-shp text-[#8B735B]','餐廳':'bg-cat-res text-cream-accent','咖啡廳':'bg-cat-caf text-[#8B7E74]','住宿':'bg-cat-bis text-white','交通':'bg-cat-mon text-white','宵夜':'bg-purple-200 text-purple-700','其他':'bg-cat-oth text-gray-500'};
             return map[type] || 'bg-white text-gray-400';
         }
 
@@ -294,14 +307,26 @@
             const list = document.getElementById('itinerary-list'); list.innerHTML = "";
             (state.itin[state.currentDay] || []).forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = "relative pl-10 mb-8";
+                div.className = "relative pl-10 mb-8 itin-item";
+                div.draggable = true;
+                div.dataset.index = idx;
+                
+                // 拖放事件
+                div.ondragstart = (e) => { e.target.classList.add('dragging'); e.dataTransfer.setData('text/plain', idx); };
+                div.ondragend = (e) => { e.target.classList.remove('dragging'); };
+                div.ondragover = (e) => { e.preventDefault(); };
+                div.ondrop = (e) => {
+                    e.preventDefault();
+                    const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIdx = idx;
+                    moveItinDirect(fromIdx, toIdx);
+                };
+
                 div.innerHTML = `
                     <div class="absolute left-[13px] top-1 w-4 h-4 rounded-full bg-cream-accent border-4 border-white shadow z-10"></div>
                     <div onclick="openDetailModal(${idx})" class="bg-white p-5 rounded-[2rem] shadow-sm border border-cream-primary/10 relative transition active:scale-95">
                         <div class="absolute top-4 right-4 flex space-x-3 text-gray-300">
-                            <button onclick="event.stopPropagation(); moveItin(${idx},-1)"><i class="fa-solid fa-chevron-up text-xs"></i></button>
-                            <button onclick="event.stopPropagation(); moveItin(${idx},1)"><i class="fa-solid fa-chevron-down text-xs"></i></button>
-                            <button onclick="event.stopPropagation(); delItin(${idx})" class="hover:text-red-400 ml-1"><i class="fa-solid fa-xmark"></i></button>
+                            <button onclick="event.stopPropagation(); delItin(${idx})" class="hover:text-red-400"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                         <div class="flex justify-between mb-2 pr-14">
                             <span class="text-xs font-black text-cream-accent italic font-mono">${item.time || '12:00'}</span>
@@ -314,16 +339,23 @@
             });
         }
 
+        function moveItinDirect(from, to) {
+            const arr = state.itin[state.currentDay];
+            const item = arr.splice(from, 1)[0];
+            arr.splice(to, 0, item);
+            saveState(); renderItin();
+        }
+
         function addNewItinerary() { state.itin[state.currentDay].push({ time:"12:00", title:"新項目", loc:"", type:"景點", desc:"", notes:"", shops:[] }); saveState(); renderItin(); }
-        function moveItin(idx, dir) { const arr = state.itin[state.currentDay]; const t = idx + dir; if(t >= 0 && t < arr.length) { [arr[idx], arr[t]] = [arr[t], arr[idx]]; saveState(); renderItin(); } }
         function delItin(idx) { if(confirm("刪除行程？")) { state.itin[state.currentDay].splice(idx,1); saveState(); renderItin(); } }
 
-        // --- 詳細頁與伸縮 Shopping List ---
+        // --- 詳細頁 (修正：新增類別選單) ---
         function openDetailModal(idx) {
             const item = state.itin[state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
             document.getElementById('detail-title').value = item.title;
             document.getElementById('detail-time').value = item.time || "12:00";
+            document.getElementById('detail-type').value = item.type || "景點";
             document.getElementById('detail-loc').value = item.loc || "";
             document.getElementById('detail-desc').value = item.desc || "";
             document.getElementById('detail-notes').value = item.notes || "";
@@ -336,16 +368,21 @@
             const item = state.itin[state.currentDay][idx];
             item.title = document.getElementById('detail-title').value;
             item.time = document.getElementById('detail-time').value;
+            item.type = document.getElementById('detail-type').value;
             item.loc = document.getElementById('detail-loc').value;
             item.desc = document.getElementById('detail-desc').value;
             item.notes = document.getElementById('detail-notes').value;
             saveState(); renderItin(); closeDetailModal();
         }
 
+        // --- Shopping List (修正：勾選後自動沉底) ---
         function renderShopping(shops) {
             const area = document.getElementById('shopping-list-area'); area.innerHTML = "";
             let total = 0, bought = 0;
             shops.forEach((shop, sIdx) => {
+                // 排序：未完成的在前，完成的在後
+                const sortedItems = [...shop.items].sort((a, b) => a.done - b.done);
+                
                 const bCount = shop.items.filter(i => i.done).length;
                 const tCount = shop.items.length;
                 const pct = tCount > 0 ? Math.round((bCount / tCount) * 100) : 0;
@@ -367,38 +404,40 @@
                         <button onclick="event.stopPropagation(); delShop(${sIdx})" class="text-gray-200 ml-4"><i class="fa-solid fa-trash-can text-xs"></i></button>
                     </div>
                     <div class="${isCollapsed ? 'hidden' : 'space-y-3'}">
-                        ${shop.items.map((i, iIdx) => `
+                        ${sortedItems.map((i, iIdx) => {
+                            const originalIdx = shop.items.indexOf(i);
+                            return `
                             <div class="bg-gray-50/50 p-4 rounded-3xl space-y-3 relative group">
                                 <div class="flex items-center space-x-3">
-                                    <input type="checkbox" ${i.done?'checked':''} onchange="toggleShopItem(${sIdx},${iIdx})" class="w-5 h-5 accent-cream-accent">
+                                    <input type="checkbox" ${i.done?'checked':''} onchange="toggleShopItem(${sIdx},${originalIdx})" class="w-5 h-5 accent-cream-accent">
                                     <div class="flex-1">
-                                        <div contenteditable="true" id="shop-i-${sIdx}-${iIdx}" class="text-[11px] font-black tracking-tight ${i.done?'line-through opacity-30':''}">${i.name}</div>
+                                        <div contenteditable="true" id="shop-i-${sIdx}-${originalIdx}" class="text-[11px] font-black tracking-tight ${i.done?'line-through opacity-30':''}">${i.name}</div>
                                         <div class="flex space-x-3 mt-1 text-[8px] font-black text-gray-400 font-mono italic uppercase">
-                                            <span>₩ <span contenteditable="true" id="shop-p-${sIdx}-${iIdx}">${i.price || 0}</span></span>
-                                            <span>Qty: <span contenteditable="true" id="shop-q-${sIdx}-${iIdx}">${i.qty || 1}</span></span>
+                                            <span>₩ <span contenteditable="true" id="shop-p-${sIdx}-${originalIdx}">${i.price || 0}</span></span>
+                                            <span>Qty: <span contenteditable="true" id="shop-q-${sIdx}-${originalIdx}">${i.qty || 1}</span></span>
                                         </div>
                                     </div>
-                                    <button onclick="delShopItem(${sIdx},${iIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button>
+                                    <button onclick="delShopItem(${sIdx},${originalIdx})" class="text-gray-200"><i class="fa-solid fa-xmark text-xs"></i></button>
                                 </div>
                                 <div class="flex items-center space-x-3 pl-8">
                                     <div class="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
                                         ${i.img ? `<img src="${i.img}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-gray-200 text-sm"></i>`}
-                                        <input type="file" accept="image/*" onchange="uploadImage(event, ${sIdx}, ${iIdx})" class="absolute inset-0 opacity-0 cursor-pointer">
+                                        <input type="file" accept="image/*" onchange="uploadImage(event, ${sIdx}, ${originalIdx})" class="absolute inset-0 opacity-0 cursor-pointer">
                                     </div>
-                                    <textarea id="shop-nt-${sIdx}-${iIdx}" placeholder="商品備註事項..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note || ''}</textarea>
+                                    <textarea id="shop-nt-${sIdx}-${originalIdx}" placeholder="商品備註事項..." class="flex-1 bg-transparent text-[9px] italic border-none outline-none resize-none">${i.note || ''}</textarea>
                                 </div>
-                            </div>`).join('')}
+                            </div>`}).join('')}
                         <button onclick="addShopItem(${sIdx})" class="text-[9px] font-black text-cream-accent uppercase tracking-widest">+ Add Item</button>
                     </div>`;
                 area.appendChild(div);
                 const nEl = div.querySelector(`#shop-n-${sIdx}`); setupAutoClear(nEl, "商店名稱");
                 nEl.onblur = () => { shop.name = nEl.innerText; saveState(); };
                 shop.items.forEach((item, iIdx) => {
-                    const iEl = div.querySelector(`#shop-i-${sIdx}-${iIdx}`); setupAutoClear(iEl, "商品名稱");
-                    iEl.onblur = () => { item.name = iEl.innerText; saveState(); };
-                    div.querySelector(`#shop-p-${sIdx}-${iIdx}`).onblur = (e) => { item.price = e.target.innerText; saveState(); };
-                    div.querySelector(`#shop-q-${sIdx}-${iIdx}`).onblur = (e) => { item.qty = e.target.innerText; saveState(); };
-                    div.querySelector(`#shop-nt-${sIdx}-${iIdx}`).onblur = (e) => { item.note = e.target.value; saveState(); };
+                    const iEl = div.querySelector(`#shop-i-${sIdx}-${iIdx}`); if(iEl) setupAutoClear(iEl, "商品名稱");
+                    if(iEl) iEl.onblur = () => { item.name = iEl.innerText; saveState(); };
+                    const pEl = div.querySelector(`#shop-p-${sIdx}-${iIdx}`); if(pEl) pEl.onblur = (e) => { item.price = e.target.innerText; saveState(); };
+                    const qEl = div.querySelector(`#shop-q-${sIdx}-${iIdx}`); if(qEl) qEl.onblur = (e) => { item.qty = e.target.innerText; saveState(); };
+                    const ntEl = div.querySelector(`#shop-nt-${sIdx}-${iIdx}`); if(ntEl) ntEl.onblur = (e) => { item.note = e.target.value; saveState(); };
                 });
             });
             const overallPct = total > 0 ? Math.round((bought / total) * 100) : 0;
@@ -432,38 +471,59 @@
             reader.readAsDataURL(file);
         }
 
-        // --- 待採購項目分頁 ---
+        // --- 待採購項目分頁 (修正：改為 Shopping List 樣式) ---
         function renderWishlist() {
             const container = document.getElementById('wishlist-groups'); container.innerHTML = "";
             (state.wishGroups || []).forEach((group, gIdx) => {
-                const gDiv = document.createElement('div'); gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm relative";
+                const total = group.items.length;
+                const bought = group.doneItems ? group.doneItems.filter(d => d).length : 0;
+                const pct = total > 0 ? Math.round((bought / total) * 100) : 0;
+
+                const gDiv = document.createElement('div'); 
+                gDiv.className = "bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 relative mb-4";
                 gDiv.innerHTML = `
                     <button onclick="delWishG(${gIdx})" class="absolute top-6 right-6 text-gray-200 text-xs">✕</button>
-                    <h3 id="wg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-4 pr-6 italic uppercase underline decoration-cream-primary/60">${group.title}</h3>
+                    <h3 id="wg-${gIdx}" contenteditable="true" class="editable text-base font-black mb-1 pr-6 italic uppercase underline decoration-cream-primary/60">${group.title}</h3>
+                    
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-cream-accent transition-all" style="width: ${pct}%"></div></div>
+                        <span class="text-[9px] font-black text-cream-accent font-mono">${bought}/${total}</span>
+                    </div>
+
                     <div class="space-y-3">
-                        ${group.items.map((item, iIdx) => `
-                            <div class="flex items-center justify-between group">
-                                <div class="flex items-center space-x-3"><div class="w-4 h-4 rounded border border-gray-200 flex-shrink-0"></div>
-                                <span id="wi-${gIdx}-${iIdx}" contenteditable="true" class="editable text-sm font-bold text-gray-500">${item}</span></div>
+                        ${group.items.map((item, iIdx) => {
+                            const isDone = group.doneItems && group.doneItems[iIdx];
+                            return `
+                            <div class="flex items-center justify-between group bg-gray-50/50 p-3 rounded-2xl">
+                                <div class="flex items-center space-x-3">
+                                    <input type="checkbox" ${isDone?'checked':''} onchange="toggleWishItem(${gIdx}, ${iIdx})" class="w-4 h-4 accent-cream-accent">
+                                    <span id="wi-${gIdx}-${iIdx}" contenteditable="true" class="editable text-xs font-bold ${isDone?'line-through opacity-30':'text-gray-600'}">${item}</span>
+                                </div>
                                 <button onclick="delWishI(${gIdx},${iIdx})" class="text-gray-200 text-xs opacity-0 group-hover:opacity-100">✕</button>
-                            </div>`).join('')}
+                            </div>`}).join('')}
                     </div>
                     <button onclick="addWishI(${gIdx})" class="mt-4 text-[10px] font-black text-gray-300 uppercase tracking-widest hover:text-cream-accent transition">+ 新增事項</button>`;
                 container.appendChild(gDiv);
+                
                 const tgEl = gDiv.querySelector(`#wg-${gIdx}`); setupAutoClear(tgEl, "分類標題");
                 tgEl.onblur = () => { group.title = tgEl.innerText; saveState(); };
                 group.items.forEach((_, iIdx) => {
-                    const tiEl = gDiv.querySelector(`#wi-${gIdx}-${iIdx}`); setupAutoClear(tiEl, "代採購內容");
-                    tiEl.onblur = () => { group.items[iIdx] = tiEl.innerText; saveState(); };
+                    const tiEl = gDiv.querySelector(`#wi-${gIdx}-${iIdx}`); if(tiEl) setupAutoClear(tiEl, "代採購內容");
+                    if(tiEl) tiEl.onblur = () => { group.items[iIdx] = tiEl.innerText; saveState(); };
                 });
             });
         }
-        function addWishGroup() { if(!state.wishGroups) state.wishGroups = []; state.wishGroups.push({ title: "分類標題", items: ["代採購內容"] }); saveState(); renderWishlist(); }
+        function toggleWishItem(g, i) {
+            if(!state.wishGroups[g].doneItems) state.wishGroups[g].doneItems = [];
+            state.wishGroups[g].doneItems[i] = !state.wishGroups[g].doneItems[i];
+            saveState(); renderWishlist();
+        }
+        function addWishGroup() { if(!state.wishGroups) state.wishGroups = []; state.wishGroups.push({ title: "分類標題", items: ["代採購內容"], doneItems: [false] }); saveState(); renderWishlist(); }
         function delWishG(idx) { state.wishGroups.splice(idx,1); saveState(); renderWishlist(); }
-        function addWishI(idx) { state.wishGroups[idx].items.push("代採購內容"); saveState(); renderWishlist(); }
-        function delWishI(g, i) { state.wishGroups[g].items.splice(i,1); saveState(); renderWishlist(); }
+        function addWishI(idx) { state.wishGroups[idx].items.push("代採購內容"); if(!state.wishGroups[idx].doneItems) state.wishGroups[idx].doneItems = []; state.wishGroups[idx].doneItems.push(false); saveState(); renderWishlist(); }
+        function delWishI(g, i) { state.wishGroups[g].items.splice(i,1); if(state.wishGroups[g].doneItems) state.wishGroups[g].doneItems.splice(i,1); saveState(); renderWishlist(); }
 
-        // --- 代辦功能 ---
+        // --- 待辦功能 ---
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             state.todoGroups.forEach((group, gIdx) => {
@@ -494,7 +554,7 @@
         function addTodoI(idx) { state.todoGroups[idx].items.push("代辦細項內容"); saveState(); renderTodos(); }
         function delTodoI(g, i) { state.todoGroups[g].items.splice(i,1); saveState(); renderTodos(); }
 
-        // --- 記帳功能修復 ---
+        // --- 記帳功能 ---
         function setField(type, val) {
             document.querySelectorAll(`.${type}-btn`).forEach(b => {
                 b.classList.remove('active'); if (b.innerText === val) b.classList.add('active');
