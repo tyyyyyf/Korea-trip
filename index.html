@@ -248,12 +248,12 @@
         // --- 核心系統 ---
         function unlockSystem() {
             if (!isOwner) {
-                const pass = prompt("請輸入主人密碼 (預設 8888)：");
-                if (pass === "8888") {
+                const pass = prompt("請輸入密碼 ：");
+                if (pass === "2002") {
                     isOwner = true;
                     document.body.classList.add('is-owner');
                     document.getElementById('lock-icon').className = "fa-solid fa-lock-open text-xs";
-                    alert("主人模式已開啟，私密採購清單已解鎖。");
+                    alert("私人模式已開啟 私人清單已解鎖。");
                 } else { alert("密碼錯誤！"); }
             } else {
                 isOwner = false;
