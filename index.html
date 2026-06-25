@@ -1,9 +1,11 @@
+--- START OF FILE Paste June 25, 2026 - 6:57PM ---
+
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 Pro Max</title>
+    <title>🇰🇷 韓國之旅 Pro Max+</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -195,15 +197,21 @@
                 <h3 id="exp-modal-title" class="text-xl font-black italic tracking-tighter">新增記帳</h3>
                 <button onclick="closeExpenseModal()" class="w-8 h-8 bg-gray-100 rounded-full text-gray-400 text-xs font-black">✕</button>
             </div>
-            <div class="space-y-6">
+            <div class="space-y-5">
                 <input type="hidden" id="edit-exp-id">
-                <input id="exp-item" type="text" placeholder="項目名稱" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold">
+                <input id="exp-item" type="text" placeholder="項目名稱 (例如：炸雞)" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold">
                 <input id="exp-date" type="date" class="w-full bg-gray-50 p-5 rounded-2xl outline-none text-sm font-bold font-mono">
                 
                 <div>
                     <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">付款人</label>
-                    <div class="grid grid-cols-4 gap-2" id="payer-btns"></div>
+                    <div class="grid grid-cols-3 gap-2" id="payer-btns"></div>
                 </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">付款方式</label>
+                    <div class="grid grid-cols-4 gap-2" id="method-btns"></div>
+                </div>
+
                 <div>
                     <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">花費分類</label>
                     <div class="grid grid-cols-4 gap-2" id="cat-btns"></div>
@@ -213,9 +221,15 @@
                     <select id="exp-currency" class="w-1/3 bg-gray-50 p-5 rounded-2xl text-[10px] font-black appearance-none"><option value="KRW">KRW(₩)</option><option value="TWD">TWD($)</option></select>
                     <input id="exp-amount" type="number" placeholder="金額" class="flex-1 bg-gray-50 p-5 rounded-2xl outline-none text-xl font-black italic">
                 </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 block">備註欄位</label>
+                    <textarea id="exp-note" placeholder="紀錄細節 (例如：哪間店、誰沒吃...)" class="w-full bg-gray-50 p-4 rounded-2xl outline-none text-xs font-medium" rows="2"></textarea>
+                </div>
+
                 <div class="flex justify-between px-3 text-[10px] font-bold font-mono text-gray-400 italic">
                     <span>匯率: <input id="exp-rate" type="number" value="0.024" step="0.001" class="w-10 bg-transparent border-b outline-none text-cream-accent"></span>
-                    <span id="exp-twd-hint" class="text-cream-accent">台幣: NT$ 0</span>
+                    <span id="exp-twd-hint" class="text-cream-accent">台幣折合: NT$ 0</span>
                 </div>
                 <button onclick="saveExpense()" class="w-full bg-cream-accent text-white py-5 rounded-[2rem] font-black tracking-widest uppercase italic">Save Now</button>
             </div>
@@ -225,7 +239,8 @@
     <!-- 分帳 Modal -->
     <div id="settlement-modal" class="fixed inset-0 z-[250] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
         <div class="w-full max-w-[350px] bg-white rounded-[2.5rem] p-8 text-center">
-            <h3 class="text-lg font-black italic mb-6 tracking-widest uppercase">分帳統計</h3>
+            <h3 class="text-lg font-black italic mb-6 tracking-widest uppercase">個人代墊統計</h3>
+            <p class="text-[9px] text-gray-400 mb-4 uppercase">不含「共同費用」支出</p>
             <div id="settlement-content" class="space-y-3 mb-6"></div>
             <button onclick="toggleSettlement()" class="w-full bg-cream-accent text-white py-4 rounded-2xl font-black text-xs uppercase italic">Close</button>
         </div>
@@ -241,19 +256,23 @@
 
         let isOwner = false;
         const dayList = [{d:"7/5",w:"SUN"},{d:"7/6",w:"MON"},{d:"7/7",w:"TUE"},{d:"7/8",w:"WED"},{d:"7/9",w:"THU"},{d:"7/10",w:"FRI"},{d:"7/11",w:"SAT"}];
-        const payers = ["小慌", "昱凱", "小安", "文哥"];
+        
+        // 擴充：付款人、方式、分類
+        const payers = ["小慌", "昱凱", "小安", "文哥", "共同費用"];
+        const payMethods = ["Wowpass", "Line Pay", "現金", "信用卡"];
         const expCats = ["吃飯", "購物", "景點", "交通"];
-        let curPayer="文哥", curExpCat="吃飯";
+        
+        let curPayer="文哥", curExpCat="吃飯", curMethod="Wowpass";
 
         // --- 核心系統 ---
         function unlockSystem() {
             if (!isOwner) {
-                const pass = prompt("請輸入主人密碼 (預設 8888)：");
-                if (pass === "8888") {
+                const pass = prompt("請輸入密碼：");
+                if (pass === "2002") {
                     isOwner = true;
                     document.body.classList.add('is-owner');
                     document.getElementById('lock-icon').className = "fa-solid fa-lock-open text-xs";
-                    alert("主人模式已開啟，私密採購清單已解鎖。");
+                    alert("私人模式已開啟，私人採購清單已解鎖。");
                 } else { alert("密碼錯誤！"); }
             } else {
                 isOwner = false;
@@ -283,7 +302,7 @@
         }
 
         function switchTab(tab) {
-            if(tab === 'wishlist' && !isOwner) { alert("此分頁僅限主人查看！"); return; }
+            if(tab === 'wishlist' && !isOwner) { alert("此分頁僅限小慌查看！"); return; }
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('active-nav-btn', 'text-gray-300'));
             document.getElementById('tab-' + tab).classList.add('active');
@@ -361,26 +380,65 @@
             const uniqueDates = [...new Set(state.expenses.map(e => e.date.slice(5)))].sort();
             renderExpDateFilter(uniqueDates, filter);
             const filtered = filter === 'all' ? state.expenses : state.expenses.filter(e => e.date.endsWith(filter));
+            
             filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e, idx) => {
                 const globalIdx = state.expenses.findIndex(x => x.id === e.id);
                 const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative";
-                div.innerHTML = `<div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})">
-                    <div class="w-10 h-10 bg-gray-50 rounded-2xl flex items-center justify-center text-[10px] font-black text-gray-400 italic">${e.payer[0]}</div>
-                    <div class="flex-1"><p class="text-sm font-black italic uppercase font-sans">${e.item}</p>
-                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${e.date.slice(5)} · ${e.payer} · ${e.cat}</p></div></div>
-                    <div class="text-right shrink-0"><p class="text-sm font-black italic font-mono">NT$ ${e.twd.toLocaleString()}</p>
-                    <button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold uppercase">✕</button></div>`;
+                div.className = "bg-white p-5 rounded-3xl shadow-sm relative";
+                
+                // 顯示標籤邏輯
+                const methodTag = e.method ? `<span class="bg-gray-100 text-gray-500 text-[8px] px-2 py-0.5 rounded-md font-black mr-1">${e.method}</span>` : '';
+                const payerInitial = e.payer === "共同費用" ? "公" : e.payer[0];
+                const noteContent = e.note ? `<p class="mt-2 text-[10px] text-gray-400 bg-gray-50 p-2 rounded-xl italic leading-tight">💬 ${e.note}</p>` : '';
+
+                div.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex items-center space-x-4 flex-1" onclick="editExp(${globalIdx})">
+                        <div class="w-10 h-10 ${e.payer === '共同費用' ? 'bg-orange-100 text-orange-600' : 'bg-gray-50 text-gray-400'} rounded-2xl flex items-center justify-center text-[10px] font-black italic shrink-0">${payerInitial}</div>
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                ${methodTag}
+                                <p class="text-sm font-black italic uppercase font-sans line-clamp-1">${e.item}</p>
+                            </div>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">${e.date.slice(5)} · ${e.payer} · ${e.cat}</p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <p class="text-sm font-black italic font-mono text-cream-accent">NT$ ${e.twd.toLocaleString()}</p>
+                        <button onclick="delExp(${globalIdx})" class="text-[8px] text-red-200 font-bold uppercase">✕</button>
+                    </div>
+                </div>
+                ${noteContent}
+                `;
                 list.appendChild(div);
             });
             updateSummary();
         }
 
         function saveExpense() {
-            const item = document.getElementById('exp-item').value, date = document.getElementById('exp-date').value, amount = parseFloat(document.getElementById('exp-amount').value) || 0, rate = parseFloat(document.getElementById('exp-rate').value) || 0.024, id = document.getElementById('edit-exp-id').value;
+            const item = document.getElementById('exp-item').value, 
+                  date = document.getElementById('exp-date').value, 
+                  amount = parseFloat(document.getElementById('exp-amount').value) || 0, 
+                  rate = parseFloat(document.getElementById('exp-rate').value) || 0.024, 
+                  id = document.getElementById('edit-exp-id').value,
+                  note = document.getElementById('exp-note').value;
+
             if (item && amount) {
-                const rec = { id: id || Date.now(), item, date, amount, rate, payer: curPayer, cat: curExpCat, twd: Math.round(amount * rate) };
-                if (id) { const idx = state.expenses.findIndex(x => x.id == id); state.expenses[idx] = rec; } else { state.expenses.push(rec); }
+                const rec = { 
+                    id: id || Date.now(), 
+                    item, date, amount, rate, 
+                    payer: curPayer, 
+                    method: curMethod,
+                    cat: curExpCat, 
+                    note: note,
+                    twd: Math.round(amount * rate) 
+                };
+                if (id) { 
+                    const idx = state.expenses.findIndex(x => x.id == id); 
+                    state.expenses[idx] = rec; 
+                } else { 
+                    state.expenses.push(rec); 
+                }
                 saveState(); renderExpenses(); closeExpenseModal();
             }
         }
@@ -417,33 +475,93 @@
             return map[type] || 'bg-white text-gray-400';
         }
 
-        // (其他渲染與 Modal 控制函數簡化以節省空間，功能與之前完全一致)
         function renderExpDateFilter(dates, cur) {
             const container = document.getElementById('expense-date-filter');
             container.innerHTML = `<button onclick="renderExpenses('all')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur === 'all' ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm">全部</button>`;
             dates.forEach(d => { container.innerHTML += `<button onclick="renderExpenses('${d}')" class="px-5 py-2.5 rounded-full text-[10px] font-black ${cur === d ? 'bg-cream-accent text-white' : 'bg-white text-gray-400'} shadow-sm">${d}</button>`; });
         }
-        function openExpenseModal() { document.getElementById('expense-modal').classList.remove('hidden'); document.getElementById('exp-date').valueAsDate = new Date(); initExpBtns(); calcHint(); }
+
+        function openExpenseModal() { 
+            document.getElementById('expense-modal').classList.remove('hidden'); 
+            document.getElementById('exp-date').valueAsDate = new Date(); 
+            document.getElementById('edit-exp-id').value = "";
+            document.getElementById('exp-item').value = "";
+            document.getElementById('exp-amount').value = "";
+            document.getElementById('exp-note').value = "";
+            initExpBtns(); 
+            calcHint(); 
+        }
+
         function closeExpenseModal() { document.getElementById('expense-modal').classList.add('hidden'); }
+        
         function initExpBtns() {
             document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="setField('payer','${p}')" class="payer-btn seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
+            document.getElementById('method-btns').innerHTML = payMethods.map(p => `<button onclick="setField('method','${p}')" class="method-btn seg-btn ${p===curMethod?'active':''}">${p}</button>`).join('');
             document.getElementById('cat-btns').innerHTML = expCats.map(p => `<button onclick="setField('cat','${p}')" class="cat-btn seg-btn ${p===curExpCat?'active':''}">${p}</button>`).join('');
         }
-        function setField(type, val) { if(type==='payer') curPayer=val; else curExpCat=val; initExpBtns(); }
-        function calcHint() { const a = parseFloat(document.getElementById('exp-amount').value) || 0; const r = parseFloat(document.getElementById('exp-rate').value) || 1; document.getElementById('exp-twd-hint').innerText = `台幣: NT$ ${Math.round(a * r).toLocaleString()}`; }
-        function editExp(idx) { const e = state.expenses[idx]; document.getElementById('edit-exp-id').value = e.id; document.getElementById('exp-item').value = e.item; document.getElementById('exp-date').value = e.date; document.getElementById('exp-amount').value = e.amount; curPayer=e.payer; curExpCat=e.cat; openExpenseModal(); }
+
+        function setField(type, val) { 
+            if(type==='payer') curPayer=val; 
+            else if(type==='method') curMethod=val;
+            else curExpCat=val; 
+            initExpBtns(); 
+        }
+
+        function calcHint() { 
+            const a = parseFloat(document.getElementById('exp-amount').value) || 0; 
+            const r = parseFloat(document.getElementById('exp-rate').value) || 1; 
+            document.getElementById('exp-twd-hint').innerText = `台幣折合: NT$ ${Math.round(a * r).toLocaleString()}`; 
+        }
+
+        function editExp(idx) { 
+            const e = state.expenses[idx]; 
+            document.getElementById('edit-exp-id').value = e.id; 
+            document.getElementById('exp-item').value = e.item; 
+            document.getElementById('exp-date').value = e.date; 
+            document.getElementById('exp-amount').value = e.amount; 
+            document.getElementById('exp-note').value = e.note || "";
+            curPayer = e.payer || "文哥"; 
+            curMethod = e.method || "Wowpass";
+            curExpCat = e.cat || "吃飯"; 
+            document.getElementById('expense-modal').classList.remove('hidden');
+            initExpBtns();
+            calcHint();
+        }
+
         function delExp(idx) { if(confirm("刪除？")) { state.expenses.splice(idx,1); saveState(); renderExpenses(); } }
+        
         function toggleSettlement() {
             const modal = document.getElementById('settlement-modal'), content = document.getElementById('settlement-content');
             if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden'); const total = state.expenses.reduce((s, e) => s + e.twd, 0), avg = total / payers.length, paid = {}; payers.forEach(p => paid[p] = 0);
-                state.expenses.forEach(e => paid[e.payer] += e.twd); content.innerHTML = "";
-                payers.forEach(p => { const diff = paid[p] - avg; content.innerHTML += `<div class="flex justify-between py-2 border-b border-gray-50"><span class="text-sm font-bold uppercase italic">${p}</span><div class="text-right font-mono"><p class="text-[10px] text-gray-400">已付: ${paid[p].toLocaleString()}</p><p class="text-xs font-black italic ${diff >= 0 ? 'text-green-500' : 'text-red-400'}">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p></div></div>`; });
+                modal.classList.remove('hidden');
+                
+                // 排除共同費用後的個人代墊計算
+                const personalPayers = payers.filter(p => p !== "共同費用");
+                const personalExpenses = state.expenses.filter(e => personalPayers.includes(e.payer));
+                const total = personalExpenses.reduce((s, e) => s + e.twd, 0);
+                const avg = total / personalPayers.length;
+                const paid = {}; 
+                personalPayers.forEach(p => paid[p] = 0);
+                personalExpenses.forEach(e => paid[e.payer] += e.twd);
+                
+                content.innerHTML = "";
+                personalPayers.forEach(p => { 
+                    const diff = paid[p] - avg; 
+                    content.innerHTML += `
+                    <div class="flex justify-between py-2 border-b border-gray-50">
+                        <span class="text-sm font-bold uppercase italic">${p}</span>
+                        <div class="text-right font-mono">
+                            <p class="text-[10px] text-gray-400">已代墊: ${paid[p].toLocaleString()}</p>
+                            <p class="text-xs font-black italic ${diff >= 0 ? 'text-green-500' : 'text-red-400'}">${diff >= 0 ? '+' : ''}${Math.round(diff).toLocaleString()}</p>
+                        </div>
+                    </div>`; 
+                });
             } else { modal.classList.add('hidden'); }
         }
+
         function openM(type, loc) { if(!loc) return alert("請輸入地標"); const q = encodeURIComponent(loc); window.open(type === 'google' ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://map.naver.com/v5/search/${q}`, '_blank'); }
 
-        // Shopping/Wishlist/Todo/Info 相關渲染函數 (確保資料正確存取)
+        // 其他基礎渲染（Todo, Wishlist, Shopping, Info... 如舊）
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             state.todoGroups.forEach((group, gIdx) => {
