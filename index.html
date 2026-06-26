@@ -301,23 +301,42 @@
             });
         }
         // 新增：資訊區塊拖曳排序
-function initInfoSortable() {
-    const el = document.getElementById('custom-info-list');
-    if(!el) return;
-    if (window.infoSortableInstance) window.infoSortableInstance.destroy();
-    window.infoSortableInstance = Sortable.create(el, {
+// 待辦事項拖曳排序初始化 (含分組排序與項目排序)
+function initTodoSortable() {
+    const groupEl = document.getElementById('todo-groups');
+    if(!groupEl) return;
+    
+    // 1. 分組間的排序 (大框框移動)
+    if (window.todoGroupSortable) window.todoGroupSortable.destroy();
+    window.todoGroupSortable = Sortable.create(groupEl, {
         animation: 200,
-        handle: '.info-card', // 整個卡片皆可拖曳
+        handle: '.todo-group-card', 
         ghostClass: 'sortable-ghost',
         onEnd: () => {
-            const infoList = window.state.customInfo;
+            const groups = window.state.todoGroups;
             const newOrder = [];
-            document.querySelectorAll('.info-card').forEach(card => {
-                newOrder.push(infoList[card.getAttribute('data-idx')]);
+            document.querySelectorAll('.todo-group-card').forEach(card => {
+                newOrder.push(groups[card.getAttribute('data-gidx')]);
             });
-            window.state.customInfo = newOrder;
+            window.state.todoGroups = newOrder;
             window.saveToCloud();
         }
+    });
+
+    // 2. 項目間的排序 (小清單移動)
+    document.querySelectorAll('.todo-items-container').forEach((el) => {
+        const gIdx = el.getAttribute('data-gidx');
+        Sortable.create(el, {
+            animation: 150,
+            handle: '.todo-item-row',
+            ghostClass: 'sortable-ghost',
+            onEnd: (evt) => {
+                const items = window.state.todoGroups[gIdx].items;
+                const [movedItem] = items.splice(evt.oldIndex, 1);
+                items.splice(evt.newIndex, 0, movedItem);
+                window.saveToCloud();
+            }
+        });
     });
 }
 
@@ -453,13 +472,50 @@ function initInfoSortable() {
             document.body.appendChild(m);
         }
         function renderTodos() {
-            const container = document.getElementById('todo-groups'); container.innerHTML = "";
-            (window.state.todoGroups || []).forEach((g, gIdx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative";
-                div.innerHTML = `<button onclick="window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h3 contenteditable="true" onblur="window.state.todoGroups[gIdx].title=this.innerText; window.saveToCloud()" class="text-base font-black italic underline decoration-[#E8DCCF]">${g.title}</h3><div class="mt-4 space-y-3">${(g.items || []).map((it, iIdx) => `<div class="flex items-center justify-between"><div class="flex items-center space-x-2"><input type="checkbox" ${it.done?'checked':''} onchange="window.state.todoGroups[gIdx].items[iIdx].done=!window.state.todoGroups[gIdx].items[iIdx].done; window.saveToCloud();" class="accent-accent"><span contenteditable="true" onblur="window.state.todoGroups[gIdx].items[iIdx].text=this.innerText; window.saveToCloud()" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span></div><button onclick="window.state.todoGroups[gIdx].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200">✕</button></div>`).join('')}</div><button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase tracking-widest">+ 新增項目</button>`;
-                container.appendChild(div);
-            });
-        }
+    const container = document.getElementById('todo-groups');
+    if (!container) return;
+    container.innerHTML = "";
+
+    (window.state.todoGroups || []).forEach((g, gIdx) => {
+        const div = document.createElement('div');
+        // 加入 todo-group-card 類別用於分組拖曳
+        div.className = "todo-group-card bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative border border-transparent cursor-grab active:cursor-grabbing";
+        div.setAttribute('data-gidx', gIdx);
+        
+        div.innerHTML = `
+            <button onclick="if(confirm('確定刪除整組？')){window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();}" class="absolute top-6 right-6 text-gray-200">✕</button>
+            
+            <!-- 分組標題：即時存入 state 防止消失 -->
+            <h3 contenteditable="true" 
+                oninput="window.state.todoGroups[${gIdx}].title=this.innerText"
+                onblur="window.saveToCloud()" 
+                class="text-base font-black italic underline decoration-[#E8DCCF] text-accent">${g.title || ''}</h3>
+            
+            <!-- 項目容器 -->
+            <div class="mt-4 space-y-3 todo-items-container" data-gidx="${gIdx}">
+                ${(g.items || []).map((it, iIdx) => `
+                    <div class="flex items-center justify-between todo-item-row cursor-move">
+                        <div class="flex items-center space-x-2 flex-1">
+                            <input type="checkbox" ${it.done ? 'checked' : ''} 
+                                onchange="window.state.todoGroups[${gIdx}].items[${iIdx}].done=this.checked; window.saveToCloud();" 
+                                class="accent-accent w-4 h-4">
+                            
+                            <!-- 項目文字：即時存入 state 防止消失 -->
+                            <span contenteditable="true" 
+                                oninput="window.state.todoGroups[${gIdx}].items[${iIdx}].text=this.innerText"
+                                onblur="window.saveToCloud()" 
+                                class="text-sm font-bold ${it.done ? 'line-through opacity-30' : ''} leading-tight flex-1">${it.text || ''}</span>
+                        </div>
+                        <button onclick="window.state.todoGroups[${gIdx}].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200 ml-2">✕</button>
+                    </div>
+                `).join('')}
+            </div>
+            <button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase tracking-widest">+ 新增事項</button>`;
+        container.appendChild(div);
+    });
+    // 渲染完後啟動排序
+    initTodoSortable();
+}
         function renderInfo() {
     const container = document.getElementById('custom-info-list');
     if (!container) return;
@@ -518,7 +574,18 @@ function initInfoSortable() {
         function closeExpenseModal() { document.getElementById('expense-modal').classList.remove('active'); }
         function zoomImg(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-modal').classList.add('active'); }
         function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
-        function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
+        function addTodoItem(gIdx) {
+    if (!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = [];
+    
+    // 先把目前的 state 存入變數，確保打一半的字不會因為 push 而消失
+    // 但因為 renderTodos 已經有 oninput 即時存檔，這裡直接 push 即可
+    window.state.todoGroups[gIdx].items.push({
+        text: "新事項",
+        done: false
+    });
+    
+    window.saveToCloud();
+}
         function addCustomInfo() {
     if (!window.state.customInfo) window.state.customInfo = [];
     
