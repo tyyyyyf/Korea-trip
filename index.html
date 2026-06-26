@@ -300,6 +300,26 @@
                 }
             });
         }
+        // 新增：資訊區塊拖曳排序
+function initInfoSortable() {
+    const el = document.getElementById('custom-info-list');
+    if(!el) return;
+    if (window.infoSortableInstance) window.infoSortableInstance.destroy();
+    window.infoSortableInstance = Sortable.create(el, {
+        animation: 200,
+        handle: '.info-card', // 整個卡片皆可拖曳
+        ghostClass: 'sortable-ghost',
+        onEnd: () => {
+            const infoList = window.state.customInfo;
+            const newOrder = [];
+            document.querySelectorAll('.info-card').forEach(card => {
+                newOrder.push(infoList[card.getAttribute('data-idx')]);
+            });
+            window.state.customInfo = newOrder;
+            window.saveToCloud();
+        }
+    });
+}
 
         function renderItin() {
             const list = document.getElementById('itinerary-list'); list.innerHTML = "";
@@ -442,24 +462,27 @@
         }
         function renderInfo() {
     const container = document.getElementById('custom-info-list');
+    if (!container) return;
     container.innerHTML = "";
     
-    // 顯示民宿資訊
+    // 更新民宿地址顯示
     if (window.state.hotel) {
-        document.getElementById('hotel-name').innerText = window.state.hotel.name || "YL民宿";
-        document.getElementById('hotel-en').innerText = window.state.hotel.en || "";
-        document.getElementById('hotel-kr').innerText = window.state.hotel.kr || "";
+        if(document.getElementById('hotel-name')) document.getElementById('hotel-name').innerText = window.state.hotel.name || "";
+        if(document.getElementById('hotel-en')) document.getElementById('hotel-en').innerText = window.state.hotel.en || "";
+        if(document.getElementById('hotel-kr')) document.getElementById('hotel-kr').innerText = window.state.hotel.kr || "";
     }
 
     (window.state.customInfo || []).forEach((info, idx) => {
         const div = document.createElement('div');
-        div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
+        // 關鍵：加入 info-card 類別與 data-idx 屬性
+        div.className = "info-card bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4 cursor-grab active:cursor-grabbing";
+        div.setAttribute('data-idx', idx);
         div.innerHTML = `
             <button onclick="if(confirm('刪除？')){window.state.customInfo.splice(${idx},1); window.saveToCloud();}" class="absolute top-6 right-6 text-gray-200">✕</button>
             <h4 contenteditable="true" 
                 oninput="window.state.customInfo[${idx}].title=this.innerText"
                 onblur="window.saveToCloud()" 
-                class="font-black text-sm uppercase italic mb-2 pr-8 text-accent">${info.title}</h4>
+                class="font-black text-sm uppercase italic mb-2 pr-8 text-accent">${info.title || ''}</h4>
             <div contenteditable="true" 
                  oninput="window.state.customInfo[${idx}].content=this.innerText"
                  onblur="window.saveToCloud()" 
@@ -470,6 +493,8 @@
             </div>`;
         container.appendChild(div);
     });
+    // 渲染後啟動排序
+    initInfoSortable();
 }
         function initExpenseBtns() {
             document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpenseBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
