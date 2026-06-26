@@ -441,16 +441,36 @@
             });
         }
         function renderInfo() {
-            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
-            document.getElementById('hotel-name').innerText = window.state.hotel.name;
-            document.getElementById('hotel-en').innerText = window.state.hotel.en;
-            document.getElementById('hotel-kr').innerText = window.state.hotel.kr;
-            (window.state.customInfo || []).forEach((info, idx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
-                div.innerHTML = `<button onclick="window.state.customInfo.splice(${idx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="window.state.customInfo[idx].title=this.innerText; window.saveToCloud()" class="font-black text-sm uppercase italic mb-2 pr-8">${info.title}</h4><div contenteditable="true" onblur="window.state.customInfo[idx].content=this.innerText; window.saveToCloud()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content}</div><div class="relative">${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}</div>`;
-                container.appendChild(div);
-            });
-        }
+    const container = document.getElementById('custom-info-list');
+    container.innerHTML = "";
+    
+    // 顯示民宿資訊
+    if (window.state.hotel) {
+        document.getElementById('hotel-name').innerText = window.state.hotel.name || "YL民宿";
+        document.getElementById('hotel-en').innerText = window.state.hotel.en || "";
+        document.getElementById('hotel-kr').innerText = window.state.hotel.kr || "";
+    }
+
+    (window.state.customInfo || []).forEach((info, idx) => {
+        const div = document.createElement('div');
+        div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
+        div.innerHTML = `
+            <button onclick="if(confirm('刪除？')){window.state.customInfo.splice(${idx},1); window.saveToCloud();}" class="absolute top-6 right-6 text-gray-200">✕</button>
+            <h4 contenteditable="true" 
+                oninput="window.state.customInfo[${idx}].title=this.innerText"
+                onblur="window.saveToCloud()" 
+                class="font-black text-sm uppercase italic mb-2 pr-8 text-accent">${info.title}</h4>
+            <div contenteditable="true" 
+                 oninput="window.state.customInfo[${idx}].content=this.innerText"
+                 onblur="window.saveToCloud()" 
+                 class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content || ''}</div>
+            <div class="relative">
+                ${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : 
+                `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}
+            </div>`;
+        container.appendChild(div);
+    });
+}
         function initExpenseBtns() {
             document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpenseBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
             document.getElementById('method-btns').innerHTML = payMethods.map(m => `<button onclick="curMethod='${m}'; initExpenseBtns()" class="seg-btn ${m===curMethod?'active':''}">${m}</button>`).join('');
@@ -474,8 +494,19 @@
         function zoomImg(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-modal').classList.add('active'); }
         function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
         function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
-        function addCustomInfo() { if(!window.state.customInfo) window.state.customInfo = []; window.state.customInfo.push({ title: "新標題", content: "點擊編輯...", img: "" }); window.saveToCloud(); }
-
+        function addCustomInfo() {
+    if (!window.state.customInfo) window.state.customInfo = [];
+    
+    // 直接推入新物件，內容給空白即可
+    window.state.customInfo.push({
+        title: "新標題",
+        content: "點擊編輯...",
+        img: ""
+    });
+    
+    // 立即儲存到 Firebase 並刷新畫面
+    window.saveToCloud();
+}
         function renderAll() {
             renderDayNav();
             renderItin();
