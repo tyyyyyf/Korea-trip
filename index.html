@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026 V11.5 COPY-PRO</title>
+    <title>🇰🇷 韓國之旅 2026 V11.6 LINK-PRO</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -33,6 +33,9 @@
         .itin-img { width: 100%; height: 160px; object-fit: cover; border-radius: 1.5rem; margin-top: 15px; border: 1px solid rgba(0,0,0,0.05); }
         .sortable-ghost { opacity: 0.2; background: #E8DCCF !important; border: 2px dashed #4A342E !important; }
         .badge-lg { padding: 6px 14px; border-radius: 99px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 網址點擊樣式 */
+        .desc-link { color: #2563eb; text-decoration: underline; font-weight: bold; word-break: break-all; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -43,6 +46,7 @@
 
     <div class="w-full max-w-[430px] min-h-screen pb-32 relative bg-[#F8F5F2]">
         
+        <!-- Header -->
         <header class="p-6 bg-white/70 backdrop-blur-lg sticky top-0 z-50 border-b border-[#E8DCCF] flex justify-between items-center">
             <h1 class="text-lg font-black italic tracking-tighter text-accent uppercase">KOREA 2026</h1>
             <div class="flex items-center space-x-1">
@@ -51,18 +55,21 @@
             </div>
         </header>
 
+        <!-- [分頁 1] 行程 -->
         <section id="tab-schedule" class="tab-content active px-4 pt-6">
             <div id="day-selector" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 pb-2"></div>
             <div id="itinerary-list" class="space-y-5 min-h-[100px]"></div>
             <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-[#E8DCCF] rounded-[2rem] text-accent font-bold">+ 新增行程項目</button>
         </section>
 
+        <!-- [分頁 2] 待辦 -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-accent uppercase">Todo List</h2>
             <div id="todo-groups" class="space-y-6"></div>
             <button onclick="addTodoGroup()" class="mt-6 w-full py-4 bg-white border border-gray-100 rounded-3xl text-gray-400 font-bold">+ 新增分類標題</button>
         </section>
 
+        <!-- [分頁 3] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8 text-center">
             <div class="bg-white p-5 rounded-3xl shadow-sm border mb-4 text-left text-accent">
                 <div class="flex justify-between text-[10px] font-bold">
@@ -79,6 +86,7 @@
             <div id="expense-list" class="space-y-4 text-left"></div>
         </section>
 
+        <!-- [分頁 4] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8 pb-10">
             <h2 class="text-xs font-black mb-3 text-accent uppercase tracking-widest">1. 住宿地址 (YL民宿)</h2>
             <div class="bg-white p-6 rounded-[2rem] shadow-sm mb-8 border border-[#E8DCCF]/40">
@@ -111,6 +119,7 @@
             <div id="custom-info-list" class="space-y-4"></div>
         </section>
 
+        <!-- 底部導覽 -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[420px] bg-white/90 backdrop-blur-2xl border h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around z-[100]">
             <button onclick="switchTab('schedule')" class="flex flex-col items-center text-gray-300" id="nav-schedule"><i class="fa-solid fa-compass"></i><span class="text-[8px] font-bold">行程</span></button>
             <button onclick="switchTab('todo')" class="flex flex-col items-center text-gray-300" id="nav-todo"><i class="fa-solid fa-list-check"></i><span class="text-[8px] font-bold">待辦</span></button>
@@ -174,7 +183,12 @@
                     <option value="景點">景點</option><option value="餐廳">餐廳</option><option value="購物">購物</option><option value="住宿">住宿</option><option value="交通">交通</option><option value="其他">其他</option>
                 </select>
             </div>
-            <textarea id="detail-desc" rows="4" class="w-full bg-gray-50 p-5 rounded-[2rem] outline-none text-sm leading-relaxed" placeholder="描述細節或提醒..."></textarea>
+
+            <div class="space-y-2">
+                <label class="text-[9px] font-black text-gray-400 uppercase ml-1 italic">詳細備註 (支援連結點擊)</label>
+                <!-- 加大備註框 -->
+                <textarea id="detail-desc" rows="10" class="w-full bg-gray-50 p-6 rounded-[2.5rem] outline-none text-sm leading-relaxed border-2 border-transparent focus:border-accent/10 transition" placeholder="輸入描述、食譜、或貼上網址..."></textarea>
+            </div>
         </div>
     </div>
 
@@ -226,7 +240,7 @@
 
         window.state = { 
             budget: 50000, currentDay: 1, 
-            hotel: { name: "YL民宿", en: "Seoul Jung-gu Sogong-ro 6na-gil 11", kr: "서울특별시 중구 소공ろ6나길 11 와이엘 게스트하우스" },
+            hotel: { name: "YL民宿", en: "Seoul Jung-gu Sogong-ro 6na-gil 11", kr: "서울특별시 중구 소공로6나길 11 와이엘 게스트訂하우스" },
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] }, todoGroups: [], expenses: [], customInfo: [] 
         };
 
@@ -243,11 +257,21 @@
         window.onload = () => { switchTab('schedule'); };
     </script>
 
+    <!-- UI 功能 -->
     <script>
         const dayList = [{d:"7/5"},{d:"7/6"},{d:"7/7"},{d:"7/8"},{d:"7/9"},{d:"7/10"},{d:"7/11"}];
         const payers = ["小慌", "昱凱", "小安", "文哥", "零用金"];
         const payMethods = ["現金", "Wowpass", "信用卡", "其他"];
         let curPayer = "文哥", curMethod = "現金", tempImgData = "";
+
+        // 網址識別函數
+        function urlify(text) {
+            if(!text) return "";
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" class="desc-link" onclick="event.stopPropagation()">${url}</a>`;
+            });
+        }
 
         function getItinColor(type) {
             const darkBrown = 'text-[#4A342E]';
@@ -285,7 +309,13 @@
                 const div = document.createElement('div');
                 div.className = `itin-card ${color.bg} ${color.text} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-[0.98]`;
                 div.setAttribute('data-idx', idx);
+                
                 const addressLine = (item.addrKr || item.addrCn) ? `<p class="text-[11px] font-bold opacity-50 mt-1 italic">📍 ${item.addrKr || item.addrCn}</p>` : '';
+                
+                // 處理備註內容 (自動換行 + 連結活化)
+                const descContent = item.desc ? 
+                    `<div class="text-[11px] font-medium opacity-70 mt-3 whitespace-pre-wrap border-t border-black/5 pt-2">${urlify(item.desc)}</div>` : '';
+
                 div.innerHTML = `
                     <button onclick="event.stopPropagation(); delItin(${idx})" class="absolute top-6 right-6 opacity-30">✕</button>
                     <div onclick="openDetailModal(${idx})">
@@ -297,6 +327,7 @@
                             </div>
                             <span class="badge-lg ${color.badge} shrink-0">${item.type || '其他'}</span>
                         </div>
+                        ${descContent}
                         ${item.img ? `<img src="${item.img}" class="itin-img">` : ''}
                     </div>`;
                 list.appendChild(div);
@@ -304,6 +335,7 @@
             initSortable();
         }
 
+        // --- 核心彈窗邏輯 ---
         function openDetailModal(idx) {
             const item = window.state.itin[window.state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
@@ -332,32 +364,27 @@
             window.saveToCloud(); closeDetailModal();
         }
 
+        // --- 其餘模組 (導航、複製、記帳、待辦) ---
         function navPrecise(type, target) {
             if(!target) { alert("尚未輸入地址或標題"); return; }
             if(type === 'google') window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target)}`);
             else window.open(`https://map.naver.com/v5/search/${encodeURIComponent(target)}`);
         }
-
-        function copyRawTxt(txt) { if(!txt) return; navigator.clipboard.writeText(txt).then(() => alert("已複製到剪貼簿！")); }
+        function copyRawTxt(txt) { if(!txt) return; navigator.clipboard.writeText(txt).then(() => alert("已複製！")); }
 
         function renderExpenses() {
             const list = document.getElementById('expense-list'); list.innerHTML = "";
             (window.state.expenses || []).sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e, idx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative mb-4 transition active:scale-95";
+                const div = document.createElement('div'); div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm mb-4 transition active:scale-95";
                 div.innerHTML = `<div class="flex-1" onclick="editExp(${idx})"><div class="flex items-center space-x-2"><span class="text-[8px] bg-gray-50 text-accent px-1.5 py-0.5 rounded font-black uppercase border border-gray-100">${e.payer}</span><p class="font-black italic text-sm text-gray-700">${e.item}</p></div><p class="text-[9px] text-gray-400 font-bold mt-1">${e.method} · ${e.date.slice(5)}</p></div><div class="text-right"><p class="text-sm font-black font-mono text-accent tracking-tighter">NT$ ${e.twd.toLocaleString()}</p><button onclick="delExp(${idx})" class="text-[8px] text-red-200 font-black uppercase mt-1">Delete</button></div>`;
                 list.appendChild(div);
             });
             updateSummary();
         }
-
         function saveExpense() {
-            const idx = document.getElementById('edit-exp-id').value;
-            const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
-            const rec = { item: document.getElementById('exp-item').value || "支出", date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt)), payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
-            if(!window.state.expenses) window.state.expenses = [];
-            if(idx !== "") window.state.expenses[idx] = rec; else window.state.expenses.push(rec);
-            window.saveToCloud(); closeExpenseModal();
+            const idx = document.getElementById('edit-exp-id').value; const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const rec = { item: document.getElementById('exp-item').value, date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt)), payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
+            if(!window.state.expenses) window.state.expenses = []; if(idx !== "") window.state.expenses[idx] = rec; else window.state.expenses.push(rec); window.saveToCloud(); closeExpenseModal();
         }
 
         function handleImageUpload(input, type, idx = null) {
@@ -373,27 +400,6 @@
                     else { window.state.customInfo[idx].img = data; window.saveToCloud(); }
                 }; img.src = e.target.result;
             }; reader.readAsDataURL(file);
-        }
-
-        function renderTodos() {
-            const container = document.getElementById('todo-groups'); container.innerHTML = "";
-            (window.state.todoGroups || []).forEach((g, gIdx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative";
-                div.innerHTML = `<button onclick="window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h3 contenteditable="true" onblur="window.state.todoGroups[gIdx].title=this.innerText; window.saveToCloud()" class="text-base font-black italic underline decoration-[#E8DCCF]">${g.title}</h3><div class="mt-4 space-y-3">${(g.items || []).map((it, iIdx) => `<div class="flex items-center justify-between"><div class="flex items-center space-x-2"><input type="checkbox" ${it.done?'checked':''} onchange="window.state.todoGroups[gIdx].items[iIdx].done=!window.state.todoGroups[gIdx].items[iIdx].done; window.saveToCloud();" class="accent-accent"><span contenteditable="true" onblur="window.state.todoGroups[gIdx].items[iIdx].text=this.innerText; window.saveToCloud()" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span></div><button onclick="window.state.todoGroups[gIdx].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200">✕</button></div>`).join('')}</div><button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase tracking-widest">+ 新增項目</button>`;
-                container.appendChild(div);
-            });
-        }
-
-        function renderInfo() {
-            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
-            document.getElementById('hotel-name').innerText = window.state.hotel.name;
-            document.getElementById('hotel-en').innerText = window.state.hotel.en;
-            document.getElementById('hotel-kr').innerText = window.state.hotel.kr;
-            (window.state.customInfo || []).forEach((info, idx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
-                div.innerHTML = `<button onclick="window.state.customInfo.splice(${idx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="window.state.customInfo[idx].title=this.innerText; window.saveToCloud()" class="font-black text-sm uppercase italic mb-2 pr-8">${info.title}</h4><div contenteditable="true" onblur="window.state.customInfo[idx].content=this.innerText; window.saveToCloud()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content}</div><div class="relative">${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}</div>`;
-                container.appendChild(div);
-            });
         }
 
         function switchTab(tab) {
@@ -423,8 +429,27 @@
             const paid = {}; payers.forEach(p => { if(p !== "零用金") paid[p] = 0; });
             (window.state.expenses || []).forEach(e => { if(paid.hasOwnProperty(e.payer)) paid[e.payer] += e.twd; });
             const m = document.createElement('div'); m.className="fixed inset-0 z-[600] bg-black/50 flex items-center justify-center p-6";
-            m.innerHTML=`<div class="bg-white rounded-[2.5rem] p-8 w-full max-w-xs shadow-2xl text-center"><h3 class="font-black mb-4 italic text-accent text-xl uppercase tracking-tighter">Settlement</h3><div class="space-y-1 mb-4">${Object.keys(paid).map(p => `<div class="flex justify-between border-b py-3 text-sm font-bold"><span>${p}</span><span class="font-mono text-accent">NT$ ${paid[p].toLocaleString()}</span></div>`).join('')}</div><button onclick="this.parentElement.parentElement.remove()" class="mt-2 w-full py-4 bg-accent text-white rounded-2xl font-black italic uppercase text-xs">Close</button></div>`;
+            m.innerHTML=`<div class="bg-white rounded-[2.5rem] p-8 w-full max-w-xs shadow-2xl text-center"><h3 class="font-black mb-4 italic text-accent text-xl uppercase">Settlement</h3><div class="space-y-1 mb-4">${Object.keys(paid).map(p => `<div class="flex justify-between border-b py-3 text-sm font-bold"><span>${p}</span><span class="font-mono text-accent">NT$ ${paid[p].toLocaleString()}</span></div>`).join('')}</div><button onclick="this.parentElement.parentElement.remove()" class="mt-2 w-full py-4 bg-accent text-white rounded-2xl font-black italic uppercase text-xs">Close</button></div>`;
             document.body.appendChild(m);
+        }
+        function renderTodos() {
+            const container = document.getElementById('todo-groups'); container.innerHTML = "";
+            (window.state.todoGroups || []).forEach((g, gIdx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative";
+                div.innerHTML = `<button onclick="window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h3 contenteditable="true" onblur="window.state.todoGroups[gIdx].title=this.innerText; window.saveToCloud()" class="text-base font-black italic underline decoration-[#E8DCCF]">${g.title}</h3><div class="mt-4 space-y-3">${(g.items || []).map((it, iIdx) => `<div class="flex items-center justify-between"><div class="flex items-center space-x-2"><input type="checkbox" ${it.done?'checked':''} onchange="window.state.todoGroups[gIdx].items[iIdx].done=!window.state.todoGroups[gIdx].items[iIdx].done; window.saveToCloud();" class="accent-accent"><span contenteditable="true" onblur="window.state.todoGroups[gIdx].items[iIdx].text=this.innerText; window.saveToCloud()" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span></div><button onclick="window.state.todoGroups[gIdx].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200">✕</button></div>`).join('')}</div><button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase tracking-widest">+ 新增項目</button>`;
+                container.appendChild(div);
+            });
+        }
+        function renderInfo() {
+            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
+            document.getElementById('hotel-name').innerText = window.state.hotel.name;
+            document.getElementById('hotel-en').innerText = window.state.hotel.en;
+            document.getElementById('hotel-kr').innerText = window.state.hotel.kr;
+            (window.state.customInfo || []).forEach((info, idx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
+                div.innerHTML = `<button onclick="window.state.customInfo.splice(${idx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="window.state.customInfo[idx].title=this.innerText; window.saveToCloud()" class="font-black text-sm uppercase italic mb-2 pr-8">${info.title}</h4><div contenteditable="true" onblur="window.state.customInfo[idx].content=this.innerText; window.saveToCloud()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content}</div><div class="relative">${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}</div>`;
+                container.appendChild(div);
+            });
         }
         function initExpenseBtns() {
             document.getElementById('payer-btns').innerHTML = payers.map(p => `<button onclick="curPayer='${p}'; initExpenseBtns()" class="seg-btn ${p===curPayer?'active':''}">${p}</button>`).join('');
