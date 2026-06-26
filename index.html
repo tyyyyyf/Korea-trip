@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026 V11.3 PRECISE-NAV</title>
+    <title>🇰🇷 韓國之旅 2026 V11.4 COLOR-CUSTOM</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -31,8 +31,8 @@
         
         .active-nav-btn { color: #4A342E !important; opacity: 1 !important; }
         .itin-img { width: 100%; height: 160px; object-fit: cover; border-radius: 1.5rem; margin-top: 15px; border: 1px solid rgba(0,0,0,0.05); }
-        .sortable-ghost { opacity: 0.2; background: #E8DCCF !important; }
-        .badge-lg { padding: 6px 14px; border-radius: 99px; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .sortable-ghost { opacity: 0.2; background: #E8DCCF !important; border: 2px dashed #4A342E !important; }
+        .badge-lg { padding: 6px 14px; border-radius: 99px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
     </style>
 </head>
 <body class="flex justify-center">
@@ -47,7 +47,7 @@
             <h1 class="text-lg font-black italic tracking-tighter text-accent uppercase">KOREA 2026</h1>
             <div class="flex items-center space-x-1">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Cloud Locked</span>
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Live</span>
             </div>
         </header>
 
@@ -149,12 +149,11 @@
                     <input id="detail-addr-cn" type="text" class="w-full bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none mt-1" placeholder="輸入中文地址...">
                 </div>
                 <div class="relative">
-                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">韓文地址 (導航必填)</label>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">韓文地址 (導航精準)</label>
                     <input id="detail-addr-kr" type="text" class="w-full bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none mt-1 text-accent" placeholder="輸入韓文地址...">
                 </div>
             </div>
 
-            <!-- 詳細頁專屬導航按鈕 -->
             <div class="grid grid-cols-2 gap-3 py-2">
                 <button onclick="navPrecise('google', document.getElementById('detail-addr-kr').value || document.getElementById('detail-title').value)" class="py-5 bg-blue-50 rounded-2xl text-[10px] font-black uppercase text-blue-600 flex flex-col items-center justify-center shadow-sm active:scale-95 transition">
                     <i class="fa-solid fa-map-location-dot mb-1 text-xl"></i>Google Map
@@ -166,7 +165,7 @@
 
             <div class="flex items-center space-x-3">
                 <input id="detail-time" type="time" class="bg-gray-50 px-4 py-2 rounded-xl font-mono outline-none border-none">
-                <select id="detail-type" class="bg-white border rounded-xl px-4 py-2 text-xs font-bold italic">
+                <select id="detail-type" class="bg-white border rounded-xl px-4 py-2 text-xs font-bold italic text-accent">
                     <option value="景點">景點</option><option value="餐廳">餐廳</option><option value="購物">購物</option><option value="住宿">住宿</option><option value="交通">交通</option><option value="其他">其他</option>
                 </select>
             </div>
@@ -246,13 +245,16 @@
         const payMethods = ["現金", "Wowpass", "信用卡", "其他"];
         let curPayer = "文哥", curMethod = "現金", tempImgData = "";
 
+        // 🎨 更新配色邏輯 (V11.4 需求)
         function getItinColor(type) {
+            const darkBrown = 'text-[#4A342E]';
             switch(type) {
-                case '餐廳': return { bg: 'bg-[#4A342E]', text: 'text-white', badge: 'bg-white/20 text-white' };
-                case '購物': return { bg: 'bg-white', text: 'text-[#4A342E]', badge: 'bg-gray-100 text-gray-500', border: 'border border-[#E8DCCF]' };
-                case '住宿': return { bg: 'bg-[#FBC02D]', text: 'text-[#4A342E]', badge: 'bg-white/60 text-orange-900' };
-                case '交通': return { bg: 'bg-[#43A047]', text: 'text-white', badge: 'bg-white/30 text-white' };
-                default: return { bg: 'bg-[#6D4C41]', text: 'text-white', badge: 'bg-white/20 text-white' };
+                case '景點': return { bg: 'bg-[#FFF9C4]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺黃
+                case '餐廳': return { bg: 'bg-[#E3F2FD]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺藍
+                case '購物': return { bg: 'bg-[#FCE4EC]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺粉
+                case '住宿': return { bg: 'bg-[#FFF4B3]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 金黃
+                case '交通': return { bg: 'bg-[#C8E6C9]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 薄荷綠
+                default: return { bg: 'bg-[#F5F5F5]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };    // 淺灰
             }
         }
 
@@ -278,19 +280,21 @@
             items.forEach((item, idx) => {
                 const color = getItinColor(item.type);
                 const div = document.createElement('div');
-                div.className = `itin-card ${color.bg} ${color.text} ${color.border || ''} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-95`;
+                div.className = `itin-card ${color.bg} ${color.text} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-[0.98]`;
                 div.setAttribute('data-idx', idx);
-                const addressLine = (item.addrKr || item.addrCn) ? `<p class="text-[11px] font-bold opacity-60 mt-1 italic">📍 ${item.addrKr || item.addrCn}</p>` : '';
+                
+                const addressLine = (item.addrKr || item.addrCn) ? `<p class="text-[11px] font-bold opacity-50 mt-1 italic">📍 ${item.addrKr || item.addrCn}</p>` : '';
+
                 div.innerHTML = `
                     <button onclick="event.stopPropagation(); delItin(${idx})" class="absolute top-6 right-6 opacity-30">✕</button>
                     <div onclick="openDetailModal(${idx})">
                         <div class="flex justify-between items-start">
                             <div class="flex-1 pr-4">
-                                <span class="text-xs font-mono font-black opacity-60">${item.time}</span>
+                                <span class="text-xs font-mono font-black opacity-40">${item.time}</span>
                                 <h3 class="font-black text-2xl italic tracking-tighter leading-tight mt-0.5">${item.title || '地點'}</h3>
                                 ${addressLine}
                             </div>
-                            <span class="badge-lg ${color.badge} shrink-0">${item.type || '景點'}</span>
+                            <span class="badge-lg ${color.badge} shrink-0">${item.type || '其他'}</span>
                         </div>
                         ${item.img ? `<img src="${item.img}" class="itin-img">` : ''}
                     </div>`;
@@ -328,32 +332,12 @@
         }
 
         function navPrecise(type, target) {
-            if(!target) { alert("尚未輸入地址或標題"); return; }
+            if(!target) { alert("請先輸入標題或地址"); return; }
             if(type === 'google') window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target)}`);
             else window.open(`https://map.naver.com/v5/search/${encodeURIComponent(target)}`);
         }
 
-        function copyRawTxt(txt) { if(!txt) return; navigator.clipboard.writeText(txt).then(() => alert("已複製！")); }
-
-        function renderExpenses() {
-            const list = document.getElementById('expense-list'); list.innerHTML = "";
-            (window.state.expenses || []).sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e, idx) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative mb-4 transition active:scale-95";
-                div.innerHTML = `<div class="flex-1" onclick="editExp(${idx})"><div class="flex items-center space-x-2"><span class="text-[8px] bg-gray-50 text-accent px-1.5 py-0.5 rounded font-black uppercase border border-gray-100">${e.payer}</span><p class="font-black italic text-sm text-gray-700">${e.item}</p></div><p class="text-[9px] text-gray-400 font-bold mt-1">${e.method} · ${e.date.slice(5)}</p></div><div class="text-right"><p class="text-sm font-black font-mono text-accent tracking-tighter">NT$ ${e.twd.toLocaleString()}</p><button onclick="delExp(${idx})" class="text-[8px] text-red-200 font-black uppercase mt-1">Delete</button></div>`;
-                list.appendChild(div);
-            });
-            updateSummary();
-        }
-        function saveExpense() {
-            const idx = document.getElementById('edit-exp-id').value;
-            const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
-            const twdValue = (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt));
-            const rec = { item: document.getElementById('exp-item').value, date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: twdValue, payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
-            if(!window.state.expenses) window.state.expenses = [];
-            if(idx !== "") window.state.expenses[idx] = rec; else window.state.expenses.push(rec);
-            window.saveToCloud(); closeExpenseModal();
-        }
+        function copyRawTxt(txt) { if(!txt) return; navigator.clipboard.writeText(txt).then(() => alert("已複製到剪貼簿！")); }
 
         function handleImageUpload(input, type, idx = null) {
             const file = input.files[0]; if(!file) return;
@@ -369,6 +353,50 @@
                 }; img.src = e.target.result;
             }; reader.readAsDataURL(file);
         }
+
+        function renderExpenses() {
+            const list = document.getElementById('expense-list'); list.innerHTML = "";
+            (window.state.expenses || []).sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e, idx) => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-5 rounded-3xl flex justify-between items-center shadow-sm relative mb-4 transition active:scale-95";
+                div.innerHTML = `<div class="flex-1" onclick="editExp(${idx})"><div class="flex items-center space-x-2"><span class="text-[8px] bg-gray-50 text-accent px-1.5 py-0.5 rounded font-black uppercase border border-gray-100">${e.payer}</span><p class="font-black italic text-sm text-gray-700">${e.item}</p></div><p class="text-[9px] text-gray-400 font-bold mt-1">${e.method} · ${e.date.slice(5)}</p></div><div class="text-right"><p class="text-sm font-black font-mono text-accent tracking-tighter">NT$ ${e.twd.toLocaleString()}</p><button onclick="delExp(${idx})" class="text-[8px] text-red-200 font-black uppercase mt-1">Delete</button></div>`;
+                list.appendChild(div);
+            });
+            updateSummary();
+        }
+
+        function saveExpense() {
+            const idx = document.getElementById('edit-exp-id').value;
+            const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const rec = { item: document.getElementById('exp-item').value || "支出", date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt)), payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
+            if(!window.state.expenses) window.state.expenses = [];
+            if(idx !== "") window.state.expenses[idx] = rec; else window.state.expenses.push(rec);
+            window.saveToCloud(); closeExpenseModal();
+        }
+
+        function renderTodos() {
+            const container = document.getElementById('todo-groups'); container.innerHTML = "";
+            (window.state.todoGroups || []).forEach((g, gIdx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative";
+                div.innerHTML = `<button onclick="window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h3 contenteditable="true" onblur="window.state.todoGroups[gIdx].title=this.innerText; window.saveToCloud()" class="text-base font-black italic underline decoration-[#E8DCCF]">${g.title}</h3><div class="mt-4 space-y-3">${(g.items || []).map((it, iIdx) => `<div class="flex items-center justify-between"><div class="flex items-center space-x-2"><input type="checkbox" ${it.done?'checked':''} onchange="window.state.todoGroups[gIdx].items[iIdx].done=!window.state.todoGroups[gIdx].items[iIdx].done; window.saveToCloud();" class="accent-accent"><span contenteditable="true" onblur="window.state.todoGroups[gIdx].items[iIdx].text=this.innerText; window.saveToCloud()" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span></div><button onclick="window.state.todoGroups[gIdx].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200">✕</button></div>`).join('')}</div><button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase tracking-widest">+ 新增項目</button>`;
+                container.appendChild(div);
+            });
+        }
+        function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
+        function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
+
+        function renderInfo() {
+            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
+            document.getElementById('hotel-name').innerText = window.state.hotel.name;
+            document.getElementById('hotel-en').innerText = window.state.hotel.en;
+            document.getElementById('hotel-kr').innerText = window.state.hotel.kr;
+            (window.state.customInfo || []).forEach((info, idx) => {
+                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
+                div.innerHTML = `<button onclick="window.state.customInfo.splice(${idx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="window.state.customInfo[idx].title=this.innerText; window.saveToCloud()" class="font-black text-sm uppercase italic mb-2 pr-8">${info.title}</h4><div contenteditable="true" onblur="window.state.customInfo[idx].content=this.innerText; window.saveToCloud()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content}</div><div class="relative">${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}</div>`;
+                container.appendChild(div);
+            });
+        }
+        function addCustomInfo() { if(!window.state.customInfo) window.state.customInfo = []; window.state.customInfo.push({ title: "新標題", content: "點擊編輯...", img: "" }); window.saveToCloud(); }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -393,28 +421,6 @@
             document.getElementById('budget-left').innerText = `${(budget - total).toLocaleString()}`;
             document.getElementById('budget-bar').style.width = Math.min(100, (total / budget) * 100) + '%';
         }
-        function renderTodos() {
-            const container = document.getElementById('todo-groups'); container.innerHTML = "";
-            (window.state.todoGroups || []).forEach((g, gIdx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm mb-4 relative";
-                div.innerHTML = `<button onclick="window.state.todoGroups.splice(${gIdx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h3 contenteditable="true" onblur="window.state.todoGroups[gIdx].title=this.innerText; window.saveToCloud()" class="text-base font-black italic underline decoration-[#E8DCCF]">${g.title}</h3><div class="mt-4 space-y-3">${(g.items || []).map((it, iIdx) => `<div class="flex items-center justify-between"><div class="flex items-center space-x-2"><input type="checkbox" ${it.done?'checked':''} onchange="window.state.todoGroups[gIdx].items[iIdx].done=!window.state.todoGroups[gIdx].items[iIdx].done; window.saveToCloud();" class="accent-accent"><span contenteditable="true" onblur="window.state.todoGroups[gIdx].items[iIdx].text=this.innerText; window.saveToCloud()" class="text-sm font-bold ${it.done?'line-through opacity-30':''}">${it.text}</span></div><button onclick="window.state.todoGroups[gIdx].items.splice(${iIdx},1); window.saveToCloud();" class="text-xs text-gray-200">✕</button></div>`).join('')}</div><button onclick="addTodoItem(${gIdx})" class="mt-4 text-[10px] font-black text-accent uppercase">+ 新增項目</button>`;
-                container.appendChild(div);
-            });
-        }
-        function renderInfo() {
-            const container = document.getElementById('custom-info-list'); container.innerHTML = "";
-            document.getElementById('hotel-name').innerText = window.state.hotel.name;
-            document.getElementById('hotel-en').innerText = window.state.hotel.en;
-            document.getElementById('hotel-kr').innerText = window.state.hotel.kr;
-            (window.state.customInfo || []).forEach((info, idx) => {
-                const div = document.createElement('div'); div.className = "bg-white p-6 rounded-[2rem] shadow-sm relative border border-gray-50 mb-4";
-                div.innerHTML = `<button onclick="window.state.customInfo.splice(${idx},1); window.saveToCloud();" class="absolute top-6 right-6 text-gray-200">✕</button><h4 contenteditable="true" onblur="window.state.customInfo[idx].title=this.innerText; window.saveToCloud()" class="font-black text-sm uppercase italic mb-2 pr-8">${info.title}</h4><div contenteditable="true" onblur="window.state.customInfo[idx].content=this.innerText; window.saveToCloud()" class="text-[11px] text-gray-500 font-mono leading-relaxed whitespace-pre-wrap mb-4">${info.content}</div><div class="relative">${info.img ? `<img src="${info.img}" class="w-full rounded-xl cursor-pointer shadow-sm" onclick="zoomImg(this.src)">` : `<label class="flex items-center justify-center w-full py-5 bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 cursor-pointer"><span class="text-[10px] font-bold text-gray-300">新增條碼/相片</span><input type="file" onchange="handleImageUpload(this, 'info', ${idx})" class="hidden" accept="image/*"></label>`}</div>`;
-                container.appendChild(div);
-            });
-        }
-        function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
-        function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
-        function addCustomInfo() { if(!window.state.customInfo) window.state.customInfo = []; window.state.customInfo.push({ title: "新標題", content: "點擊編輯...", img: "" }); window.saveToCloud(); }
         function toggleSettlement() {
             const paid = {}; payers.forEach(p => { if(p !== "零用金") paid[p] = 0; });
             (window.state.expenses || []).forEach(e => { if(paid.hasOwnProperty(e.payer)) paid[e.payer] += e.twd; });
