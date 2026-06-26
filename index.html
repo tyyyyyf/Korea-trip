@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026 V11.1 COLOR-MODE</title>
+    <title>🇰🇷 韓國之旅 2026 V11.2 COLOR-SYNC</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -21,7 +21,6 @@
         .text-accent { color: #4A342E; }
         .day-btn.active { background-color: #4A342E; color: white; transform: scale(1.05); box-shadow: 0 10px 15px -3px rgba(74, 52, 46, 0.3); }
         
-        /* 記帳組件 */
         .seg-btn { background-color: #FFFFFF; color: #8B8B8B; border: 1px solid #F3F0ED; font-size: 10px; font-weight: bold; padding: 8px 0; border-radius: 12px; transition: 0.2s; }
         .seg-btn.active { background-color: #4A342E; color: #FFFFFF; border-color: #4A342E; }
         
@@ -34,7 +33,6 @@
         .itin-img { width: 100%; height: 160px; object-fit: cover; border-radius: 1.5rem; margin-top: 15px; border: 1px solid rgba(0,0,0,0.05); }
         .sortable-ghost { opacity: 0.2; background: #E8DCCF !important; }
         
-        /* 分類標籤樣式 */
         .badge-lg { padding: 6px 14px; border-radius: 99px; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
@@ -50,7 +48,7 @@
             <h1 class="text-lg font-black italic tracking-tighter text-accent uppercase">KOREA 2026</h1>
             <div class="flex items-center space-x-1">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-[9px] font-black text-gray-400">CLOUD SYNC</span>
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Live Sync</span>
             </div>
         </header>
 
@@ -92,16 +90,16 @@
                 <h3 id="hotel-name" contenteditable="true" onblur="window.state.hotel.name=this.innerText; window.saveToCloud()" class="font-black text-lg text-accent italic mb-4">YL民宿</h3>
                 <div class="space-y-4">
                     <div class="flex items-start justify-between">
-                        <div class="flex-1">
+                        <div class="flex-1 pr-2">
                             <p class="text-[10px] font-black text-gray-400 uppercase">English Address</p>
                             <p id="hotel-en" contenteditable="true" onblur="window.state.hotel.en=this.innerText; window.saveToCloud()" class="text-xs font-bold text-gray-600 leading-tight">Seoul Jung-gu Sogong-ro 6na-gil 11</p>
                         </div>
                         <button onclick="copyRawTxt(document.getElementById('hotel-en').innerText)" class="ml-2 p-2 bg-gray-50 rounded-lg text-gray-400 active:text-accent"><i class="fa-solid fa-copy"></i></button>
                     </div>
                     <div class="flex items-start justify-between">
-                        <div class="flex-1">
+                        <div class="flex-1 pr-2">
                             <p class="text-[10px] font-black text-gray-400 uppercase">Korean Address</p>
-                            <p id="hotel-kr" contenteditable="true" onblur="window.state.hotel.kr=this.innerText; window.saveToCloud()" class="text-xs font-bold text-gray-600 leading-tight">서울특별시 중구 소공로6나길 11 와이엘 게스트訂하우스</p>
+                            <p id="hotel-kr" contenteditable="true" onblur="window.state.hotel.kr=this.innerText; window.saveToCloud()" class="text-xs font-bold text-gray-600 leading-tight">서울특별시 중구 소공로6나길 11 와イ엘 게스트하우스</p>
                         </div>
                         <button onclick="copyRawTxt(document.getElementById('hotel-kr').innerText)" class="ml-2 p-2 bg-gray-50 rounded-lg text-gray-400 active:text-accent"><i class="fa-solid fa-copy"></i></button>
                     </div>
@@ -129,11 +127,11 @@
         <button id="fab-budget" onclick="openExpenseModal()" class="hidden fixed bottom-32 right-8 w-14 h-14 bg-accent text-white rounded-full shadow-2xl items-center justify-center text-xl z-[90]"><i class="fa-solid fa-plus"></i></button>
     </div>
 
-    <!-- 詳細頁 Modal (維持) -->
+    <!-- 詳細頁 Modal -->
     <div id="detail-modal" class="no-scrollbar">
         <div class="sticky top-0 z-[510] bg-white/90 backdrop-blur-md px-6 py-5 border-b flex justify-between items-center">
             <button onclick="closeDetailModal()" class="text-gray-400 font-bold text-xs">✕ CLOSE</button>
-            <h3 class="text-xs font-black text-accent uppercase tracking-widest">Itinerary Details</h3>
+            <h3 class="text-xs font-black text-accent italic uppercase tracking-widest">Itinerary Details</h3>
             <button onclick="saveCurrentDetail()" class="px-6 py-2 bg-accent text-white rounded-full text-xs font-black">SAVE</button>
         </div>
         <div class="p-8 pb-40 space-y-6">
@@ -144,20 +142,28 @@
                 <img id="detail-img-src" src="" class="hidden w-full h-full object-cover">
             </div>
             <input id="detail-title" type="text" class="w-full text-3xl font-black outline-none italic tracking-tighter text-accent" placeholder="地點名稱">
+            
             <div class="space-y-4">
                 <div class="relative">
                     <label class="text-[9px] font-black text-gray-400 uppercase ml-1">中文地址</label>
                     <div class="flex items-center mt-1">
-                        <input id="detail-addr-cn" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none" placeholder="輸入中文地址...">
+                        <input id="detail-addr-cn" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none" placeholder="輸入中文地址...">
                     </div>
                 </div>
                 <div class="relative">
-                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">韓文地址 (導航最精準)</label>
+                    <label class="text-[9px] font-black text-gray-400 uppercase ml-1">韓文地址</label>
                     <div class="flex items-center mt-1">
-                        <input id="detail-addr-kr" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none" placeholder="輸入韓文地址...">
+                        <input id="detail-addr-kr" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none" placeholder="輸入韓文地址...">
                     </div>
                 </div>
             </div>
+
+            <!-- 詳細頁導航鍵 -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="navPrecise('google', document.getElementById('detail-addr-kr').value || document.getElementById('detail-title').value)" class="py-5 bg-gray-100 rounded-2xl text-[10px] font-black uppercase text-blue-600 flex items-center justify-center"><i class="fa-solid fa-map-location-dot mr-2"></i>Google Map</button>
+                <button onclick="navPrecise('naver', document.getElementById('detail-addr-kr').value || document.getElementById('detail-title').value)" class="py-5 bg-green-50 rounded-2xl text-[10px] font-black text-green-700 uppercase flex items-center justify-center"><i class="fa-solid fa-location-arrow mr-2"></i>Naver Map</button>
+            </div>
+
             <div class="flex items-center space-x-3">
                 <input id="detail-time" type="time" class="bg-gray-50 px-4 py-2 rounded-xl font-mono outline-none border-none">
                 <select id="detail-type" class="bg-white border rounded-xl px-4 py-2 text-xs font-bold italic">
@@ -168,7 +174,7 @@
         </div>
     </div>
 
-    <!-- 記帳 Modal (維持) -->
+    <!-- 記帳 Modal -->
     <div id="expense-modal" onclick="if(event.target==this) closeExpenseModal()">
         <div class="w-full bg-white rounded-t-[3.5rem] p-8 pb-12 overflow-y-auto max-h-[95vh] shadow-2xl">
             <div class="flex justify-between mb-6"><h3 class="text-xl font-black italic text-accent uppercase">New Expense</h3><button onclick="closeExpenseModal()" class="text-gray-300">✕</button></div>
@@ -240,15 +246,15 @@
         const payMethods = ["現金", "Wowpass", "信用卡", "其他"];
         let curPayer = "文哥", curMethod = "現金", tempImgData = "";
 
-        // 核心配色邏輯
+        // 🎨 核心配色與分類系統
         function getItinColor(type) {
             switch(type) {
-                case '景點': return { bg: 'bg-[#4A342E]', text: 'text-white', badge: 'bg-white/20 text-white' };
-                case '餐廳': return { bg: 'bg-[#FFD1DC]', text: 'text-[#4A342E]', badge: 'bg-white text-[#FF69B4]' };
-                case '購物': return { bg: 'bg-[#D1E8FF]', text: 'text-[#4A342E]', badge: 'bg-white text-[#1E88E5]' };
-                case '住宿': return { bg: 'bg-[#FFF4B3]', text: 'text-[#4A342E]', badge: 'bg-white text-[#FFB300]' };
-                case '交通': return { bg: 'bg-[#C8E6C9]', text: 'text-[#4A342E]', badge: 'bg-white text-[#2E7D32]' };
-                default: return { bg: 'bg-white', text: 'text-[#4A342E]', badge: 'bg-gray-100 text-gray-500' };
+                case '餐廳': return { bg: 'bg-[#4A342E]', text: 'text-white', badge: 'bg-white/20 text-white' };
+                case '購物': return { bg: 'bg-white', text: 'text-[#4A342E]', badge: 'bg-gray-100 text-gray-500', border: 'border border-[#E8DCCF]' };
+                case '景點': return { bg: 'bg-[#6D4C41]', text: 'text-white', badge: 'bg-white/20 text-white' };
+                case '住宿': return { bg: 'bg-[#FBC02D]', text: 'text-[#4A342E]', badge: 'bg-white/60 text-orange-900' };
+                case '交通': return { bg: 'bg-[#43A047]', text: 'text-white', badge: 'bg-white/30 text-white' };
+                default: return { bg: 'bg-[#BDBDBD]', text: 'text-white', badge: 'bg-white/20 text-white' };
             }
         }
 
@@ -274,10 +280,9 @@
             items.forEach((item, idx) => {
                 const color = getItinColor(item.type);
                 const div = document.createElement('div');
-                div.className = `itin-card ${color.bg} ${color.text} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-95`;
+                div.className = `itin-card ${color.bg} ${color.text} ${color.border || ''} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-95`;
                 div.setAttribute('data-idx', idx);
                 
-                // 判斷是否顯示地址行 (若無則移除 📍 行)
                 const addressLine = (item.addrKr || item.addrCn) ? 
                     `<p class="text-[11px] font-bold opacity-60 mt-1 italic">📍 ${item.addrKr || item.addrCn}</p>` : '';
 
@@ -299,7 +304,7 @@
             initSortable();
         }
 
-        // --- 基礎邏輯與 Firebase 操作 ---
+        // --- 其餘功能模組 ---
         function openDetailModal(idx) {
             const item = window.state.itin[window.state.currentDay][idx];
             document.getElementById('detail-idx').value = idx;
@@ -354,7 +359,6 @@
             }; reader.readAsDataURL(file);
         }
 
-        // --- 記帳、待辦與資訊渲染 (與前版一致) ---
         function renderExpenses() {
             const list = document.getElementById('expense-list'); list.innerHTML = "";
             (window.state.expenses || []).sort((a,b) => new Date(b.date) - new Date(a.date)).forEach((e, idx) => {
@@ -365,10 +369,11 @@
             });
             updateSummary();
         }
+
         function saveExpense() {
             const idx = document.getElementById('edit-exp-id').value;
             const amt = parseFloat(document.getElementById('exp-amount').value) || 0;
-            const rec = { item: document.getElementById('exp-item').value, date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt)), payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
+            const rec = { item: document.getElementById('exp-item').value || "支出", date: document.getElementById('exp-date').value, amount: amt, currency: document.getElementById('exp-currency').value, twd: (document.getElementById('exp-currency').value==="KRW"?Math.round(amt*0.024):Math.round(amt)), payer: curPayer, method: curMethod, tax: document.getElementById('exp-tax').value, notes: document.getElementById('exp-notes').value };
             if(!window.state.expenses) window.state.expenses = [];
             if(idx !== "") window.state.expenses[idx] = rec; else window.state.expenses.push(rec);
             window.saveToCloud(); closeExpenseModal();
