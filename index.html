@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🇰🇷 韓國之旅 2026 V11.4 COLOR-CUSTOM</title>
+    <title>🇰🇷 韓國之旅 2026 V11.5 COPY-PRO</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -47,25 +47,22 @@
             <h1 class="text-lg font-black italic tracking-tighter text-accent uppercase">KOREA 2026</h1>
             <div class="flex items-center space-x-1">
                 <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Live</span>
+                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Linked</span>
             </div>
         </header>
 
-        <!-- [分頁 1] 行程 -->
         <section id="tab-schedule" class="tab-content active px-4 pt-6">
             <div id="day-selector" class="flex space-x-2 overflow-x-auto no-scrollbar mb-6 pb-2"></div>
             <div id="itinerary-list" class="space-y-5 min-h-[100px]"></div>
             <button onclick="addNewItinerary()" class="mt-8 w-full py-4 border-2 border-dashed border-[#E8DCCF] rounded-[2rem] text-accent font-bold">+ 新增行程項目</button>
         </section>
 
-        <!-- [分頁 2] 待辦 -->
         <section id="tab-todo" class="tab-content px-6 pt-8">
             <h2 class="text-2xl font-black mb-6 italic text-accent uppercase">Todo List</h2>
             <div id="todo-groups" class="space-y-6"></div>
             <button onclick="addTodoGroup()" class="mt-6 w-full py-4 bg-white border border-gray-100 rounded-3xl text-gray-400 font-bold">+ 新增分類標題</button>
         </section>
 
-        <!-- [分頁 3] 記帳 -->
         <section id="tab-budget" class="tab-content px-6 pt-8 text-center">
             <div class="bg-white p-5 rounded-3xl shadow-sm border mb-4 text-left text-accent">
                 <div class="flex justify-between text-[10px] font-bold">
@@ -82,7 +79,6 @@
             <div id="expense-list" class="space-y-4 text-left"></div>
         </section>
 
-        <!-- [分頁 4] 資訊 -->
         <section id="tab-info" class="tab-content px-6 pt-8 pb-10">
             <h2 class="text-xs font-black mb-3 text-accent uppercase tracking-widest">1. 住宿地址 (YL民宿)</h2>
             <div class="bg-white p-6 rounded-[2rem] shadow-sm mb-8 border border-[#E8DCCF]/40">
@@ -115,7 +111,6 @@
             <div id="custom-info-list" class="space-y-4"></div>
         </section>
 
-        <!-- 底部導覽 -->
         <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[420px] bg-white/90 backdrop-blur-2xl border h-20 rounded-[2.5rem] shadow-2xl flex items-center justify-around z-[100]">
             <button onclick="switchTab('schedule')" class="flex flex-col items-center text-gray-300" id="nav-schedule"><i class="fa-solid fa-compass"></i><span class="text-[8px] font-bold">行程</span></button>
             <button onclick="switchTab('todo')" class="flex flex-col items-center text-gray-300" id="nav-todo"><i class="fa-solid fa-list-check"></i><span class="text-[8px] font-bold">待辦</span></button>
@@ -146,11 +141,21 @@
             <div class="space-y-4">
                 <div class="relative">
                     <label class="text-[9px] font-black text-gray-400 uppercase ml-1">中文地址</label>
-                    <input id="detail-addr-cn" type="text" class="w-full bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none mt-1" placeholder="輸入中文地址...">
+                    <div class="flex items-center mt-1 gap-2">
+                        <input id="detail-addr-cn" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none" placeholder="輸入中文地址...">
+                        <button onclick="copyRawTxt(document.getElementById('detail-addr-cn').value)" class="p-4 bg-gray-100 rounded-2xl text-gray-400 active:text-accent transition">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="relative">
                     <label class="text-[9px] font-black text-gray-400 uppercase ml-1">韓文地址 (導航精準)</label>
-                    <input id="detail-addr-kr" type="text" class="w-full bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none mt-1 text-accent" placeholder="輸入韓文地址...">
+                    <div class="flex items-center mt-1 gap-2">
+                        <input id="detail-addr-kr" type="text" class="flex-1 bg-gray-50 p-4 rounded-2xl text-sm font-bold border-none outline-none text-accent" placeholder="輸入韓文地址...">
+                        <button onclick="copyRawTxt(document.getElementById('detail-addr-kr').value)" class="p-4 bg-gray-100 rounded-2xl text-gray-400 active:text-accent transition">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -221,7 +226,7 @@
 
         window.state = { 
             budget: 50000, currentDay: 1, 
-            hotel: { name: "YL民宿", en: "Seoul Jung-gu Sogong-ro 6na-gil 11", kr: "서울특별시 중구 소공로6나길 11 와이엘 게스트하우스" },
+            hotel: { name: "YL民宿", en: "Seoul Jung-gu Sogong-ro 6na-gil 11", kr: "서울특별시 중구 소공ろ6나길 11 와이엘 게스트하우스" },
             itin: { 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[] }, todoGroups: [], expenses: [], customInfo: [] 
         };
 
@@ -238,23 +243,21 @@
         window.onload = () => { switchTab('schedule'); };
     </script>
 
-    <!-- UI 功能 -->
     <script>
         const dayList = [{d:"7/5"},{d:"7/6"},{d:"7/7"},{d:"7/8"},{d:"7/9"},{d:"7/10"},{d:"7/11"}];
         const payers = ["小慌", "昱凱", "小安", "文哥", "零用金"];
         const payMethods = ["現金", "Wowpass", "信用卡", "其他"];
         let curPayer = "文哥", curMethod = "現金", tempImgData = "";
 
-        // 🎨 更新配色邏輯 (V11.4 需求)
         function getItinColor(type) {
             const darkBrown = 'text-[#4A342E]';
             switch(type) {
-                case '景點': return { bg: 'bg-[#FFF9C4]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺黃
-                case '餐廳': return { bg: 'bg-[#E3F2FD]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺藍
-                case '購物': return { bg: 'bg-[#FCE4EC]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 淺粉
-                case '住宿': return { bg: 'bg-[#FFF4B3]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 金黃
-                case '交通': return { bg: 'bg-[#C8E6C9]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' }; // 薄荷綠
-                default: return { bg: 'bg-[#F5F5F5]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };    // 淺灰
+                case '景點': return { bg: 'bg-[#FFF9C4]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
+                case '餐廳': return { bg: 'bg-[#E3F2FD]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
+                case '購物': return { bg: 'bg-[#FCE4EC]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
+                case '住宿': return { bg: 'bg-[#FFF4B3]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
+                case '交通': return { bg: 'bg-[#C8E6C9]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
+                default: return { bg: 'bg-[#F5F5F5]', text: darkBrown, badge: 'bg-[#4A342E]/10 text-[#4A342E]' };
             }
         }
 
@@ -282,9 +285,7 @@
                 const div = document.createElement('div');
                 div.className = `itin-card ${color.bg} ${color.text} p-6 rounded-[2.5rem] shadow-sm relative transition-all active:scale-[0.98]`;
                 div.setAttribute('data-idx', idx);
-                
                 const addressLine = (item.addrKr || item.addrCn) ? `<p class="text-[11px] font-bold opacity-50 mt-1 italic">📍 ${item.addrKr || item.addrCn}</p>` : '';
-
                 div.innerHTML = `
                     <button onclick="event.stopPropagation(); delItin(${idx})" class="absolute top-6 right-6 opacity-30">✕</button>
                     <div onclick="openDetailModal(${idx})">
@@ -332,27 +333,12 @@
         }
 
         function navPrecise(type, target) {
-            if(!target) { alert("請先輸入標題或地址"); return; }
+            if(!target) { alert("尚未輸入地址或標題"); return; }
             if(type === 'google') window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(target)}`);
             else window.open(`https://map.naver.com/v5/search/${encodeURIComponent(target)}`);
         }
 
         function copyRawTxt(txt) { if(!txt) return; navigator.clipboard.writeText(txt).then(() => alert("已複製到剪貼簿！")); }
-
-        function handleImageUpload(input, type, idx = null) {
-            const file = input.files[0]; if(!file) return;
-            const reader = new FileReader(); reader.onload = (e) => {
-                const img = new Image(); img.onload = () => {
-                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                    const max = 800; let w = img.width, h = img.height;
-                    if(w > h && w > max) { h *= max/w; w = max; } else if(h > max) { w *= max/h; h = max; }
-                    canvas.width = w; canvas.height = h; ctx.drawImage(img, 0,0,w,h);
-                    const data = canvas.toDataURL('image/jpeg', 0.6);
-                    if(type==='itin') { tempImgData = data; document.getElementById('detail-img-src').src = data; document.getElementById('detail-img-src').classList.remove('hidden'); }
-                    else { window.state.customInfo[idx].img = data; window.saveToCloud(); }
-                }; img.src = e.target.result;
-            }; reader.readAsDataURL(file);
-        }
 
         function renderExpenses() {
             const list = document.getElementById('expense-list'); list.innerHTML = "";
@@ -374,6 +360,21 @@
             window.saveToCloud(); closeExpenseModal();
         }
 
+        function handleImageUpload(input, type, idx = null) {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader(); reader.onload = (e) => {
+                const img = new Image(); img.onload = () => {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    const max = 800; let w = img.width, h = img.height;
+                    if(w > h && w > max) { h *= max/w; w = max; } else if(h > max) { w *= max/h; h = max; }
+                    canvas.width = w; canvas.height = h; ctx.drawImage(img, 0,0,w,h);
+                    const data = canvas.toDataURL('image/jpeg', 0.6);
+                    if(type==='itin') { tempImgData = data; document.getElementById('detail-img-src').src = data; document.getElementById('detail-img-src').classList.remove('hidden'); }
+                    else { window.state.customInfo[idx].img = data; window.saveToCloud(); }
+                }; img.src = e.target.result;
+            }; reader.readAsDataURL(file);
+        }
+
         function renderTodos() {
             const container = document.getElementById('todo-groups'); container.innerHTML = "";
             (window.state.todoGroups || []).forEach((g, gIdx) => {
@@ -382,8 +383,6 @@
                 container.appendChild(div);
             });
         }
-        function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
-        function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
 
         function renderInfo() {
             const container = document.getElementById('custom-info-list'); container.innerHTML = "";
@@ -396,7 +395,6 @@
                 container.appendChild(div);
             });
         }
-        function addCustomInfo() { if(!window.state.customInfo) window.state.customInfo = []; window.state.customInfo.push({ title: "新標題", content: "點擊編輯...", img: "" }); window.saveToCloud(); }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -449,6 +447,9 @@
         function closeDetailModal() { document.getElementById('detail-modal').classList.remove('active'); }
         function closeExpenseModal() { document.getElementById('expense-modal').classList.remove('active'); }
         function zoomImg(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-modal').classList.add('active'); }
+        function addTodoGroup() { if(!window.state.todoGroups) window.state.todoGroups = []; window.state.todoGroups.push({ title: "新清單", items: [] }); window.saveToCloud(); }
+        function addTodoItem(gIdx) { if(!window.state.todoGroups[gIdx].items) window.state.todoGroups[gIdx].items = []; window.state.todoGroups[gIdx].items.push({ text: "新事項", done: false }); window.saveToCloud(); }
+        function addCustomInfo() { if(!window.state.customInfo) window.state.customInfo = []; window.state.customInfo.push({ title: "新標題", content: "點擊編輯...", img: "" }); window.saveToCloud(); }
 
         function renderAll() {
             renderDayNav();
